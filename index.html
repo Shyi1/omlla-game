@@ -3,65 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Omlla Clicker</title>
+    <title>Omlla Elite</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --main-color: #f3ba2f; --bg-color: #0d0d0d; }
-        body { background: var(--bg-color); color: white; font-family: sans-serif; text-align: center; margin: 0; overflow: hidden; user-select: none; }
-        .stats { margin-top: 40px; font-size: 42px; font-weight: bold; color: var(--main-color); }
-        .coin-container { margin-top: 60px; position: relative; display: inline-block; }
-        .coin { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, #f3ba2f 0%, #a47c00 100%); 
-                box-shadow: 0 0 50px rgba(243, 186, 47, 0.3); cursor: pointer; transition: transform 0.1s; border: 8px solid #333; }
-        .coin:active { transform: scale(0.95); }
-        .plus-one { position: absolute; color: var(--main-color); font-size: 24px; font-weight: bold; animation: floatUp 0.8s forwards; pointer-events: none; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
-        .footer { position: fixed; bottom: 20px; width: 100%; font-size: 14px; opacity: 0.6; }
+        :root {
+            --gold-gradient: linear-gradient(135deg, #ffcf67 0%, #d3a02c 50%, #8a6a1e 100%);
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+        body {
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+        }
+        .header { margin-top: 50px; text-align: center; }
+        .score-container {
+            background: var(--glass);
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: 1px solid rgba(211, 160, 44, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        #score {
+            font-size: 48px;
+            font-weight: 900;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        .coin-wrapper {
+            margin-top: auto;
+            margin-bottom: auto;
+            position: relative;
+        }
+        .coin {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 80px rgba(211, 160, 44, 0.15), inset 0 0 20px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.05s ease;
+            border: 4px solid #1a1a1a;
+        }
+        .coin::after {
+            content: "O"; /* شعار العملة */
+            font-size: 120px;
+            font-weight: 900;
+            color: rgba(0,0,0,0.7);
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.2);
+        }
+        .coin:active { transform: scale(0.92); }
+        .plus-one {
+            position: absolute;
+            color: #ffcf67;
+            font-size: 28px;
+            font-weight: bold;
+            animation: rise 0.7s ease-out forwards;
+            pointer-events: none;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        @keyframes rise {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-120px) scale(1.5); }
+        }
+        .signature {
+            margin-bottom: 30px;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.2);
+        }
+        .signature span { color: #d3a02c; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="stats" id="score">0</div>
-    <div style="font-size: 18px; color: #888;">COINS</div>
+    <div class="header">
+        <div class="score-container">
+            <div id="score">0</div>
+        </div>
+        <p style="color: rgba(255,255,255,0.4); margin-top: 10px; font-weight: 300;">OMLLA ELITE BALANCE</p>
+    </div>
 
-    <div class="coin-container">
+    <div class="coin-wrapper">
         <div class="coin" id="coinBtn"></div>
     </div>
 
-    <div class="footer">Omlla Ecosystem - Powered by Telegram</div>
+    <div class="signature">Developed by <span>Yous</span></div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); // لفتح الواجهة بكامل الشاشة
+        tg.expand();
+        tg.headerColor = '#050505';
 
-        let score = parseInt(localStorage.getItem('omlla_score')) || 0;
+        let score = parseInt(localStorage.getItem('omlla_elite_score')) || 0;
         const scoreEl = document.getElementById('score');
         const coinBtn = document.getElementById('coinBtn');
 
         scoreEl.innerText = score.toLocaleString();
 
         coinBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // منع الزووم
-            score++;
+            e.preventDefault();
+            score += 1;
             scoreEl.innerText = score.toLocaleString();
-            localStorage.setItem('omlla_score', score);
+            localStorage.setItem('omlla_elite_score', score);
 
-            // اهتزاز خفيف (Haptic Feedback)
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
 
-            // تأثير +1
             const touch = e.touches[0];
-            createPlusOne(touch.clientX, touch.clientY);
-        });
-
-        function createPlusOne(x, y) {
             const plus = document.createElement('div');
             plus.innerText = '+1';
             plus.className = 'plus-one';
-            plus.style.left = x + 'px';
-            plus.style.top = y + 'px';
+            plus.style.left = touch.clientX + 'px';
+            plus.style.top = (touch.clientY - 50) + 'px';
             document.body.appendChild(plus);
-            setTimeout(() => plus.remove(), 800);
-        }
+            setTimeout(() => plus.remove(), 700);
+        });
     </script>
 </body>
 </html>
