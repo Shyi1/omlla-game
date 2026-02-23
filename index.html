@@ -2,790 +2,247 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMLA • GOLD • Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TURTLE ELITE CONTROL</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
+        :root {
+            --accent: #14F195; /* Solana Green */
+            --gold: #f7ad19;
+            --bg: #000000;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            min-height: 100vh;
-            background: #0a0c0e;
-            background: radial-gradient(circle at 50% 30%, #1a2a1a, #0a120a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            padding: 16px;
-        }
-
-        /* Main container */
-        .game-container {
-            max-width: 420px;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 48px;
-            padding: 20px 20px 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(212, 175, 55, 0.2) inset;
-        }
-
-        /* Header with balance and level */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 8px 20px 8px;
-        }
-
-        .balance {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 8px 24px 8px 16px;
-            border-radius: 60px;
-            border: 1px solid #d4af37;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .mini-coin {
-            width: 32px;
-            height: 32px;
-            background: radial-gradient(circle at 30% 30%, #ffd966, #b8860b);
-            border-radius: 50%;
-            border: 2px solid #ffd700;
-            box-shadow: 0 0 10px gold;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1a2e1a;
-            font-weight: 800;
-            font-size: 12px;
-            text-shadow: 0 1px 1px gold;
-        }
-
-        .balance span {
-            color: #d4af37;
-            font-weight: 700;
-            font-size: 28px;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-            letter-spacing: 1px;
-        }
-
-        .level-badge {
-            background: linear-gradient(145deg, #1a2e1a, #0a1a0a);
-            border: 1px solid #d4af37;
-            border-radius: 40px;
-            padding: 8px 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-        }
-        .level-badge .level-label {
-            color: #d4af37;
-            font-weight: 600;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.8;
-        }
-        .level-badge .level-value {
-            color: #ffd700;
-            font-weight: 800;
-            font-size: 20px;
-            text-shadow: 0 0 8px gold;
-        }
-
-        /* Main coin area */
-        .coin-section {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 10px 0 20px;
-        }
-
-        /* Premium 3D Coin with OMLA logo */
-        .coin-3d {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            cursor: pointer;
-            transition: transform 0.1s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .coin-3d:active {
-            transform: scale(0.97);
-        }
-
-        /* Main coin with complex gradients for realism */
-        .coin-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff2b5, #d4a017 40%, #7d5d0b 80%);
-            box-shadow: 
-                0 0 0 8px rgba(212, 175, 55, 0.3),
-                0 0 0 12px rgba(0, 0, 0, 0.3),
-                0 25px 35px rgba(0,0,0,0.8),
-                inset 0 -15px 25px rgba(0,0,0,0.6),
-                inset 0 15px 30px rgba(255, 245, 200, 0.9),
-                0 0 50px #ffd700;
+            background: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
             overflow: hidden;
-            border: 3px solid #ffd700;
+            user-select: none;
         }
 
-        /* Gold reflections and scratches for realism */
-        .coin-face::before {
-            content: "";
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            top: -50%;
-            left: -50%;
-            background: radial-gradient(circle at 70% 30%, rgba(255,255,240,0.5) 0%, transparent 40%),
-                        repeating-linear-gradient(45deg, transparent 0px, transparent 12px, rgba(0,0,0,0.1) 12px, rgba(0,0,0,0.1) 14px);
-            transform: rotate(25deg);
-            pointer-events: none;
+        /* App Container */
+        .app-shell { height: 100vh; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
+        .page { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.3s; }
+        .active { display: flex; }
+
+        /* Admin Secret Panel */
+        #adminPanel {
+            position: fixed; top: 10%; left: 5%; width: 90%; background: #111; 
+            border: 2px solid var(--gold); border-radius: 20px; padding: 20px;
+            z-index: 9999; display: none; box-shadow: 0 0 50px rgba(0,0,0,1);
         }
 
-        /* Edge/rim effect */
-        .coin-face::after {
-            content: "";
-            position: absolute;
-            width: 94%;
-            height: 94%;
-            top: 3%;
-            left: 3%;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 245, 150, 0.7);
-            box-shadow: inset 0 0 20px gold;
-        }
+        /* Header & Balance */
+        .header { text-align: center; margin-bottom: 30px; }
+        .balance-label { font-size: 12px; color: #666; letter-spacing: 2px; }
+        .balance-val { font-size: 50px; font-weight: 900; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* OMLA Logo in the center */
-        .omla-logo {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 140px;
-            height: 140px;
-            background: linear-gradient(145deg, #1a3a1a, #0a2a0a);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid #ffd700;
-            box-shadow: 0 0 30px gold, inset 0 0 20px rgba(255,215,0,0.3);
-            z-index: 2;
-            font-family: 'Audiowide', sans-serif;
-            font-size: 42px;
-            font-weight: 900;
-            color: #ffd700;
-            text-shadow: 2px 2px 0 #7d5d0b, 4px 4px 0 rgba(0,0,0,0.3);
-            letter-spacing: 2px;
-            animation: glowPulse 3s infinite;
-        }
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px; }
+        .stat-item { background: var(--glass); padding: 10px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
+        .stat-item i { display: block; color: var(--accent); margin-bottom: 5px; }
+        .stat-item span { font-size: 10px; color: #888; display: block; }
+        .stat-item b { font-size: 14px; }
 
-        @keyframes glowPulse {
-            0%, 100% { box-shadow: 0 0 30px gold, inset 0 0 20px rgba(255,215,0,0.3); }
-            50% { box-shadow: 0 0 50px #ffd700, inset 0 0 30px rgba(255,215,0,0.5); }
+        /* Main Coin (The Turtle) */
+        .coin-box { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+        .turtle-btn {
+            width: 280px; height: 280px; border-radius: 50%;
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+            border: 4px solid #1a1a1a; position: relative;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 40px rgba(20, 241, 149, 0.1); cursor: pointer;
+            transition: transform 0.1s cubic-bezier(0.1, 0.7, 1.0, 0.1);
         }
+        .turtle-btn img { width: 70%; filter: drop-shadow(0 0 15px var(--accent)); }
+        .turtle-btn:active { transform: scale(0.95); }
 
-        .omla-logo span {
-            transform: rotate(-5deg);
-            display: block;
-        }
+        /* Energy Bar */
+        .energy-wrap { margin-bottom: 80px; }
+        .bar-container { height: 10px; background: #111; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; }
+        .bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--accent), var(--gold)); transition: 0.2s; }
 
-        /* Floating +1 animation container */
-        .floating-plus {
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none;
-            z-index: 10;
-            font-size: 48px;
-            font-weight: 800;
-            color: #ffd700;
-            text-shadow: 0 0 20px gold, 0 0 40px #ffaa00, 0 0 60px #ff8800;
-            opacity: 0;
-            white-space: nowrap;
-            font-family: 'Audiowide', 'Inter', sans-serif;
-            letter-spacing: 2px;
+        /* Navigation Dock */
+        .dock {
+            position: fixed; bottom: 20px; left: 5%; width: 90%; 
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px);
+            border-radius: 25px; border: 1px solid var(--border);
+            display: flex; justify-content: space-around; padding: 15px 0;
         }
+        .dock-btn { color: #444; text-align: center; font-size: 10px; cursor: pointer; }
+        .dock-btn.active { color: var(--accent); }
+        .dock-btn i { font-size: 20px; display: block; }
 
-        .floating-plus.animate {
-            animation: floatUp 1s ease-out forwards;
-        }
+        /* List Items */
+        .list-card { background: var(--glass); padding: 15px; border-radius: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        .btn-gold { background: var(--gold); color: black; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-        @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0) scale(1);
-            }
-            50% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(-50px) scale(1.5);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(-120px) scale(0.8);
-            }
-        }
-
-        /* Coin shine overlay */
-        .coin-shine {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: 3;
-            mix-blend-mode: overlay;
-        }
-
-        /* Tap instructions with level multiplier */
-        .tap-hint {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .tap-hint span {
-            color: #d4af37;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 8px gold;
-            opacity: 0.8;
-        }
-        
-        .multiplier-badge {
-            background: linear-gradient(145deg, #d4af37, #7d5d0b);
-            color: black;
-            font-weight: 800;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            border: 1px solid gold;
-            box-shadow: 0 0 15px gold;
-        }
-
-        /* Energy section with level progress */
-        .energy-section {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 40px;
-            padding: 20px;
-            border: 1px solid #d4af37;
-            backdrop-filter: blur(10px);
-            margin-top: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-
-        .energy-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .energy-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .energy-label span {
-            color: #d4af37;
-            font-weight: 600;
-            font-size: 16px;
-            letter-spacing: 0.5px;
-        }
-
-        .lightning-icon {
-            color: #ffd700;
-            font-size: 20px;
-            filter: drop-shadow(0 0 5px gold);
-        }
-
-        .referral-badge {
-            background: linear-gradient(145deg, #1a3a1a, #0a2a0a);
-            border: 1px solid gold;
-            color: #ffd700;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .referral-badge:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px gold;
-        }
-
-        /* Energy bar */
-        .energy-bar-container {
-            width: 100%;
-            height: 24px;
-            background: #1a2a1a;
-            border-radius: 30px;
-            border: 2px solid #7d5d0b;
-            padding: 2px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 15px #d4af3740;
-            margin-bottom: 12px;
-        }
-
-        .energy-bar-fill {
-            height: 100%;
-            width: 80%;
-            background: linear-gradient(90deg, #ffd966, #ffaa00, #ffd966);
-            border-radius: 30px;
-            box-shadow: 0 0 20px #ffd700, inset 0 2px 5px rgba(255,255,255,0.5);
-            position: relative;
-            transition: width 0.3s ease;
-        }
-
-        .energy-bar-fill::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .energy-stats {
-            display: flex;
-            justify-content: space-between;
-            color: #d4af37;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        /* Level progress */
-        .level-progress {
-            margin-top: 15px;
-        }
-        
-        .level-info {
-            display: flex;
-            justify-content: space-between;
-            color: #d4af37;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #1a2a1a;
-            border-radius: 10px;
-            border: 1px solid #7d5d0b;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            width: 65%;
-            background: linear-gradient(90deg, #ffd966, #ffd700);
-            border-radius: 10px;
-            box-shadow: 0 0 10px gold;
-        }
-
-        /* Referral section */
-        .referral-section {
-            margin-top: 20px;
-            padding: 16px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 30px;
-            border: 1px solid #d4af37;
-        }
-        
-        .referral-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #ffd700;
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-        
-        .referral-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .referral-count {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .referral-number {
-            color: #ffd700;
-            font-size: 24px;
-            font-weight: 800;
-            text-shadow: 0 0 10px gold;
-        }
-        
-        .referral-label {
-            color: #d4af37;
-            font-size: 13px;
-            opacity: 0.8;
-        }
-        
-        .referral-bonus {
-            background: linear-gradient(145deg, #d4af37, #7d5d0b);
-            color: black;
-            font-weight: 800;
-            padding: 6px 15px;
-            border-radius: 30px;
-            font-size: 14px;
-            border: 1px solid gold;
-            box-shadow: 0 0 15px gold;
-        }
-
-        /* Footer */
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 16px;
-            padding: 0 8px;
-            color: #d4af37;
-            font-size: 13px;
-        }
-        
-        .boost-timer {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 380px) {
-            .coin-3d {
-                width: 240px;
-                height: 240px;
-            }
-            .omla-logo {
-                width: 120px;
-                height: 120px;
-                font-size: 36px;
-            }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .float-val { position: absolute; color: var(--accent); font-weight: 900; animation: floatUp 0.6s ease-out forwards; pointer-events: none; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Audiowide&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="game-container">
-        <!-- Header with balance and level -->
-        <div class="header">
-            <div class="balance">
-                <div class="mini-coin">OM</div>
-                <span id="coinBalance">5,820</span>
+
+    <div id="adminPanel">
+        <h3 style="color: var(--gold);">MASTER CONTROL</h3>
+        <label>Set Balance:</label>
+        <input type="number" id="setBal" style="width: 100%; padding: 8px; margin: 10px 0;">
+        <button class="btn-gold" onclick="applyAdmin()">APPLY CHANGES</button>
+        <button onclick="closeAdmin()" style="background:none; border:none; color:white; margin-top:10px;">Close</button>
+    </div>
+
+    <div class="app-shell">
+        
+        <div id="minePage" class="page active">
+            <div class="header">
+                <div class="balance-label" onclick="openAdminTrigger()">TOTAL EARNINGS</div>
+                <div class="balance-val" id="balText">0.00</div>
             </div>
-            <div class="level-badge">
-                <span class="level-label">Level</span>
-                <span class="level-value" id="levelValue">7</span>
+
+            <div class="stats-grid">
+                <div class="stat-item"><i class="fas fa-bolt"></i><span>Energy</span><b id="nrgText">1000</b></div>
+                <div class="stat-item"><i class="fas fa-hand-pointer"></i><span>Clicks</span><b id="clickText">0</b></div>
+                <div class="stat-item"><i class="fas fa-clock"></i><span>Passive</span><b>+5K/h</b></div>
+            </div>
+
+            <div class="coin-box">
+                <div class="turtle-btn" id="coinBtn">
+                    <img src="https://img.icons8.com/emoji/256/turtle-emoji.png" alt="Logo">
+                </div>
+            </div>
+
+            <div class="energy-wrap">
+                <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:5px;">
+                    <span>POWER SYSTEM</span><span id="percText">100%</span>
+                </div>
+                <div class="bar-container"><div id="nrgBar" class="bar-fill"></div></div>
             </div>
         </div>
 
-        <!-- Main coin section with OMLA logo -->
-        <div class="coin-section">
-            <div class="coin-3d" id="clickableCoin">
-                <div class="coin-face"></div>
-                <!-- OMLA Logo in center -->
-                <div class="omla-logo">
-                    <span>OMLA</span>
-                </div>
-                <!-- Shine overlay -->
-                <div class="coin-shine"></div>
+        <div id="walletPage" class="page">
+            <h2>Luxury Wallet</h2>
+            <div class="list-card">
+                <div><span>Solana (SOL)</span><h3>$0.00</h3></div>
+                <button class="btn-gold" onclick="tg.showAlert('Withdrawal starting soon!')">WITHDRAW</button>
             </div>
-            <!-- Floating +1 animation -->
-            <div class="floating-plus" id="floatingText">+5</div>
-            <!-- Tap hint with multiplier -->
-            <div class="tap-hint">
-                <span>TAP THE GOLD</span>
-                <div class="multiplier-badge" id="multiplierDisplay">x2.5</div>
-            </div>
+            <div class="list-card"><span>Network Status</span><b style="color: var(--accent);">Operational</b></div>
         </div>
 
-        <!-- Energy bar section -->
-        <div class="energy-section">
-            <div class="energy-header">
-                <div class="energy-label">
-                    <span class="lightning-icon">⚡</span>
-                    <span>ENERGY</span>
-                </div>
-                <div class="referral-badge" id="referralBtn">
-                    <span>👥</span> REFER
-                </div>
+        <div id="friendsPage" class="page">
+            <h2>Referral Hub</h2>
+            <div class="stat-item" style="padding:30px; margin-bottom:20px;">
+                <i class="fas fa-users-crown" style="font-size:40px;"></i>
+                <h3>Invite & Get 10%</h3>
+                <button class="btn-gold" style="width:100%" onclick="invite()">INVITE FRIEND</button>
             </div>
-
-            <!-- Energy bar -->
-            <div class="energy-bar-container">
-                <div class="energy-bar-fill" id="energyBarFill" style="width: 75%"></div>
-            </div>
-
-            <div class="energy-stats">
-                <span id="energyCurrent">750</span>
-                <span>/</span>
-                <span id="energyMax">1000</span>
-            </div>
-
-            <!-- Level Progress -->
-            <div class="level-progress">
-                <div class="level-info">
-                    <span>Level 7 → 8</span>
-                    <span>650/1000 XP</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 65%"></div>
-                </div>
-            </div>
+            <div id="refList"></div>
         </div>
 
-        <!-- Referral Section -->
-        <div class="referral-section">
-            <div class="referral-title">
-                <span>👥</span>
-                <span>Your Referrals</span>
-            </div>
-            <div class="referral-stats">
-                <div class="referral-count">
-                    <span class="referral-number" id="referralCount">12</span>
-                    <span class="referral-label">friends</span>
-                </div>
-                <div class="referral-bonus">
-                    +120% BONUS
-                </div>
-            </div>
-        </div>
+    </div>
 
-        <!-- Footer -->
-        <div class="footer">
-            <div class="boost-timer">
-                <span>⚡</span>
-                <span>Boost: 2:30 left</span>
-            </div>
-            <div>
-                <span>🎁 Daily bonus ready</span>
-            </div>
-        </div>
+    <div class="dock">
+        <div class="dock-btn active" onclick="nav('minePage', this)"><i class="fas fa-gem"></i>Mine</div>
+        <div class="dock-btn" onclick="nav('walletPage', this)"><i class="fas fa-wallet"></i>Wallet</div>
+        <div class="dock-btn" onclick="nav('friendsPage', this)"><i class="fas fa-user-friends"></i>Friends</div>
+        <div class="dock-btn" onclick="tg.showAlert('Tasks update in 2h')"><i class="fas fa-tasks"></i>Tasks</div>
     </div>
 
     <script>
-        // Game state
-        let balance = 5820;
-        let energy = 750;
-        const maxEnergy = 1000;
-        const tapCost = 8;
-        let level = 7;
-        let xp = 650;
-        let xpToNextLevel = 1000;
-        let referrals = 12;
-        
-        // Multiplier calculation (base 1 + referral bonus)
-        const baseMultiplier = 1;
-        const referralBonus = referrals * 0.1; // 10% per referral
-        let currentMultiplier = baseMultiplier + referralBonus;
-        
-        // DOM elements
-        const coin = document.getElementById('clickableCoin');
-        const floatingText = document.getElementById('floatingText');
-        const balanceElement = document.getElementById('coinBalance');
-        const energyFill = document.getElementById('energyBarFill');
-        const energyCurrent = document.getElementById('energyCurrent');
-        const levelValue = document.getElementById('levelValue');
-        const multiplierDisplay = document.getElementById('multiplierDisplay');
-        const referralCount = document.getElementById('referralCount');
-        
-        // Update multiplier display
-        function updateMultiplier() {
-            currentMultiplier = baseMultiplier + (referrals * 0.1);
-            multiplierDisplay.textContent = `x${currentMultiplier.toFixed(1)}`;
-        }
-        
-        // Update energy display
-        function updateEnergyBar() {
-            const percent = (energy / maxEnergy) * 100;
-            energyFill.style.width = percent + '%';
-            energyCurrent.textContent = energy;
-        }
-        
-        // Add XP and check level up
-        function addXP(amount) {
-            xp += amount;
-            if (xp >= xpToNextLevel) {
-                level++;
-                xp -= xpToNextLevel;
-                xpToNextLevel = Math.floor(xpToNextLevel * 1.5); // Increase required XP
-                levelValue.textContent = level;
-                
-                // Show level up animation
-                floatingText.textContent = 'LEVEL UP!';
-                floatingText.classList.remove('animate');
-                void floatingText.offsetWidth;
-                floatingText.classList.add('animate');
-                setTimeout(() => {
-                    floatingText.textContent = `+${Math.floor(coinsPerTap)}`;
-                }, 1000);
-            }
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.setHeaderColor('#000000');
+
+        let balance = parseFloat(localStorage.getItem('turtle_bal')) || 0;
+        let energy = 1000;
+        let totalClicks = parseInt(localStorage.getItem('turtle_clicks')) || 0;
+        let adminClicks = 0;
+
+        // UI Updates
+        function updateUI() {
+            document.getElementById('balText').innerText = balance.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('nrgText').innerText = energy;
+            document.getElementById('clickText').innerText = totalClicks;
+            document.getElementById('nrgBar').style.width = (energy/1000*100) + "%";
+            document.getElementById('percText').innerText = Math.floor(energy/1000*100) + "%";
         }
 
-        // Calculate coins per tap based on multiplier
-        function getCoinsPerTap() {
-            return Math.floor(5 * currentMultiplier); // Base 5 coins
-        }
-
-        // Click handler with realistic feedback
-        coin.addEventListener('click', (e) => {
+        // Tapping Logic
+        document.getElementById('coinBtn').addEventListener('touchstart', (e) => {
             e.preventDefault();
-            
-            if (energy <= 0) {
-                // Show out of energy feedback
-                floatingText.textContent = '⚡ NO ENERGY';
-                floatingText.classList.remove('animate');
-                void floatingText.offsetWidth;
-                floatingText.classList.add('animate');
-                setTimeout(() => {
-                    floatingText.textContent = `+${getCoinsPerTap()}`;
-                }, 1200);
-                return;
-            }
-
-            // Deduct energy
-            energy = Math.max(0, energy - tapCost);
-            
-            // Calculate coins earned
-            const coinsEarned = getCoinsPerTap();
-            
-            // Add coins
-            balance += coinsEarned;
-            balanceElement.textContent = balance.toLocaleString();
-            
-            // Add XP (1 XP per tap)
-            addXP(1);
-            
-            // Update energy bar
-            updateEnergyBar();
-
-            // Animate floating + with current multiplier
-            floatingText.textContent = `+${coinsEarned}`;
-            floatingText.classList.remove('animate');
-            void floatingText.offsetWidth;
-            floatingText.classList.add('animate');
-
-            // Add coin press effect
-            coin.style.transform = 'scale(0.97)';
-            setTimeout(() => {
-                coin.style.transform = 'scale(1)';
-            }, 100);
-
-            // Optional: Add haptic feedback simulation
-            if (window.Telegram?.WebApp?.HapticFeedback) {
-                Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            if(energy > 0) {
+                balance += 0.25; // القيمة لكل ضغطة
+                energy -= 1;
+                totalClicks++;
+                updateUI();
+                spawnEffect(e.touches[0].clientX, e.touches[0].clientY);
+                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                save();
             }
         });
 
-        // Referral button click
-        document.getElementById('referralBtn').addEventListener('click', () => {
-            // Simulate adding a referral
-            referrals++;
-            referralCount.textContent = referrals;
-            updateMultiplier();
-            
-            // Show referral bonus animation
-            floatingText.textContent = '🎁 +1 REF';
-            floatingText.classList.remove('animate');
-            void floatingText.offsetWidth;
-            floatingText.classList.add('animate');
-            setTimeout(() => {
-                floatingText.textContent = `+${getCoinsPerTap()}`;
-            }, 1000);
-        });
-
-        // Simulate energy regeneration
-        setInterval(() => {
-            if (energy < maxEnergy) {
-                energy = Math.min(maxEnergy, energy + 3);
-                updateEnergyBar();
-            }
-        }, 1000);
-
-        // Simulate Telegram WebApp environment
-        if (!window.Telegram) {
-            window.Telegram = {
-                WebApp: {
-                    HapticFeedback: {
-                        impactOccurred: (style) => console.log('Haptic:', style)
-                    },
-                    ready: () => console.log('Telegram WebApp ready'),
-                    expand: () => {}
-                }
-            };
-        }
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-
-        // Initial updates
-        updateEnergyBar();
-        updateMultiplier();
-        levelValue.textContent = level;
-
-        // Add hover effects for desktop
-        if (window.matchMedia('(hover: hover)').matches) {
-            coin.addEventListener('mouseenter', () => {
-                coin.style.transform = 'scale(1.02)';
-            });
-            coin.addEventListener('mouseleave', () => {
-                coin.style.transform = 'scale(1)';
-            });
+        function spawnEffect(x, y) {
+            const p = document.createElement('div');
+            p.className = 'float-val';
+            p.innerText = '+$0.25';
+            p.style.left = x + 'px'; p.style.top = y + 'px';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 600);
         }
 
-        // Add click animation to referral button
-        const referralBtn = document.getElementById('referralBtn');
-        referralBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 100);
-        });
+        // Navigation
+        function nav(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        // Admin Trigger (اضغط 5 مرات على كلمة TOTAL EARNINGS لفتح التحكم)
+        function openAdminTrigger() {
+            adminClicks++;
+            if(adminClicks >= 5) {
+                document.getElementById('adminPanel').style.display = 'block';
+                adminClicks = 0;
+            }
+        }
+
+        function applyAdmin() {
+            const newVal = document.getElementById('setBal').value;
+            if(newVal !== "") {
+                balance = parseFloat(newVal);
+                updateUI();
+                save();
+                closeAdmin();
+            }
+        }
+
+        function closeAdmin() { document.getElementById('adminPanel').style.display = 'none'; }
+
+        // Referral System
+        function invite() {
+            const refLink = `https://t.me/YourBotUser?start=user${tg.initDataUnsafe.user?.id || '000'}`;
+            const text = "🚀 Join the most luxury mining app on Telegram!";
+            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(text)}`);
+        }
+
+        function save() {
+            localStorage.setItem('turtle_bal', balance);
+            localStorage.setItem('turtle_clicks', totalClicks);
+        }
+
+        // Auto Regen
+        setInterval(() => { if(energy < 1000) { energy += 2; updateUI(); } }, 2000);
+
+        updateUI();
     </script>
 </body>
 </html>
+    </script>
+</body>
+</html>
+
