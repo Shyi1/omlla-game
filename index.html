@@ -1,27 +1,54 @@
-// Firebase Setup
-const firebaseConfig = {
-    databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/"
-};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Solana Turtle Elite</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --solana-green: #14F195;
+            --solana-purple: #9945FF;
+            --dark-surface: #121212;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+        body {
+            background: radial-gradient(circle at top, #1a2a1a 0%, #050505 100%);
+            color: white;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
 
-// تحديد هوية المستخدم من تليجرام
-const tg = window.Telegram.WebApp;
-const uid = tg.initDataUnsafe?.user?.id || "test_user";
+        /* Top Header Stats */
+        .top-nav {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
 
-// تحميل النقاط من السحابة عند البدء
-db.ref('players/' + uid).once('value').then((snapshot) => {
-    if (snapshot.exists()) {
-        score = snapshot.val().points;
-        scoreEl.innerText = score.toLocaleString();
-    }
-});
+        .user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .user-info img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--solana-green); }
 
-// تعديل وظيفة النقر (الموجودة سابقاً) لإرسال البيانات
-// أضف هذا السطر داخل وظيفة coinBtn.addEventListener('touchstart', ...)
-db.ref('players/' + uid).set({
-    name: tg.initDataUnsafe?.user?.first_name || "Unknown",
-    points: score,
-    last_click: new Date().toISOString()
-});
+        /* Main Score Display */
+        .score-display {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .score-display .
