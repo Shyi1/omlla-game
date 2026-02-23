@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,173 +7,78 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --gold: linear-gradient(135deg, #ffcf67 0%, #d3a02c 50%, #8a6a1e 100%);
-            --dark-bg: #050505;
+            --gold: linear-gradient(135deg, #FFD700 0%, #B8860B 50%, #8B6508 100%);
+            --bg-dark: #000000;
             --glass: rgba(255, 255, 255, 0.05);
-            --border-gold: rgba(211, 160, 44, 0.3);
+            --border-gold: rgba(184, 134, 11, 0.4);
         }
         body {
-            background-color: var(--dark-bg);
-            color: white;
-            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            background-image: radial-gradient(circle at top, #1a1a1a 0%, #050505 100%);
+            background-image: radial-gradient(circle at top, #111111 0%, #000000 100%);
         }
 
-        /* Stats Section */
-        .header { margin-top: 40px; text-align: center; width: 100%; }
-        .score-box {
+        /* Stats Dashboard */
+        .header { margin-top: 50px; text-align: center; width: 100%; }
+        .score-container {
             display: inline-block;
             background: var(--glass);
-            padding: 10px 30px;
-            border-radius: 20px;
+            padding: 12px 35px;
+            border-radius: 24px;
             border: 1px solid var(--border-gold);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
         }
-        #score { font-size: 52px; font-weight: 900; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .multiplier-tag { font-size: 14px; color: #ffcf67; margin-top: 5px; font-weight: bold; }
+        #score { 
+            font-size: 56px; 
+            font-weight: 900; 
+            background: var(--gold); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 10px rgba(184, 134, 11, 0.3));
+        }
+        .multiplier-badge {
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: #FFD700;
+            margin-top: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
-        /* Coin Section */
-        .coin-wrapper { margin-top: auto; margin-bottom: auto; position: relative; }
-        .coin {
-            width: 240px; height: 240px; border-radius: 50%;
+        /* Luxury Coin Engine */
+        .engine-room { margin-top: auto; margin-bottom: auto; position: relative; }
+        .coin-core {
+            width: 250px; height: 250px; border-radius: 50%;
             background: var(--gold);
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 60px rgba(211, 160, 44, 0.2);
-            cursor: pointer; transition: transform 0.05s;
-            border: 5px solid #111;
+            box-shadow: 0 0 70px rgba(184, 134, 11, 0.2);
+            cursor: pointer; transition: transform 0.05s cubic-bezier(0.1, 0, 0, 1);
+            border: 6px solid #0a0a0a;
         }
-        .coin:active { transform: scale(0.94); }
-        .coin::after { content: "O"; font-size: 110px; font-weight: 900; color: rgba(0,0,0,0.8); }
+        .coin-core:active { transform: scale(0.92); }
+        .coin-core::after { content: "O"; font-size: 120px; font-weight: 900; color: rgba(0,0,0,0.8); }
 
-        /* Boosters Section */
-        .actions-grid {
+        /* Professional Action Grid */
+        .action-hub {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             width: 90%;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
-        .btn-boost {
+        .boost-card {
             background: var(--glass);
             border: 1px solid var(--border-gold);
-            border-radius: 15px;
-            padding: 12px;
-            color: white;
-            font-size: 13px;
+            border-radius: 18px;
+            padding: 15px;
+            color: #ffffff;
+            font-size: 14px;
             cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        .btn-boost:hover { background: rgba(255,255,255,0.1); }
-        .btn-boost span { font-weight: bold; color: #ffcf67; }
-
-        .plus-one {
-            position: absolute; color: #ffcf67; font-size: 32px; font-weight: bold;
-            animation: rise 0.6s ease-out forwards; pointer-events: none;
-        }
-        @keyframes rise { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-130px); } }
-
-        .signature { margin-bottom: 15px; font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.2); }
-        .signature span { color: #d3a02c; }
-    </style>
-</head>
-<body>
-
-    <div class="header">
-        <div class="score-box">
-            <div id="score">0</div>
-        </div>
-        <div class="multiplier-tag" id="multiTag">X1 MULTIPLIER</div>
-    </div>
-
-    <div class="coin-wrapper">
-        <div class="coin" id="coinBtn"></div>
-    </div>
-
-    <div class="actions-grid">
-        <div class="btn-boost" onclick="upgradePower()">
-            🚀 تفعيل التوربو
-            <span>(دفع Stars)</span>
-        </div>
-        <div class="btn-boost" onclick="shareGame()">
-            📢 دعوة صديق
-            <span>(جائزة +500)</span>
-        </div>
-    </div>
-
-    <div class="signature">Architected by <span>Yous</span></div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        let score = parseInt(localStorage.getItem('omlla_score')) || 0;
-        let multiplier = parseInt(localStorage.getItem('omlla_multi')) || 1;
-        
-        const scoreEl = document.getElementById('score');
-        const multiTag = document.getElementById('multiTag');
-
-        const updateUI = () => {
-            scoreEl.innerText = score.toLocaleString();
-            multiTag.innerText = `X${multiplier} MULTIPLIER`;
-        };
-
-        updateUI();
-
-        // منطق النقر
-        document.getElementById('coinBtn').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            score += (1 * multiplier);
-            localStorage.setItem('omlla_score', score);
-            updateUI();
-
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-
-            const touch = e.touches[0];
-            createEffect(touch.clientX, touch.clientY);
-        });
-
-        function createEffect(x, y) {
-            const plus = document.createElement('div');
-            plus.innerText = `+${1 * multiplier}`;
-            plus.className = 'plus-one';
-            plus.style.left = x + 'px';
-            plus.style.top = (y - 50) + 'px';
-            document.body.appendChild(plus);
-            setTimeout(() => plus.remove(), 600);
-        }
-
-        // ميزة الدفع (المحاكاة)
-        function upgradePower() {
-            tg.showConfirm("هل تريد تفعيل وضع التوربو مقابل 50 Telegram Stars؟", (ok) => {
-                if(ok) {
-                    multiplier += 1;
-                    localStorage.setItem('omlla_multi', multiplier);
-                    updateUI();
-                    tg.showAlert("تم تفعيل التوربو بنجاح! نقراتك الآن مضاعفة.");
-                }
-            });
-        }
-
-        // ميزة المشاركة
-        function shareGame() {
-            const shareUrl = `https://t.me/share/url?url=https://t.me/omlla_bot&text=العب واجمع عملة Omlla الآن!`;
-            tg.openLink(shareUrl);
-            // إضافة جائزة وهمية للتحفيز
-            score += 500;
-            localStorage.setItem('omlla_score', score);
-            updateUI();
-        }
-
-    </script>
-</body>
-</html>
