@@ -63,4 +63,88 @@
             width: 90%;
             height: 90%;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        #omlla-coin:active {
+            transform: scale(0.94);
+        }
+
+        .stats-box {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .label {
+            color: #888;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .invite-btn {
+            margin-top: 25px;
+            background: none;
+            border: 1px solid #f1c40f;
+            color: #f1c40f;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .invite-btn:hover {
+            background: #f1c40f;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="label">Total Balance</div>
+    <div id="score-container">0</div>
+
+    <div class="coin-wrapper">
+        <div id="omlla-coin" onclick="mine()">M</div>
+    </div>
+
+    <div class="stats-box">
+        <div class="label">League</div>
+        <div style="font-weight: bold; color: #fff;">GOLD EXECUTIVE</div>
+    </div>
+
+    <button class="invite-btn" onclick="invite()">Invite Partners 🚀</button>
+
+    <script>
+        const tele = window.Telegram.WebApp;
+        let score = parseInt(localStorage.getItem('omlla_score')) || 0;
+        
+        function updateDisplay() {
+            document.getElementById('score-container').innerText = score.toLocaleString();
+        }
+
+        function mine() {
+            score++;
+            updateDisplay();
+            localStorage.setItem('omlla_score', score);
+            tele.HapticFeedback.impactOccurred('medium');
+        }
+
+        function invite() {
+            const botUrl = "https://t.me/Shyi1_bot/play"; 
+            const text = "Join the Omlla Luxury Mining network! 🪙";
+            tele.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(botUrl)}&text=${encodeURIComponent(text)}`);
+        }
+
+        updateDisplay();
+        tele.ready();
+        tele.expand();
+    </script>
+</body>
+</html>
