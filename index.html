@@ -1,222 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Solana Turtle Tapper</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root {
-            --solana-green: #14F195;
-            --solana-purple: #9945FF;
-            --dark-bg: #0a0a0a;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
+// Firebase Setup
+const firebaseConfig = {
+    databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/"
+};
 
-        body {
-            background-color: var(--dark-bg);
-            background-image: radial-gradient(circle at top, #1a2a1a 0%, #050505 100%);
-            color: white;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
-        }
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-        /* High-End Header */
-        .stats-container {
-            margin-top: 50px;
-            text-align: center;
-            z-index: 2;
-        }
-        .balance-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--solana-green);
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
-        #score {
-            font-size: 56px;
-            font-weight: 900;
-            text-shadow: 0 0 20px rgba(20, 241, 149, 0.3);
-        }
+// تحديد هوية المستخدم من تليجرام
+const tg = window.Telegram.WebApp;
+const uid = tg.initDataUnsafe?.user?.id || "test_user";
 
-        /* Professional Coin Design */
-        .game-area {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
-        .coin-hex {
-            width: 260px;
-            height: 260px;
-            background: linear-gradient(145deg, #14F195, #000);
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            cursor: pointer;
-            box-shadow: 0 0 60px rgba(20, 241, 149, 0.15), inset 0 0 30px rgba(0,0,0,0.8);
-            border: 4px solid #111;
-            transition: transform 0.05s cubic-bezier(0.1, 0, 0.1, 1);
-        }
-        .coin-hex::before {
-            content: '';
-            position: absolute;
-            width: 90%;
-            height: 90%;
-            border-radius: 50%;
-            border: 2px dashed rgba(20, 241, 149, 0.3);
-            animation: rotate 20s linear infinite;
-        }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .turtle-icon { font-size: 90px; filter: drop-shadow(0 0 10px rgba(20, 241, 149, 0.5)); }
-        .coin-name {
-            font-weight: 900;
-            font-size: 24px;
-            color: white;
-            letter-spacing: 2px;
-            margin-top: -5px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        /* Bottom UI Elements */
-        .bottom-nav {
-            width: 90%;
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px;
-            padding: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-around;
-        }
-        .energy-bar-wrap {
-            width: 85%;
-            height: 8px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        #energy-fill {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, var(--solana-green), var(--solana-purple));
-            transition: width 0.2s;
-        }
-
-        .tap-pop {
-            position: absolute;
-            color: var(--solana-green);
-            font-weight: 900;
-            font-size: 28px;
-            pointer-events: none;
-            animation: fly 0.6s ease-out forwards;
-        }
-        @keyframes fly {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-120px) scale(1.5); }
-        }
-
-        .footer-sig {
-            font-size: 10px;
-            letter-spacing: 4px;
-            color: rgba(255,255,255,0.2);
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-        .footer-sig span { color: var(--solana-green); font-weight: bold; }
-    </style>
-</head>
-<body>
-
-    <div class="stats-container">
-        <div class="balance-label">Solana Turtle Balance</div>
-        <div id="score">0</div>
-    </div>
-
-    <div class="game-area">
-        <div class="coin-hex" id="coin">
-            <div class="turtle-icon">🐢</div>
-            <div class="coin-name">SOLANA</div>
-        </div>
-    </div>
-
-    <div class="energy-bar-wrap">
-        <div id="energy-fill"></div>
-    </div>
-
-    <div class="bottom-nav">
-        <div style="text-align: center; font-size: 12px;">⚡ <span id="energy">1500</span>/1500</div>
-    </div>
-
-    <div class="footer-sig">System by <span>/Yous</span></div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.headerColor = '#0a0a0a';
-
-        let score = parseInt(localStorage.getItem('sol_score')) || 0;
-        let energy = 1500;
-        const maxEnergy = 1500;
-
-        const scoreEl = document.getElementById('score');
-        const energyEl = document.getElementById('energy');
-        const energyFill = document.getElementById('energy-fill');
-        const coinBtn = document.getElementById('coin');
-
+// تحميل النقاط من السحابة عند البدء
+db.ref('players/' + uid).once('value').then((snapshot) => {
+    if (snapshot.exists()) {
+        score = snapshot.val().points;
         scoreEl.innerText = score.toLocaleString();
+    }
+});
 
-        coinBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (energy > 0) {
-                score++;
-                energy--;
-                
-                scoreEl.innerText = score.toLocaleString();
-                energyEl.innerText = energy;
-                energyFill.style.width = (energy / maxEnergy * 100) + '%';
-                
-                localStorage.setItem('sol_score', score);
-
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-
-                const touch = e.touches[0];
-                const pop = document.createElement('div');
-                pop.className = 'tap-pop';
-                pop.innerText = '+1';
-                pop.style.left = touch.clientX + 'px';
-                pop.style.top = touch.clientY + 'px';
-                document.body.appendChild(pop);
-                setTimeout(() => pop.remove(), 600);
-                
-                coinBtn.style.transform = 'scale(0.95)';
-                setTimeout(() => coinBtn.style.transform = 'scale(1)', 50);
-            }
-        });
-
-        // Professional Energy Recharge Logic
-        setInterval(() => {
-            if (energy < maxEnergy) {
-                energy += 2;
-                energyEl.innerText = energy;
-                energyFill.style.width = (energy / maxEnergy * 100) + '%';
-            }
-        }, 1000);
-    </script>
-</body>
-</html>
+// تعديل وظيفة النقر (الموجودة سابقاً) لإرسال البيانات
+// أضف هذا السطر داخل وظيفة coinBtn.addEventListener('touchstart', ...)
+db.ref('players/' + uid).set({
+    name: tg.initDataUnsafe?.user?.first_name || "Unknown",
+    points: score,
+    last_click: new Date().toISOString()
+});
