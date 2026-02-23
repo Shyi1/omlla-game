@@ -7,48 +7,98 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root {
-            --solana-green: #14F195;
-            --solana-purple: #9945FF;
-            --dark-surface: #121212;
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
+        :root { --solana-green: #14F195; --dark-bg: #0a0a0a; }
+        body { background: radial-gradient(circle at top, #1a2a1a 0%, #050505 100%); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+        .score-box { margin-top: 50px; text-align: center; }
+        #score { font-size: 60px; font-weight: 900; color: var(--solana-green); text-shadow: 0 0 20px rgba(20, 241, 149, 0.4); }
+        .coin-area { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .coin { width: 250px; height: 250px; background: linear-gradient(145deg, #14F195, #000); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 5px solid #111; box-shadow: 0 0 50px rgba(20, 241, 149, 0.2); transition: transform 0.05s; }
+        .coin:active { transform: scale(0.92); }
+        .turtle { font-size: 90px; }
+        .c-name { font-weight: 900; font-size: 22px; margin-top: -5px; }
+        .footer { margin-bottom: 20px; font-size: 10px; opacity: 0.3; letter-spacing: 2px; }
+        .floating-text { position: absolute; color: var(--solana-green); font-weight: bold; font-size: 28px; animation: fly 0.6s forwards; pointer-events: none; }
+        @keyframes fly { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
+    </style>
+</head>
+<body>
 
-        body {
-            background: radial-gradient(circle at top, #1a2a1a 0%, #050505 100%);
-            color: white;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
-        }
+    <div class="score-box">
+        <div style="font-size: 12px; letter-spacing: 2px;">SOLANA BALANCE</div>
+        <div id="score">0</div>
+    </div>
 
-        /* Top Header Stats */
-        .top-nav {
-            width: 90%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-        }
+    <div class="coin-area">
+        <div class="coin" id="tap-btn">
+            <div class="turtle">🐢</div>
+            <div class="c-name">SOLANA</div>
+        </div>
+    </div>
 
-        .user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; }
-        .user-info img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--solana-green); }
+    <div class="footer">SYSTEM BY <span>/YOUS</span></div>
 
-        /* Main Score Display */
-        .score-display {
-            text-align: center;
-            margin-top: 40px;
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // --- تهيئة Firebase ---
+        const firebaseConfig = {
+            databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/"
+        };
+        
+        // التحقق من عدم تهيئة Firebase مرتين
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
-        .score-display .
+        const db = firebase.database();
+
+        // بيانات المستخدم
+        const userId = tg.initDataUnsafe?.user?.id || "guest_" + Math.floor(Math.random() * 1000);
+        const userName = tg.initDataUnsafe?.user?.first_name || "Unknown";
+
+        let score = parseInt(localStorage.getItem('sol_score')) || 0;
+        const scoreEl = document.getElementById('score');
+        scoreEl.innerText = score.toLocaleString();
+
+        // تحميل النقاط من السحابة فوراً عند فتح التطبيق
+        db.ref('players/' + userId).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                score = snapshot.val().points;
+                scoreEl.innerText = score.toLocaleString();
+                localStorage.setItem('sol_score', score);
+            }
+        });
+
+        // وظيفة النقر
+        document.getElementById('tap-btn').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            score++;
+            scoreEl.innerText = score.toLocaleString();
+            localStorage.setItem('sol_score', score);
+
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+
+            // تأثير النقاط العائمة
+            const touch = e.touches[0];
+            const pop = document.createElement('div');
+            pop.className = 'floating-text';
+            pop.innerText = '+1';
+            pop.style.left = touch.clientX + 'px';
+            pop.style.top = touch.clientY + 'px';
+            document.body.appendChild(pop);
+            setTimeout(() => pop.remove(), 600);
+
+            // حفظ البيانات في السحابة (كل 5 نقرات لتقليل الضغط)
+            if (score % 5 === 0) {
+                db.ref('players/' + userId).set({
+                    name: userName,
+                    points: score,
+                    last_update: new Date().toISOString()
+                }).catch(err => console.error("Firebase Error:", err));
+            }
+        });
+    </script>
+</body>
+</html>
