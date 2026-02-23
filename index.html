@@ -1,244 +1,284 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Solana Elite - Lacoste Edition</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <style>
-        :root {
-            --lacoste-green: #004526;
-            --solana-neon: #14F195;
-            --premium-gold: #c5a059;
-            --dark-bg: #050505;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<title>Solana Elite</title>
 
-        body {
-            background: radial-gradient(circle at center, #0a1f14 0%, var(--dark-bg) 100%);
-            color: white;
-            font-family: 'Inter', -apple-system, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
-        }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-        .header {
-            margin-top: 60px;
-            text-align: center;
-        }
+<style>
+:root{
+  --bg:#050505;
+  --card:#0b0f0c;
+  --gold:#c5a059;
+  --gold-light:#f5d487;
+  --neon:#14F195;
+  --text:#ffffff;
+}
 
-        .balance-label {
-            font-size: 11px;
-            letter-spacing: 4px;
-            color: var(--solana-neon);
-            text-transform: uppercase;
-            font-weight: 700;
-            opacity: 0.8;
-        }
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
-        #score {
-            font-size: 68px;
-            font-weight: 900;
-            margin: 10px 0;
-            text-shadow: 0 0 30px rgba(20, 241, 149, 0.2);
-        }
+body{
+  margin:0;
+  font-family:Inter,-apple-system,system-ui,sans-serif;
+  background:
+    radial-gradient(circle at 50% 20%, #0a1f14 0%, var(--bg) 70%);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow:hidden;
+  user-select:none;
+}
 
-        .game-container {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
+/* HEADER */
+.header{
+  margin-top:60px;
+  text-align:center;
+}
 
-        /* Professional SVG Coin */
-        .premium-coin {
-            width: 280px;
-            height: 280px;
-            background: linear-gradient(145deg, #005a32, #002a16);
-            border-radius: 50%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 0 60px rgba(0, 69, 38, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1);
-            border: 6px solid #001a0d;
-            transition: transform 0.05s ease;
-        }
+.balance-label{
+  font-size:11px;
+  letter-spacing:4px;
+  color:var(--neon);
+  text-transform:uppercase;
+  font-weight:700;
+  opacity:.9;
+}
 
-        .premium-coin:active { transform: scale(0.94); }
+#score{
+  font-size:68px;
+  font-weight:900;
+  margin:10px 0;
+  text-shadow:0 0 35px rgba(20,241,149,.25);
+}
 
-        /* The Lacoste-Style Logo (High Quality SVG) */
-        .lacoste-logo {
-            width: 140px;
-            fill: white;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-        }
+/* GAME AREA */
+.game-container{
+  flex:1;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-        .coin-brand {
-            margin-top: 10px;
-            font-weight: 900;
-            font-size: 22px;
-            letter-spacing: 3px;
-            color: white;
-        }
+/* PREMIUM COIN */
+.premium-coin{
+  width:280px;
+  height:280px;
+  border-radius:50%;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
 
-        /* UI Elements */
-        .energy-wrapper {
-            width: 85%;
-            margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 15px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+  background:
+    radial-gradient(circle at 30% 30%,
+      #fff3b0 0%,
+      var(--gold-light) 30%,
+      var(--gold) 55%,
+      #8c6a2f 80%,
+      #5a4218 100%);
 
-        .energy-bar {
-            height: 8px;
-            background: #111;
-            border-radius: 4px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
+  box-shadow:
+    0 30px 70px rgba(0,0,0,.75),
+    inset 0 8px 18px rgba(255,255,255,.35),
+    inset 0 -12px 28px rgba(0,0,0,.6);
 
-        .energy-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--solana-neon), #00ff87);
-            width: 100%;
-            transition: width 0.2s;
-        }
+  border:4px solid rgba(255,215,120,.55);
+  transition:transform .08s ease;
+}
 
-        .floating-point {
-            position: absolute;
-            color: var(--solana-neon);
-            font-size: 32px;
-            font-weight: 900;
-            pointer-events: none;
-            animation: riseFade 0.7s ease-out forwards;
-        }
+.premium-coin:active{
+  transform:scale(.92);
+}
 
-        @keyframes riseFade {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-140px); }
-        }
+/* SHINE EFFECT */
+.premium-coin::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255,255,255,.35) 50%,
+    transparent 70%
+  );
+  opacity:0;
+  animation:shine 3s infinite;
+}
 
-        .signature {
-            margin-bottom: 20px;
-            font-size: 10px;
-            letter-spacing: 3px;
-            color: rgba(255,255,255,0.2);
-            text-transform: uppercase;
-        }
-        .signature span { color: var(--solana-neon); font-weight: bold; }
-    </style>
+@keyframes shine{
+  0%{opacity:0;transform:translateX(-120%)}
+  50%{opacity:.6}
+  100%{opacity:0;transform:translateX(120%)}
+}
+
+/* LOGO */
+.coin-logo{
+  font-size:80px;
+  filter:drop-shadow(0 6px 12px rgba(0,0,0,.6));
+}
+
+/* BRAND */
+.coin-brand{
+  margin-top:14px;
+  font-weight:900;
+  font-size:22px;
+  letter-spacing:4px;
+  color:var(--gold-light);
+  text-shadow:0 2px 8px rgba(0,0,0,.7);
+}
+
+/* ENERGY */
+.energy-wrapper{
+  width:85%;
+  margin-bottom:30px;
+  background:rgba(255,255,255,.03);
+  padding:16px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.06);
+  backdrop-filter:blur(6px);
+}
+
+.energy-top{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+}
+
+.energy-bar{
+  height:8px;
+  background:#111;
+  border-radius:4px;
+  margin-top:10px;
+  overflow:hidden;
+}
+
+.energy-fill{
+  height:100%;
+  width:100%;
+  background:linear-gradient(90deg,var(--neon),#00ff87);
+  transition:width .25s ease;
+}
+
+/* FLOATING POINT */
+.floating-point{
+  position:absolute;
+  color:var(--neon);
+  font-size:32px;
+  font-weight:900;
+  pointer-events:none;
+  animation:riseFade .7s ease-out forwards;
+}
+
+@keyframes riseFade{
+  0%{opacity:1;transform:translateY(0)}
+  100%{opacity:0;transform:translateY(-140px)}
+}
+
+/* SIGNATURE */
+.signature{
+  margin-bottom:20px;
+  font-size:10px;
+  letter-spacing:3px;
+  color:rgba(255,255,255,.25);
+  text-transform:uppercase;
+}
+
+.signature span{
+  color:var(--neon);
+  font-weight:bold;
+}
+</style>
+
 </head>
+
 <body>
 
-    <div class="header">
-        <div class="balance-label">Solana Balance</div>
-        <div id="score">0</div>
-    </div>
+<div class="header">
+  <div class="balance-label">Solana Balance</div>
+  <div id="score">0</div>
+</div>
 
-    <div class="game-container">
-        <div class="premium-coin" id="coinBtn">
-            <svg class="lacoste-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22,14.5c0-0.83-0.67-1.5-1.5-1.5h-1c-0.28,0-0.5,0.22-0.5,0.5s0.22,0.5,0.5,0.5h1c0.28,0,0.5,0.22,0.5,0.5s-0.22,0.5-0.5,0.5H19 c-1.66,0-3-1.34-3-3s1.34-3,3-3h1.5c0.83,0,1.5-0.67,1.5-1.5S21.33,7,20.5,7H19c-2.76,0-5,2.24-5,5s2.24,5,5,5h1.5 C21.33,17,22,16.33,22,15.5V14.5z M11,12c0-3.87-3.13-7-7-7S0,8.13,0,12s3.13,7,7,7S14,15.87,14,12z M7,17c-2.76,0-5-2.24-5-5s2.24-5,5-5 s5,2.24,5,5S9.76,17,7,17z M7,9c-1.66,0-3,1.34-3,3s1.34,3,3,3s3-1.34,3-3S8.66,9,7,9z"/>
-                <path d="M18.5,10c-0.28,0-0.5,0.22-0.5,0.5v1c0,0.28,0.22,0.5,0.5,0.5s0.5-0.22,0.5-0.5v-1C19,10.22,18.78,10,18.5,10z"/>
-                <path d="M4,12c0,1.66,1.34,3,3,3s3-1.34,3-3s-1.34-3-3-3S4,10.34,4,12z M7,10.5c0.83,0,1.5,0.67,1.5,1.5S7.83,13.5,7,13.5 S5.5,12.83,5.5,12S6.17,10.5,7,10.5z"/>
-            </svg>
-            <div class="coin-brand">SOLANA</div>
-        </div>
-    </div>
+<div class="game-container">
+  <div class="premium-coin" id="coinBtn">
+    <div class="coin-logo">🐊</div>
+    <div class="coin-brand">SOLANA</div>
+  </div>
+</div>
 
-    <div class="energy-wrapper">
-        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-            <span>⚡ <span id="currentEnergy">2000</span> / 2000</span>
-            <span style="color: var(--solana-neon);">BOOST Ready</span>
-        </div>
-        <div class="energy-bar">
-            <div class="energy-fill" id="energyFill"></div>
-        </div>
-    </div>
+<div class="energy-wrapper">
+  <div class="energy-top">
+    <span>⚡ <span id="currentEnergy">2000</span> / 2000</span>
+    <span style="color:var(--neon)">BOOST Ready</span>
+  </div>
+  <div class="energy-bar">
+    <div class="energy-fill" id="energyFill"></div>
+  </div>
+</div>
 
-    <div class="signature">Crafted by <span>/Yous</span></div>
+<div class="signature">Crafted by <span>/Yous</span></div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+<script>
+const tg = window.Telegram?.WebApp;
+tg?.expand();
 
-        // Firebase Sync
-        const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+let score = 0;
+let energy = 2000;
+const maxEnergy = 2000;
 
-        const userId = tg.initDataUnsafe?.user?.id || "dev_user";
-        let score = parseInt(localStorage.getItem('sol_score')) || 0;
-        let energy = 2000;
-        const maxEnergy = 2000;
+const scoreEl = document.getElementById("score");
+const energyEl = document.getElementById("currentEnergy");
+const energyFill = document.getElementById("energyFill");
+const coinBtn = document.getElementById("coinBtn");
 
-        const scoreEl = document.getElementById('score');
-        const energyEl = document.getElementById('currentEnergy');
-        const energyFill = document.getElementById('energyFill');
+coinBtn.addEventListener("touchstart", handleTap);
+coinBtn.addEventListener("click", handleTap);
 
-        scoreEl.innerText = score.toLocaleString();
+function handleTap(e){
+  e.preventDefault();
+  if(energy<=0) return;
 
-        // Load points from Cloud
-        db.ref('players/' + userId).once('value', (snap) => {
-            if (snap.exists()) {
-                score = snap.val().points;
-                scoreEl.innerText = score.toLocaleString();
-            }
-        });
+  score++;
+  energy--;
 
-        document.getElementById('coinBtn').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (energy > 0) {
-                score++;
-                energy--;
-                
-                scoreEl.innerText = score.toLocaleString();
-                energyEl.innerText = energy;
-                energyFill.style.width = (energy / maxEnergy * 100) + '%';
-                
-                localStorage.setItem('sol_score', score);
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+  scoreEl.textContent = score.toLocaleString();
+  energyEl.textContent = energy;
+  energyFill.style.width = (energy/maxEnergy*100)+"%";
 
-                // Floating point effect
-                const touch = e.touches[0];
-                const pop = document.createElement('div');
-                pop.className = 'floating-point';
-                pop.innerText = '+1';
-                pop.style.left = touch.clientX + 'px';
-                pop.style.top = touch.clientY + 'px';
-                document.body.appendChild(pop);
-                setTimeout(() => pop.remove(), 700);
+  const x = e.touches ? e.touches[0].clientX : e.clientX;
+  const y = e.touches ? e.touches[0].clientY : e.clientY;
 
-                // Sync every 5 taps
-                if (score % 5 === 0) {
-                    db.ref('players/' + userId).update({
-                        points: score,
-                        last_active: new Date().toISOString()
-                    });
-                }
-            }
-        });
+  const pop = document.createElement("div");
+  pop.className="floating-point";
+  pop.textContent="+1";
+  pop.style.left=x+"px";
+  pop.style.top=y+"px";
+  document.body.appendChild(pop);
+  setTimeout(()=>pop.remove(),700);
 
-        // Recharge Energy
-        setInterval(() => {
-            if (energy < maxEnergy) {
-                energy += 2;
-                energyEl.innerText = energy;
-                energyFill.style.width = (energy / maxEnergy * 100) + '%';
-            }
-        }, 1000);
-    </script>
+  tg?.HapticFeedback?.impactOccurred("medium");
+}
+
+setInterval(()=>{
+  if(energy<maxEnergy){
+    energy+=2;
+    if(energy>maxEnergy) energy=maxEnergy;
+    energyEl.textContent=energy;
+    energyFill.style.width=(energy/maxEnergy*100)+"%";
+  }
+},1000);
+</script>
+
 </body>
 </html>
