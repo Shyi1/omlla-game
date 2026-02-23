@@ -1,150 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Omlla Clicker</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
-            color: #ffffff;
-            text-align: center;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        #score-container {
-            font-size: 56px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            color: #f1c40f;
-            text-shadow: 0 0 25px rgba(241, 196, 15, 0.4);
-            letter-spacing: -1px;
-        }
-
-        .coin-wrapper {
-            position: relative;
-            padding: 20px;
-            filter: drop-shadow(0 0 30px rgba(241, 196, 15, 0.2));
-        }
-
-        #omlla-coin {
-            width: 240px;
-            height: 240px;
-            background: linear-gradient(135deg, #f1c40f 0%, #d4af37 40%, #b8860b 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 110px;
-            font-weight: 900;
-            color: #1a1a1a;
-            border: 10px solid #ceae31;
-            box-shadow: 
-                inset 0 0 20px rgba(255, 255, 255, 0.5),
-                0 15px 35px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        #omlla-coin::after {
-            content: '';
-            position: absolute;
-            top: 5%;
-            left: 5%;
-            width: 90%;
-            height: 90%;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        #omlla-coin:active {
-            transform: scale(0.94);
-        }
-
-        .stats-box {
-            margin-top: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .label {
-            color: #888;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .invite-btn {
-            margin-top: 25px;
-            background: none;
-            border: 1px solid #f1c40f;
-            color: #f1c40f;
-            padding: 12px 35px;
-            border-radius: 50px;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .invite-btn:hover {
-            background: #f1c40f;
-            color: #000;
-        }
+        :root { --main-color: #f3ba2f; --bg-color: #0d0d0d; }
+        body { background: var(--bg-color); color: white; font-family: sans-serif; text-align: center; margin: 0; overflow: hidden; user-select: none; }
+        .stats { margin-top: 40px; font-size: 42px; font-weight: bold; color: var(--main-color); }
+        .coin-container { margin-top: 60px; position: relative; display: inline-block; }
+        .coin { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, #f3ba2f 0%, #a47c00 100%); 
+                box-shadow: 0 0 50px rgba(243, 186, 47, 0.3); cursor: pointer; transition: transform 0.1s; border: 8px solid #333; }
+        .coin:active { transform: scale(0.95); }
+        .plus-one { position: absolute; color: var(--main-color); font-size: 24px; font-weight: bold; animation: floatUp 0.8s forwards; pointer-events: none; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
+        .footer { position: fixed; bottom: 20px; width: 100%; font-size: 14px; opacity: 0.6; }
     </style>
 </head>
 <body>
 
-    <div class="label">Total Balance</div>
-    <div id="score-container">0</div>
+    <div class="stats" id="score">0</div>
+    <div style="font-size: 18px; color: #888;">COINS</div>
 
-    <div class="coin-wrapper">
-        <div id="omlla-coin" onclick="mine()">M</div>
+    <div class="coin-container">
+        <div class="coin" id="coinBtn"></div>
     </div>
 
-    <div class="stats-box">
-        <div class="label">League</div>
-        <div style="font-weight: bold; color: #fff;">GOLD EXECUTIVE</div>
-    </div>
-
-    <button class="invite-btn" onclick="invite()">Invite Partners 🚀</button>
+    <div class="footer">Omlla Ecosystem - Powered by Telegram</div>
 
     <script>
-        const tele = window.Telegram.WebApp;
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // لفتح الواجهة بكامل الشاشة
+
         let score = parseInt(localStorage.getItem('omlla_score')) || 0;
-        
-        function updateDisplay() {
-            document.getElementById('score-container').innerText = score.toLocaleString();
-        }
+        const scoreEl = document.getElementById('score');
+        const coinBtn = document.getElementById('coinBtn');
 
-        function mine() {
+        scoreEl.innerText = score.toLocaleString();
+
+        coinBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // منع الزووم
             score++;
-            updateDisplay();
+            scoreEl.innerText = score.toLocaleString();
             localStorage.setItem('omlla_score', score);
-            tele.HapticFeedback.impactOccurred('medium');
-        }
 
-        function invite() {
-            const botUrl = "https://t.me/Shyi1_bot/play"; 
-            const text = "Join the Omlla Luxury Mining network! 🪙";
-            tele.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(botUrl)}&text=${encodeURIComponent(text)}`);
-        }
+            // اهتزاز خفيف (Haptic Feedback)
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
-        updateDisplay();
-        tele.ready();
-        tele.expand();
+            // تأثير +1
+            const touch = e.touches[0];
+            createPlusOne(touch.clientX, touch.clientY);
+        });
+
+        function createPlusOne(x, y) {
+            const plus = document.createElement('div');
+            plus.innerText = '+1';
+            plus.className = 'plus-one';
+            plus.style.left = x + 'px';
+            plus.style.top = y + 'px';
+            document.body.appendChild(plus);
+            setTimeout(() => plus.remove(), 800);
+        }
     </script>
 </body>
 </html>
