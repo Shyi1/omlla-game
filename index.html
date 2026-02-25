@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA BOT | OFFICIAL GOLD</title>
+    <title>OMLLA CAPITAL | ELITE GOLD</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -11,183 +11,177 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         :root {
-            --primary-gold: #FFD700;
-            --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
-            --dark: #050505;
-            --dark-light: #0f0f0f;
-            --gray: #1a1a1a;
-            --text-gray: #888;
-            --emerald: #14F195;
+            --gold: #FFD700;
+            --gold-soft: #bf953f;
+            --gold-lux: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 50%, #fbf5b7 55%, #aa771c 100%);
+            --bg: #050505;
+            --card-bg: #0f0f0f;
+            --glass: rgba(255, 215, 0, 0.05);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            background: var(--dark);
+            background: var(--bg);
             color: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             height: 100vh;
             overflow: hidden;
             display: flex;
             justify-content: center;
         }
 
-        .container {
+        .app-shell {
             width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            height: 100vh;
+            max-width: 420px;
+            background: radial-gradient(circle at 50% -20%, #1a1a0a 0%, #050505 100%);
             display: flex;
             flex-direction: column;
-            background: radial-gradient(circle at top, #1a1a0a 0%, #050505 100%);
-            overflow-y: auto;
-            padding-bottom: 90px; /* مساحة للتنقل السفلي */
+            position: relative;
         }
 
-        /* Branding & Timer */
-        .brand { font-size: 10px; letter-spacing: 5px; color: var(--primary-gold); text-align: center; margin-bottom: 12px; font-weight: 900; }
-        
-        .timer-card {
-            background: var(--gold-gradient);
-            border-radius: 18px;
-            padding: 12px 18px;
-            margin-bottom: 12px;
+        /* Luxury Header */
+        .header-engine {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,215,0,0.1);
+        }
+
+        .brand-meta { font-size: 10px; letter-spacing: 4px; color: var(--gold-soft); font-weight: 900; margin-bottom: 15px; }
+
+        .balance-master {
+            background: var(--glass);
+            border: 1px solid rgba(255,215,0,0.15);
+            border-radius: 30px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .val-display { font-size: 48px; font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(255,215,0,0.3); }
+
+        /* Navigation Engine */
+        .page { display: none; padding: 20px; height: 100%; overflow-y: auto; padding-bottom: 100px; }
+        .page.active { display: block; animation: slideUp 0.3s ease-out; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tap Engine UI */
+        .coin-portal {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .engine-core {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: var(--gold-lux);
+            border: 8px solid #332811;
+            box-shadow: 0 0 60px rgba(186,141,10,0.15), inset 0 0 20px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: #4a3505;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-        }
-
-        .balance-card {
-            background: var(--dark-light);
-            border-radius: 25px;
-            padding: 20px;
-            border: 1px solid rgba(255,215,0,0.2);
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        .balance-amount {
-            font-size: 52px;
-            font-weight: 900;
-            color: var(--primary-gold);
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        /* Pages Control */
-        .page { display: none; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Tap Engine */
-        .tap-area { text-align: center; margin: 20px 0; }
-        .gold-coin {
-            width: 220px; height: 220px;
-            margin: 0 auto;
-            border-radius: 50%;
-            background: var(--gold-gradient);
-            border: 6px solid #8a6d3b;
-            display: flex; justify-content: center; align-items: center;
+            justify-content: center;
             cursor: pointer;
-            box-shadow: 0 0 50px rgba(186, 141, 10, 0.2);
-            transition: transform 0.05s ease;
+            transition: transform 0.05s;
         }
-        .gold-coin:active { transform: scale(0.92); }
-        .coin-text { font-size: 40px; font-weight: 900; color: #4a3505; letter-spacing: -1px; }
 
-        /* Stats & Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-        .stat-card { background: var(--dark-light); border: 1px solid var(--gray); border-radius: 18px; padding: 12px; text-align: center; }
-        .stat-value { font-size: 18px; font-weight: 800; color: var(--primary-gold); }
-        .stat-label { font-size: 10px; color: var(--text-gray); text-transform: uppercase; }
+        .engine-core:active { transform: scale(0.94); }
+        .core-text { font-size: 44px; font-weight: 900; color: #3d2b07; text-shadow: 1px 1px 0px rgba(255,255,255,0.2); }
 
-        /* Navigation */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            display: flex; background: rgba(15,15,15,0.98);
-            backdrop-filter: blur(15px); border-top: 1px solid #222;
-            padding: 12px 0; z-index: 1000;
+        /* Energy System */
+        .energy-wrapper { margin-top: 30px; }
+        .progress-track { height: 12px; background: #111; border-radius: 20px; border: 1px solid #222; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--gold-lux); width: 100%; transition: width 0.3s; }
+
+        /* Task Components */
+        .task-card {
+            background: var(--card-bg);
+            border: 1px solid #222;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .nav-item { flex: 1; text-align: center; color: #555; transition: 0.3s; cursor: pointer; }
-        .nav-item.active { color: var(--primary-gold); }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
-        .nav-item span { font-size: 10px; font-weight: bold; }
 
-        /* Utilities */
-        .btn-gold { background: var(--primary-gold); color: black; border: none; padding: 12px 20px; border-radius: 15px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; }
-        .tap-effect { position: absolute; color: var(--primary-gold); font-weight: 900; font-size: 32px; animation: tapFloat 0.8s forwards; pointer-events: none; z-index: 2000; }
-        @keyframes tapFloat { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
-        
-        .energy-bar-bg { height: 10px; background: #111; border-radius: 10px; overflow: hidden; margin: 10px 0; border: 1px solid #222; }
-        .energy-bar-fill { height: 100%; background: var(--primary-gold); width: 100%; transition: width 0.3s linear; }
+        .btn-action {
+            background: var(--gold-lux);
+            color: #000;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        /* Bottom Menu */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 420px;
+            background: rgba(8,8,8,0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            padding: 15px 10px;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .tab-link { flex: 1; text-align: center; color: #444; font-size: 10px; font-weight: 700; }
+        .tab-link.active { color: var(--gold); }
+        .tab-link i { font-size: 22px; display: block; margin-bottom: 5px; }
+
+        .floating-reward { position: absolute; color: var(--gold); font-weight: 900; font-size: 36px; animation: floatUp 0.8s forwards; pointer-events: none; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-150px); } }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <div class="brand">OMLLA CAPITAL • PRESTIGE</div>
-            
-            <div class="timer-card">
-                <i class="fas fa-clock"></i>
-                <div style="flex:1">
-                    <div style="font-size: 9px; font-weight: 800; text-transform: uppercase;">Time to Global Listing</div>
-                    <div id="countdown" style="font-size: 18px; font-weight: 900;">Calculating...</div>
-                </div>
-                <div style="background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 10px; font-size: 12px; font-weight: 800;">LIVE</div>
-            </div>
-
-            <div class="balance-card">
-                <div class="balance-amount" id="balance-display">0</div>
-                <div style="font-size: 11px; color: var(--text-gray); font-weight: 800; letter-spacing: 2px;">O$ GOLD CAPITAL</div>
+    <div class="app-shell">
+        <header class="header-engine">
+            <div class="brand-meta">OMLLA CAPITAL • GLOBAL</div>
+            <div class="balance-master">
+                <div class="val-display" id="total-balance">0</div>
+                <div style="font-size: 11px; color: var(--gold-soft); letter-spacing: 2px;">GOLD RESERVES</div>
             </div>
         </header>
 
-        <div id="home-page" class="page active">
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-label">Energy</div><div class="stat-value" id="energy-val">1000</div></div>
-                <div class="stat-card"><div class="stat-label">Taps</div><div class="stat-value" id="taps-val">0</div></div>
-                <div class="stat-card"><div class="stat-label">Rank</div><div class="stat-value" id="rank-val">#--</div></div>
-            </div>
-
-            <div class="tap-area">
-                <div class="gold-coin" id="tap-trigger">
-                    <div class="coin-text">OMLLA</div>
+        <div id="mine-page" class="page active">
+            <div class="coin-portal">
+                <div class="engine-core" id="tap-engine">
+                    <div class="core-text">O$</div>
                 </div>
             </div>
 
-            <div class="energy-bar-bg">
-                <div class="energy-bar-fill" id="energy-fill"></div>
-            </div>
-            
-            <div style="display:flex; gap:10px;">
-                <button class="btn-gold" style="background:#1a1a1a; color:var(--primary-gold); border:1px solid var(--primary-gold)" onclick="copyReferral()"><i class="fas fa-user-plus"></i> INVITE</button>
-                <button class="btn-gold" onclick="tg.showAlert('Booster Activated!')"><i class="fas fa-rocket"></i> BOOST</button>
-            </div>
-        </div>
-
-        <div id="rating-page" class="page">
-            <h2 style="color:var(--primary-gold); margin-bottom:15px; text-align:center;">GLOBAL LEADERBOARD</h2>
-            <div id="leaderboard-list"></div>
-        </div>
-
-        <div id="profile-page" class="page">
-            <div class="balance-card" style="text-align: left;">
-                <h3 id="prof-name">Elite Player</h3>
-                <p id="prof-id" style="font-size: 12px; color: #555;"></p>
-                <hr style="margin:15px 0; border:0; border-top:1px solid #222;">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <div><small>TOTAL TAPS</small><h4 id="prof-taps">0</h4></div>
-                    <div><small>REFERRALS</small><h4 id="prof-refs">0</h4></div>
+            <div class="energy-wrapper">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px;">
+                    <span style="color:#666">POWER SUPPLY</span>
+                    <span id="energy-val" style="color:var(--gold)">1000/1000</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="energy-fill"></div>
                 </div>
             </div>
-            <button class="btn-gold" style="background:#ff4444; color:white" onclick="location.reload()">REFRESH ACCOUNT</button>
         </div>
 
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="showTab('home', this)"><i class="fas fa-home"></i><span>MINE</span></div>
-            <div class="nav-item" onclick="showTab('rating', this)"><i class="fas fa-trophy"></i><span>TOP</span></div>
-            <div class="nav-item" onclick="showTab('profile', this)"><i class="fas fa-user"></i><span>PROFILE</span></div>
+        <div id="tasks-page" class="page">
+            <h3 style="color:var(--gold); margin-bottom:20px; text-align:center;">CAPITAL MISSIONS</h3>
+            <div class="task-card">
+                <div>
+                    <div style="font-weight:800;">Official Channel</div>
+                    <div style="color:var(--gold); font-size:12px;">+1,000 O$</div>
+                </div>
+                <button class="btn-action" onclick="runTask('https://t.me/OmllaChannel', 1000)">JOIN</button>
+            </div>
+        </div>
+
+        <nav class="tab-bar">
+            <div class="tab-link active" onclick="switchPage('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
+            <div class="tab-link" onclick="switchPage('tasks', this)"><i class="fas fa-list-check"></i>TASKS</div>
+            <div class="tab-link" onclick="tg.showAlert('Global Exchange Listing Soon')"><i class="fas fa-wallet"></i>WALLET</div>
         </nav>
     </div>
 
@@ -195,111 +189,83 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 🔴 CONFIGURATION
+        // System Configuration
+        const RENDER_URL = "https://omlla-payments-backend.onrender.com";
         const firebaseConfig = { databaseURL: "https://omlla-game-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        const user = tg.initDataUnsafe?.user || { id: 'test_dev', first_name: 'Master' };
+        const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Investor' };
         const userRef = db.ref('players/' + user.id);
 
-        let player = { points: 0, energy: 1000, totalTaps: 0, referrals: 0 };
+        let state = { points: 0, energy: 1000 };
 
-        // UI SYNC
-        function updateUI() {
-            document.getElementById('balance-display').innerText = Math.floor(player.points).toLocaleString();
-            document.getElementById('energy-val').innerText = player.energy;
-            document.getElementById('energy-fill').style.width = (player.energy / 10) + "%";
-            document.getElementById('taps-val').innerText = player.totalTaps.toLocaleString();
-            document.getElementById('prof-taps').innerText = player.totalTaps;
-            document.getElementById('prof-refs').innerText = player.referrals;
-            document.getElementById('prof-name').innerText = user.first_name;
-            document.getElementById('prof-id').innerText = "CAPITAL ID: " + user.id;
+        function refreshUI() {
+            document.getElementById('total-balance').innerText = Math.floor(state.points).toLocaleString();
+            document.getElementById('energy-val').innerText = `${state.energy}/1000`;
+            document.getElementById('energy-fill').style.width = (state.energy / 10) + "%";
         }
 
-        // DATABASE LISTEN
         userRef.on('value', (snap) => {
             const data = snap.val();
-            if (data) {
-                player = { ...player, ...data };
-                updateUI();
-            } else {
-                userRef.set({ points: 0, energy: 1000, totalTaps: 0, referrals: 0, name: user.first_name });
-            }
+            if(data) { state = { ...state, ...data }; refreshUI(); }
+            else { userRef.set({ points: 0, energy: 1000, name: user.first_name }); }
         });
 
-        // TAP LOGIC
-        document.getElementById('tap-trigger').addEventListener('touchstart', (e) => {
+        // Tap Logic
+        document.getElementById('tap-engine').addEventListener('touchstart', (e) => {
             e.preventDefault();
-            if (player.energy >= 1) {
-                player.points += 1;
-                player.energy -= 1;
-                player.totalTaps += 1;
-                updateUI();
+            if(state.energy >= 1) {
+                state.points += 1;
+                state.energy -= 1;
+                refreshUI();
 
-                // Animation
-                const touch = e.touches[0];
-                const p = document.createElement('div');
-                p.className = 'tap-effect'; p.innerText = '+1';
-                p.style.left = touch.clientX + 'px'; p.style.top = touch.clientY + 'px';
-                document.body.appendChild(p);
-                setTimeout(() => p.remove(), 800);
+                // Logic sync
+                userRef.update({ points: state.points, energy: state.energy, name: user.first_name });
+                
+                // Visual feedback
+                const t = e.touches[0];
+                const f = document.createElement('div');
+                f.className = 'floating-reward'; f.innerText = '+1';
+                f.style.left = t.clientX + 'px'; f.style.top = t.clientY + 'px';
+                document.body.appendChild(f);
+                setTimeout(() => f.remove(), 800);
 
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-
-                // Sync Database (Satisfaction of Rule: name + points)
-                userRef.update({ points: player.points, energy: player.energy, totalTaps: player.totalTaps, name: user.first_name });
+                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             }
         });
 
-        // TABS SYSTEM
-        window.showTab = function(id, el) {
+        // Navigation Logic
+        window.switchPage = (id, el) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id + '-page').classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
-            if (id === 'rating') loadLeaderboard();
-        }
+        };
 
-        function loadLeaderboard() {
-            db.ref('players').orderByChild('points').limitToLast(10).once('value', (snap) => {
-                let html = '';
-                const data = [];
-                snap.forEach(child => { data.push(child.val()); });
-                data.reverse().forEach((p, i) => {
-                    html += `<div class="stat-card" style="display:flex; justify-content:space-between; align-items:center;">
-                        <span>#${i+1} ${p.name || 'Investor'}</span>
-                        <span style="color:var(--primary-gold); font-weight:900;">${Math.floor(p.points).toLocaleString()} O$</span>
-                    </div>`;
+        // Task Engine Logic
+        window.runTask = (url, reward) => {
+            tg.openLink(url);
+            setTimeout(() => {
+                tg.showConfirm("Mission Completed?", (confirmed) => {
+                    if(confirmed) {
+                        state.points += reward;
+                        refreshUI();
+                        userRef.update({ points: state.points, name: user.first_name });
+                        tg.showAlert("Elite Status: Reward Claimed!");
+                    }
                 });
-                document.getElementById('leaderboard-list').innerHTML = html;
-            });
-        }
+            }, 3000);
+        };
 
-        function copyReferral() {
-            const link = `https://t.me/OMLLA_Coin_bot?start=${user.id}`;
-            navigator.clipboard.writeText(link);
-            tg.showAlert("✅ Referral Link Copied!");
-        }
-
-        // COUNTDOWN
+        // Regen Engine
         setInterval(() => {
-            const now = new Date();
-            const h = 23 - now.getHours();
-            const m = 59 - now.getMinutes();
-            document.getElementById('countdown').innerText = `${h}h ${m}m Remaining`;
-        }, 1000);
-
-        // ENERGY REGEN
-        setInterval(() => {
-            if (player.energy < 1000) {
-                player.energy += 1;
-                updateUI();
-                userRef.child('energy').set(player.energy);
+            if(state.energy < 1000) { 
+                state.energy += 1; 
+                refreshUI(); 
+                userRef.child('energy').set(state.energy);
             }
         }, 3000);
-const BACKEND_URL = "https://omlla-payments-backend.onrender.com";
     </script>
 </body>
 </html>
-
