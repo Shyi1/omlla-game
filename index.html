@@ -197,19 +197,34 @@
             </div>
 
             <div id="perks-page" class="page">
-                <div class="stat-card"><div class="stat-value">+100</div><div style="font-size:12px">Daily Bonus</div></div>
-                <div class="stat-card"><div class="stat-value">+500</div><div style="font-size:12px">Referral Reward</div></div>
-                <div class="stat-card" style="border-color: var(--primary-gold);"><div class="stat-value">PRESTIGE</div><div style="font-size:12px">Active Account</div></div>
+                <div class="stat-card">
+                    <div class="stat-value">⚡ BOOST</div>
+                    <div style="font-size:12px; margin:10px 0;">Pay 500 O$ for 2x taps (30 sec)</div>
+                    <button class="action-btn primary" id="boost-btn-page">ACTIVATE BOOST</button>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">📅 DAILY BONUS</div>
+                    <div style="font-size:12px; margin:10px 0;">Get 100 O$ free every day</div>
+                    <button class="action-btn primary" id="daily-btn">CLAIM DAILY</button>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">💰 BUY O$</div>
+                    <div style="font-size:12px; margin:10px 0;">Coming Soon: Buy O$ with SOL</div>
+                    <button class="action-btn primary" id="buy-btn">NOTIFY ME</button>
+                </div>
             </div>
 
             <div id="rating-page" class="page">
-                <div class="stat-card"><div style="display:flex; justify-content: space-between;"><span>#1 CryptoWhale</span><span class="stat-value">50k O$</span></div></div>
-                <div class="stat-card"><div style="display:flex; justify-content: space-between;"><span>#2 OMLLA_Dev</span><span class="stat-value">42k O$</span></div></div>
-                <div class="stat-card"><div style="display:flex; justify-content: space-between;"><span>#3 Investor_X</span><span class="stat-value">38k O$</span></div></div>
+                <div id="leaderboard-list">
+                    <div class="stat-card">Loading leaderboard...</div>
+                </div>
             </div>
 
             <div id="profile-page" class="page">
                 <div class="stat-card"><div class="stat-label" style="font-size:10px; color:#555">TOTAL TAPS</div><div class="stat-value" id="profile-taps">0</div></div>
+                <div class="stat-card"><div class="stat-label" style="font-size:10px; color:#555">REFERRALS</div><div class="stat-value" id="profile-refs">0</div></div>
                 <div class="stat-card"><div class="stat-label" style="font-size:10px; color:#555">RANKING</div><div class="stat-value" id="profile-rank">#42</div></div>
             </div>
         </div>
@@ -239,7 +254,7 @@
                 databaseURL: "https://omlla-game-default-rtdb.firebaseio.com" // CHANGE THIS
             };
 
-            // Initialize Firebase only if not already initialized
+            // Initialize Firebase
             if (typeof firebase !== 'undefined' && !firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
@@ -253,18 +268,11 @@
             const userId = user.id.toString();
             const userRef = db.ref('players/' + userId);
 
-            // Check for referral in start param
-            const startParam = tg.initDataUnsafe?.start_param || '';
-            if (startParam && startParam.startsWith('ref_')) {
-                const referrerId = startParam.replace('ref_', '');
-                // Award bonus to referrer (handled on server side ideally)
-                // For now, we'll just log it
-                console.log('Referred by:', referrerId);
-                // You can implement a one-time bonus here
-            }
-
-            // Player state
-            let player = { points: 0, energy: 1000, totalTaps: 0, lastUpdate: Date.now() };
+            // Game variables
+            let player = { points: 0, energy: 1000, totalTaps: 0, referrals: 0 };
+            let boostActive = false;
+            let lastTapTime = 0;
+            const TAP_DELAY = 200; // ms between taps
 
             // DOM elements
             const elements = {
@@ -275,6 +283,7 @@
                 userId: document.getElementById('user-id'),
                 avatarChar: document.getElementById('avatar-char'),
                 profileTaps: document.getElementById('profile-taps'),
+                profileRefs: document.getElementById('profile-refs'),
                 profileRank: document.getElementById('profile-rank'),
                 countdown: document.getElementById('countdown'),
                 tapTrigger: document.getElementById('tap-trigger'),
@@ -289,61 +298,183 @@
             elements.userId.innerText = userId;
             elements.avatarChar.innerText = user.first_name.charAt(0).toUpperCase();
 
-            // Update UI function
+            // =============================================
+            // FIX #1: ENERGY BAR CORRECTION
+            // =============================================
             function updateUI() {
                 elements.balance.innerText = Math.floor(player.points).toLocaleString();
                 elements.energy.innerText = `${player.energy}/1000`;
-                // Correct energy bar width calculation
+                // FIXED: Correct percentage calculation
                 elements.energyFill.style.width = (player.energy / 1000 * 100) + '%';
+                
                 if (elements.profileTaps) elements.profileTaps.innerText = player.totalTaps.toLocaleString();
+                if (elements.profileRefs) elements.profileRefs.innerText = player.referrals || 0;
+                
                 // Random rank for demo
                 elements.profileRank.innerText = '#' + (Math.floor(Math.random() * 100) + 1);
             }
 
-            // Load player data from Firebase
+            // Load player data
             userRef.on('value', (snap) => {
                 const data = snap.val();
                 if (data) {
                     player.points = data.points || 0;
                     player.energy = data.energy ?? 1000;
                     player.totalTaps = data.totalTaps || 0;
+                    player.referrals = data.referrals || 0;
                 } else {
-                    // New user – initialize
-                    player = { points: 0, energy: 1000, totalTaps: 0 };
+                    // New user
+                    player = { points: 0, energy: 1000, totalTaps: 0, referrals: 0 };
                     userRef.set({
                         points: 0,
                         energy: 1000,
                         totalTaps: 0,
+                        referrals: 0,
                         name: user.first_name
-                    }).catch(err => console.error('Firebase write error:', err));
+                    }).catch(err => console.error('Firebase error:', err));
                 }
                 updateUI();
-            }, (error) => {
-                console.error('Firebase read error:', error);
-                tg.showAlert('⚠️ Failed to load data. Check your connection.');
             });
 
-            // Save energy function (used by regeneration)
-            function saveEnergy() {
-                userRef.child('energy').set(player.energy)
-                    .catch(err => console.error('Energy save error:', err));
+            // =============================================
+            // FIX #2: REFERRAL REWARDS
+            // =============================================
+            const startParam = tg.initDataUnsafe?.start_param || '';
+            if (startParam && startParam.startsWith('ref_')) {
+                const referrerId = startParam.replace('ref_', '');
+                
+                // Check if this user already got referral bonus
+                const rewardKey = 'referred_' + userId;
+                if (!localStorage.getItem(rewardKey)) {
+                    // Give 500 to new user
+                    userRef.child('points').transaction(function(current) {
+                        return (current || 0) + 500;
+                    });
+                    
+                    // Give 500 to referrer and increment their referral count
+                    db.ref('players/' + referrerId).transaction(function(current) {
+                        if (current) {
+                            current.points = (current.points || 0) + 500;
+                            current.referrals = (current.referrals || 0) + 1;
+                        }
+                        return current;
+                    });
+                    
+                    // Mark as rewarded
+                    localStorage.setItem(rewardKey, 'true');
+                    tg.showAlert('🎁 You got 500 free coins from referral!');
+                }
             }
 
-            // Tap handler – using transaction to avoid race conditions
-            elements.tapTrigger.addEventListener('touchstart', handleTap);
-            elements.tapTrigger.addEventListener('mousedown', handleTap);
+            // =============================================
+            // FIX #3: BOOST FEATURE
+            // =============================================
+            function activateBoost() {
+                if (player.points < 500) {
+                    tg.showAlert('❌ Need 500 O$ for boost');
+                    return;
+                }
+                
+                // Take 500 coins
+                userRef.child('points').transaction(function(current) {
+                    return (current || 0) - 500;
+                });
+                
+                // Activate boost
+                boostActive = true;
+                tg.showAlert('⚡ BOOST ACTIVE for 30 seconds! 2x earnings!');
+                
+                // Turn off after 30 seconds
+                setTimeout(function() {
+                    boostActive = false;
+                    tg.showAlert('⏰ Boost ended');
+                }, 30000);
+            }
 
+            // =============================================
+            // FIX #4: DAILY BONUS
+            // =============================================
+            function claimDaily() {
+                const lastClaim = localStorage.getItem('daily_' + userId);
+                const now = Date.now();
+                
+                // Check if already claimed today (24 hours = 86400000 ms)
+                if (lastClaim && now - parseInt(lastClaim) < 86400000) {
+                    tg.showAlert('⏳ Already claimed today! Come back tomorrow');
+                    return;
+                }
+                
+                // Give 100 coins
+                userRef.child('points').transaction(function(current) {
+                    return (current || 0) + 100;
+                });
+                
+                // Save claim time
+                localStorage.setItem('daily_' + userId, now.toString());
+                tg.showAlert('✅ +100 O$ claimed!');
+            }
+
+            // =============================================
+            // FIX #5: LEADERBOARD
+            // =============================================
+            function loadLeaderboard() {
+                db.ref('players').orderByChild('points').limitToLast(10).once('value', function(snapshot) {
+                    const data = snapshot.val();
+                    if (!data) return;
+                    
+                    // Convert to array and sort
+                    const players = [];
+                    for (let id in data) {
+                        players.push({
+                            id: id,
+                            name: data[id].name || id.substring(0, 6),
+                            points: data[id].points || 0
+                        });
+                    }
+                    
+                    // Sort by points (highest first)
+                    players.sort(function(a, b) {
+                        return b.points - a.points;
+                    });
+                    
+                    // Build HTML
+                    let html = '';
+                    for (let i = 0; i < players.length; i++) {
+                        html += '<div class="stat-card" style="display:flex; justify-content:space-between;">';
+                        html += '<span>#' + (i+1) + ' ' + players[i].name + '</span>';
+                        html += '<span class="stat-value">' + players[i].points.toLocaleString() + ' O$</span>';
+                        html += '</div>';
+                    }
+                    
+                    document.getElementById('leaderboard-list').innerHTML = html;
+                });
+            }
+
+            // =============================================
+            // FIX #6: ANTI-CHEAT (Rate Limiting)
+            // =============================================
             function handleTap(e) {
                 e.preventDefault();
+                
+                // Rate limiting
+                const now = Date.now();
+                if (now - lastTapTime < TAP_DELAY) {
+                    return;
+                }
+                lastTapTime = now;
+                
                 if (player.energy < 1) {
                     tg.HapticFeedback?.impactOccurred('heavy');
                     return;
                 }
 
-                // Use transaction for atomic update
+                // Calculate earnings (boost = 2x)
+                const earnAmount = boostActive ? 2 : 1;
+
+                // Update Firebase
                 userRef.transaction((currentData) => {
                     if (currentData) {
-                        currentData.points = (currentData.points || 0) + 1;
+                        currentData.points = (currentData.points || 0) + earnAmount;
                         currentData.energy = Math.max((currentData.energy || 1000) - 1, 0);
                         currentData.totalTaps = (currentData.totalTaps || 0) + 1;
                     }
@@ -359,44 +490,41 @@
                         // Visual feedback
                         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                        showPlusOne(clientX, clientY);
+                        showPlusOne(clientX, clientY, earnAmount);
 
                         tg.HapticFeedback?.impactOccurred('medium');
                     }
                 }).catch(err => {
-                    console.error('Transaction error:', err);
-                    // Fallback: simple increment
-                    player.points += 1;
-                    player.energy -= 1;
-                    player.totalTaps += 1;
-                    updateUI();
-                    userRef.update({
-                        points: player.points,
-                        energy: player.energy,
-                        totalTaps: player.totalTaps
-                    }).catch(e => console.error(e));
-                    showPlusOne(e.clientX || e.touches[0].clientX, e.clientY || e.touches[0].clientY);
+                    console.error('Tap error:', err);
                 });
             }
 
-            function showPlusOne(x, y) {
+            function showPlusOne(x, y, amount) {
                 const p = document.createElement('div');
                 p.className = 'plus-one';
-                p.innerText = '+1';
+                p.innerText = '+' + amount;
                 p.style.left = x + 'px';
                 p.style.top = y + 'px';
                 document.body.appendChild(p);
                 setTimeout(() => p.remove(), 800);
             }
 
+            // =============================================
+            // EVENT LISTENERS
+            // =============================================
+            
+            // Tap handler
+            elements.tapTrigger.addEventListener('touchstart', handleTap);
+            elements.tapTrigger.addEventListener('mousedown', handleTap);
+
             // Energy regeneration
             setInterval(() => {
                 if (player.energy < 1000) {
                     player.energy = Math.min(player.energy + 1, 1000);
                     updateUI();
-                    saveEnergy(); // Save only energy
+                    userRef.child('energy').set(player.energy).catch(() => {});
                 }
-            }, 3000); // 1 energy per 3 seconds
+            }, 3000);
 
             // Page navigation
             elements.navItems.forEach(item => {
@@ -407,35 +535,58 @@
                         document.getElementById(page + '-page').classList.add('active');
                         elements.navItems.forEach(n => n.classList.remove('active'));
                         item.classList.add('active');
+                        
+                        // Load leaderboard when rating page opens
+                        if (page === 'rating') {
+                            loadLeaderboard();
+                        }
                     }
                 });
             });
 
-            // Invite button – improved with fallback
+            // Invite button
             elements.inviteBtn.addEventListener('click', () => {
                 const botUsername = "OMLLA_Coin_bot"; // Replace with your bot's username
                 const link = `https://t.me/${botUsername}?start=ref_${userId}`;
                 
                 if (tg.openTelegramLink) {
-                    // Share directly via Telegram
                     tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Join OMLLA and earn gold!')}`);
                 } else {
-                    // Fallback: copy to clipboard or show alert
                     navigator.clipboard.writeText(link).then(() => {
-                        tg.showAlert('✅ Referral link copied to clipboard!');
+                        tg.showAlert('✅ Referral link copied!');
                     }).catch(() => {
                         tg.showAlert('📋 Your referral link:\n' + link);
                     });
                 }
             });
 
-            // Boost button (placeholder)
-            elements.boostBtn.addEventListener('click', () => {
-                tg.showAlert('⚡ Boost feature coming soon!');
-            });
+            // Boost button (main page)
+            elements.boostBtn.addEventListener('click', activateBoost);
 
-            // Countdown timer (set to a specific date)
-            const targetDate = new Date(Date.UTC(2025, 2, 1, 12, 0, 0)); // Example: March 1, 2025, 12:00 UTC
+            // Boost button (perks page)
+            setTimeout(() => {
+                const boostPageBtn = document.getElementById('boost-btn-page');
+                if (boostPageBtn) boostPageBtn.addEventListener('click', activateBoost);
+            }, 1000);
+
+            // Daily bonus button
+            setTimeout(() => {
+                const dailyBtn = document.getElementById('daily-btn');
+                if (dailyBtn) dailyBtn.addEventListener('click', claimDaily);
+            }, 1000);
+
+            // Buy button (coming soon)
+            setTimeout(() => {
+                const buyBtn = document.getElementById('buy-btn');
+                if (buyBtn) {
+                    buyBtn.addEventListener('click', () => {
+                        tg.showAlert('📢 Buy O$ feature coming soon! You will be notified.');
+                    });
+                }
+            }, 1000);
+
+            // Countdown timer
+            const targetDate = new Date(Date.UTC(2025, 2, 1, 12, 0, 0)); // March 1, 2025
             function updateCountdown() {
                 const now = new Date();
                 const diff = targetDate - now;
@@ -454,24 +605,23 @@
             // Initial update
             updateUI();
 
-            // Telegram main button (optional)
+            // Telegram buttons
             tg.MainButton.setText('⚡ PLAY OMLLA ⚡');
             tg.MainButton.show();
             tg.MainButton.onClick(() => {
                 tg.HapticFeedback?.impactOccurred('medium');
             });
 
-            // Back button
             tg.BackButton.show();
             tg.BackButton.onClick(() => {
                 if (document.getElementById('main-page').classList.contains('active')) {
                     tg.close();
                 } else {
-                    // Go to main page
-                    elements.navItems[0].click();
+                    document.querySelectorAll('.nav-item')[0].click();
                 }
             });
         })();
     </script>
 </body>
 </html>
+
