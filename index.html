@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA GAME | OFFICIAL</title>
+    <title>OMLLA BOT | OFFICIAL GOLD</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -11,20 +11,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         :root {
-            --primary: #14F195;
-            --primary-dark: #0fa86a;
+            --primary-gold: #FFD700;
+            --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
             --dark: #050505;
             --dark-light: #0f0f0f;
-            --gray: #222;
+            --gray: #1a1a1a;
             --text-gray: #888;
         }
 
@@ -35,7 +28,6 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
         }
 
         .container {
@@ -45,731 +37,279 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            background: radial-gradient(circle at top, #1a1a0a 0%, #050505 100%);
         }
 
-        /* Header */
-        .header {
-            text-align: center;
-        }
-
-        .brand {
-            font-size: 12px;
-            letter-spacing: 4px;
-            color: var(--text-gray);
+        /* Header Components */
+        .brand { font-size: 10px; letter-spacing: 5px; color: var(--primary-gold); text-align: center; margin-bottom: 15px; font-weight: 900; }
+        
+        .timer-card {
+            background: var(--gold-gradient);
+            border-radius: 20px;
+            padding: 15px;
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #4a3505;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
         .balance-card {
             background: var(--dark-light);
-            border-radius: 30px;
-            padding: 25px;
-            border: 1px solid var(--gray);
-            margin-bottom: 10px;
-        }
-
-        .balance-label {
-            font-size: 14px;
-            color: var(--text-gray);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .balance-amount {
-            font-size: 64px;
-            font-weight: 900;
-            color: var(--primary);
-            line-height: 1.2;
-            text-shadow: 0 0 30px rgba(20, 241, 149, 0.3);
-        }
-
-        .balance-currency {
-            font-size: 18px;
-            color: var(--text-gray);
-            margin-left: 5px;
-        }
-
-        /* User Info */
-        .user-info {
-            background: var(--dark-light);
-            border-radius: 50px;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid var(--gray);
-            margin: 15px 0;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(45deg, var(--primary), #0fa86a);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            color: black;
-        }
-
-        .user-details {
-            flex: 1;
-            text-align: left;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .user-id {
-            font-size: 12px;
-            color: var(--text-gray);
-        }
-
-        .user-level {
-            background: var(--primary);
-            color: black;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        /* Tap Area - ONLY CHANGED THIS TO O$ */
-        .tap-area {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .coin-btn {
-            width: 240px;
-            height: 240px;
-            margin: 0 auto;
-            cursor: pointer;
-            transition: all 0.1s ease;
-            position: relative;
-        }
-
-        .coin-btn:active {
-            transform: scale(0.92);
-        }
-
-        .coin-btn img {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 0 30px var(--primary));
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* Energy Bar */
-        .energy-container {
-            background: var(--dark-light);
-            border-radius: 30px;
+            border-radius: 25px;
             padding: 20px;
-            border: 1px solid var(--gray);
-            margin: 20px 0;
-        }
-
-        .energy-header {
-            display: flex;
-            justify-content: space-between;
+            border: 1px solid rgba(255,215,0,0.2);
+            text-align: center;
             margin-bottom: 10px;
-            font-size: 14px;
+        }
+        .balance-amount {
+            font-size: 50px;
+            font-weight: 900;
+            color: var(--primary-gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
 
-        .energy-bar-bg {
-            width: 100%;
-            height: 12px;
-            background: var(--gray);
+        /* User Identity */
+        .user-info {
+            background: rgba(255,255,255,0.03);
             border-radius: 50px;
-            overflow: hidden;
-        }
-
-        .energy-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #14F195);
-            border-radius: 50px;
-            transition: width 0.3s ease;
-            width: 100%;
-        }
-
-        /* Boost Section */
-        .boost-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .boost-btn {
-            background: var(--dark-light);
-            border: 1px solid var(--gray);
-            border-radius: 20px;
-            padding: 15px 10px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
+            padding: 8px 15px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .boost-btn i {
-            color: var(--primary);
-        }
-
-        .boost-btn:active {
-            background: var(--gray);
-            transform: scale(0.95);
-        }
-
-        .boost-btn.primary {
-            background: var(--primary);
-            color: black;
-            border: none;
-        }
-
-        .boost-btn.primary i {
-            color: black;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 15px 0;
+            border: 1px solid var(--gray);
+            margin-bottom: 15px;
         }
+        .user-avatar {
+            width: 35px; height: 35px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #4a3505; font-weight: 900;
+        }
+
+        /* Gold Coin Engine */
+        .tap-area { flex: 1; display: flex; justify-content: center; align-items: center; }
+        .omlla-gold-btn {
+            width: 230px; height: 230px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            border: 6px solid #8a6d3b;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 50px rgba(186, 141, 10, 0.2);
+            transition: transform 0.05s ease;
+        }
+        .omlla-gold-btn:active { transform: scale(0.94); }
+        .coin-text { font-size: 40px; font-weight: 900; color: #4a3505; letter-spacing: -1px; }
+
+        /* Navigation & Footer */
+        .bottom-nav {
+            display: flex;
+            background: rgba(15,15,15,0.95);
+            border-top: 1px solid #333;
+            padding: 10px 0;
+            position: sticky; bottom: 0; margin: 0 -20px;
+        }
+        .nav-item { flex: 1; text-align: center; color: #555; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--primary-gold); }
+        .nav-item i { font-size: 18px; display: block; }
+        .nav-item span { font-size: 10px; font-weight: bold; }
+
+        /* Action Buttons */
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .action-btn {
+            background: var(--dark-light); border: 1px solid var(--primary-gold);
+            border-radius: 15px; padding: 12px; color: var(--primary-gold);
+            font-weight: 700; text-align: center; font-size: 14px;
+        }
+        .action-btn.primary { background: var(--primary-gold); color: black; }
+
+        /* Pages System */
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .stat-card {
-            background: var(--dark-light);
-            border: 1px solid var(--gray);
-            border-radius: 20px;
-            padding: 15px;
-            text-align: center;
+            background: var(--dark-light); border: 1px solid var(--gray);
+            border-radius: 20px; padding: 15px; margin-bottom: 10px; text-align: center;
         }
+        .stat-value { font-size: 24px; font-weight: 900; color: var(--primary-gold); }
 
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary);
+        .plus-one {
+            position: absolute; color: var(--primary-gold); font-weight: 900; font-size: 28px;
+            pointer-events: none; animation: floatUp 0.8s forwards;
         }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-gray);
-            margin-top: 5px;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            font-size: 11px;
-            color: var(--text-gray);
-            padding: 15px 0;
-        }
-
-        .status {
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .debug-log {
-            color: #ff4444;
-            font-size: 10px;
-            word-break: break-word;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--dark-light);
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 300px;
-            border: 1px solid var(--gray);
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
-
-        .topup-option {
-            background: var(--dark);
-            border: 1px solid var(--gray);
-            border-radius: 15px;
-            padding: 15px;
-            margin: 10px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .topup-option:active {
-            background: var(--gray);
-        }
-
-        .topup-amount {
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .close-modal {
-            margin-top: 20px;
-            background: none;
-            border: 1px solid var(--gray);
-            color: white;
-            padding: 12px;
-            border-radius: 25px;
-            width: 100%;
-            cursor: pointer;
-        }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="brand">⚡ OMLLA CAPITAL ⚡</div>
+        <header>
+            <div class="brand">OMLLA CAPITAL NETWORK</div>
             
-            <!-- Balance Card - Changed OMLLA to O$ -->
+            <div class="timer-card">
+                <i class="fas fa-hourglass-half" style="font-size: 20px;"></i>
+                <div style="flex:1">
+                    <div style="font-size: 10px; font-weight: 800; text-transform: uppercase;">Listing Countdown</div>
+                    <div id="countdown" style="font-size: 20px; font-weight: 900;">23h 59m</div>
+                </div>
+            </div>
+
             <div class="balance-card">
-                <div class="balance-label">Total Balance</div>
-                <div class="balance-amount">
-                    <span id="balance-display">0</span>
-                    <span class="balance-currency">O$</span>
+                <div class="balance-amount" id="balance-display">0</div>
+                <div style="font-size: 12px; color: var(--text-gray); font-weight: bold; letter-spacing: 2px;">O$ COINS</div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" id="avatar-char">?</div>
+                <div style="flex:1; text-align: left;">
+                    <div id="user-name" style="font-weight: 700; font-size: 14px;">Master</div>
+                    <div id="user-rank" style="font-size: 10px; color: var(--primary-gold); font-weight: 800;">ELITE STATUS</div>
+                </div>
+                <div style="font-size: 9px; color: #444;">ID: <span id="user-id">---</span></div>
+            </div>
+        </header>
+
+        <div class="pages-content" style="flex:1">
+            <div id="main-page" class="page active">
+                <div class="tap-area">
+                    <div class="omlla-gold-btn" id="tap-trigger">
+                        <div class="coin-text">OMLLA</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
+                        <span>STAMINA</span>
+                        <span id="energy-display">1000/1000</span>
+                    </div>
+                    <div style="height:8px; background:#111; border-radius:10px; overflow:hidden;">
+                        <div id="energy-fill" style="height:100%; width:100%; background:var(--primary-gold); transition:0.3s"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- User Info -->
-            <div class="user-info" id="user-info">
-                <div class="user-avatar" id="user-avatar">👤</div>
-                <div class="user-details">
-                    <div class="user-name" id="user-name">Loading...</div>
-                    <div class="user-id" id="user-id">ID: -</div>
-                </div>
-                <div class="user-level" id="user-level">Beginner</div>
+            <div id="perks-page" class="page">
+                <div class="stat-card"><div class="stat-value">+100</div><div style="font-size:12px">Daily Bonus</div></div>
+                <div class="stat-card"><div class="stat-value">+500</div><div style="font-size:12px">Referral Reward</div></div>
+                <div class="stat-card" style="border-color: var(--primary-gold);"><div class="stat-value">PRESTIGE</div><div style="font-size:12px">Active Account</div></div>
+            </div>
+
+            <div id="rating-page" class="page">
+                <div class="stat-card"><div style="display:flex; justify-content: space-between;"><span>#1 CryptoWhale</span><span class="stat-value">50k O$</span></div></div>
+                <div class="stat-card"><div style="display:flex; justify-content: space-between;"><span>#2 OMLLA_Dev</span><span class="stat-value">42k O$</span></div></div>
+                <div class="stat-card"><div style="display:flex; justify-content: space-between;"><span>#3 Investor_X</span><span class="stat-value">38k O$</span></div></div>
+            </div>
+
+            <div id="profile-page" class="page">
+                <div class="stat-card"><div class="stat-label" style="font-size:10px; color:#555">TOTAL TAPS</div><div class="stat-value" id="profile-taps">0</div></div>
+                <div class="stat-card"><div class="stat-label" style="font-size:10px; color:#555">RANKING</div><div class="stat-value">#42</div></div>
             </div>
         </div>
 
-        <!-- Tap Area - Changed to O$ coin image -->
-        <div class="tap-area">
-            <div class="coin-btn" id="tap-button">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2314F195'/%3E%3Ccircle cx='50' cy='50' r='38' fill='%23050505'/%3E%3Ctext x='50' y='70' font-size='48' text-anchor='middle' fill='%2314F195' font-family='Arial' font-weight='bold'%3EO%24%3C/text%3E%3C/svg%3E" 
-                     alt="O$ Coin">
-            </div>
+        <div class="action-buttons">
+            <button class="action-btn" onclick="copyReferral()"><i class="fas fa-link"></i> INVITE</button>
+            <button class="action-btn primary" onclick="tg.showAlert('Shop Opening Soon!')"><i class="fas fa-bolt"></i> BOOST</button>
         </div>
 
-        <!-- Energy Bar -->
-        <div class="energy-container">
-            <div class="energy-header">
-                <span><i class="fas fa-bolt" style="color: #14F195;"></i> Energy</span>
-                <span id="energy-display">1000/1000</span>
-            </div>
-            <div class="energy-bar-bg">
-                <div class="energy-bar-fill" id="energy-fill" style="width: 100%"></div>
-            </div>
-        </div>
-
-        <!-- Boost Section - NO REFERRAL BUTTON -->
-        <div class="boost-section">
-            <button class="boost-btn" id="refill-energy">
-                <i class="fas fa-bolt"></i> Refill
-            </button>
-            <button class="boost-btn primary" id="show-topup">
-                <i class="fas fa-coins"></i> Top Up
-            </button>
-        </div>
-
-        <!-- Stats Grid - BACK TO ORIGINAL (Tap Level) -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="total-taps">0</div>
-                <div class="stat-label">Total Taps</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="tap-level">1</div>
-                <div class="stat-label">Tap Level</div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <div class="status" id="connection-status">Connecting to network...</div>
-            <div class="debug-log" id="debug-log"></div>
-            <div>© 2024 OMLLA GAME</div>
-        </div>
-    </div>
-
-    <!-- Top Up Modal - Changed OMLLA to O$ -->
-    <div class="modal" id="topup-modal">
-        <div class="modal-content">
-            <div class="modal-title">💰 Top Up O$</div>
-            
-            <div class="topup-option" data-amount="100">
-                <span>100 O$</span>
-                <span class="topup-amount">$1.00</span>
-            </div>
-            
-            <div class="topup-option" data-amount="500">
-                <span>500 O$</span>
-                <span class="topup-amount">$4.50</span>
-            </div>
-            
-            <div class="topup-option" data-amount="1000">
-                <span>1,000 O$</span>
-                <span class="topup-amount">$8.00</span>
-            </div>
-            
-            <div class="topup-option" data-amount="5000">
-                <span>5,000 O$</span>
-                <span class="topup-amount">$35.00</span>
-            </div>
-            
-            <button class="close-modal" id="close-modal">Cancel</button>
-        </div>
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showPage('main', this)"><i class="fas fa-home"></i><span>Home</span></div>
+            <div class="nav-item" onclick="showPage('perks', this)"><i class="fas fa-gem"></i><span>Perks</span></div>
+            <div class="nav-item" onclick="showPage('rating', this)"><i class="fas fa-trophy"></i><span>Rating</span></div>
+            <div class="nav-item" onclick="showPage('profile', this)"><i class="fas fa-user"></i><span>Profile</span></div>
+        </nav>
     </div>
 
     <script>
-        (function() {
-            'use strict';
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-            // ==================== TELEGRAM INIT ====================
-            const tg = window.Telegram.WebApp;
-            tg.expand();
-            tg.enableClosingConfirmation();
+        const firebaseConfig = { databaseURL: "https://omlla-game-default-rtdb.firebaseio.com" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        
+        const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Investor' };
+        const userRef = db.ref('players/' + user.id);
 
-            // ==================== FIREBASE CONFIG ====================
-            const firebaseConfig = {
-                databaseURL: "https://omlla-game-default-rtdb.firebaseio.com"
-            };
+        let player = { points: 0, energy: 1000, totalTaps: 0 };
 
-            // ==================== DOM ELEMENTS ====================
-            const elements = {
-                balance: document.getElementById('balance-display'),
-                energy: document.getElementById('energy-display'),
-                energyFill: document.getElementById('energy-fill'),
-                userName: document.getElementById('user-name'),
-                userId: document.getElementById('user-id'),
-                userAvatar: document.getElementById('user-avatar'),
-                userLevel: document.getElementById('user-level'),
-                totalTaps: document.getElementById('total-taps'),
-                tapLevel: document.getElementById('tap-level'),
-                connectionStatus: document.getElementById('connection-status'),
-                debugLog: document.getElementById('debug-log'),
-                tapButton: document.getElementById('tap-button'),
-                refillBtn: document.getElementById('refill-energy'),
-                showTopup: document.getElementById('show-topup'),
-                topupModal: document.getElementById('topup-modal'),
-                closeModal: document.getElementById('close-modal')
-            };
+        // UI Initial Setup
+        document.getElementById('user-name').innerText = user.first_name;
+        document.getElementById('user-id').innerText = user.id;
+        document.getElementById('avatar-char').innerText = user.first_name.charAt(0).toUpperCase();
 
-            // ==================== GAME VARIABLES ====================
-            let player = {
-                id: null,
-                name: 'Guest',
-                points: 0,
-                energy: 1000,
-                maxEnergy: 1000,
-                totalTaps: 0,
-                tapLevel: 1,
-                lastUpdate: Date.now()
-            };
+        function updateUI() {
+            document.getElementById('balance-display').innerText = Math.floor(player.points).toLocaleString();
+            document.getElementById('energy-display').innerText = `${player.energy}/1000`;
+            document.getElementById('energy-fill').style.width = (player.energy / 10) + "%";
+            if(document.getElementById('profile-taps')) document.getElementById('profile-taps').innerText = player.totalTaps;
+        }
 
-            let db = null;
-            let userRef = null;
-
-            // ==================== UTILITY FUNCTIONS ====================
-            function formatNumber(num) {
-                return num.toLocaleString();
-            }
-
-            function updateUI() {
-                elements.balance.textContent = formatNumber(Math.floor(player.points));
-                elements.energy.textContent = `${Math.floor(player.energy)}/${player.maxEnergy}`;
-                elements.energyFill.style.width = `${(player.energy / player.maxEnergy) * 100}%`;
-                elements.totalTaps.textContent = formatNumber(player.totalTaps);
-                elements.tapLevel.textContent = player.tapLevel;
-
-                // Update level based on points
-                if (player.points < 100) {
-                    elements.userLevel.textContent = '🐣 Beginner';
-                } else if (player.points < 1000) {
-                    elements.userLevel.textContent = '🌱 Bronze';
-                } else if (player.points < 5000) {
-                    elements.userLevel.textContent = '🌿 Silver';
-                } else if (player.points < 10000) {
-                    elements.userLevel.textContent = '🔥 Gold';
-                } else {
-                    elements.userLevel.textContent = '👑 Platinum';
-                }
-            }
-
-            function logDebug(message, isError = false) {
-                console.log(message);
-                if (isError) {
-                    elements.debugLog.textContent = `Error: ${message}`;
-                }
-            }
-
-            // ==================== FIREBASE FUNCTIONS ====================
-            function initFirebase() {
-                try {
-                    if (!firebase.apps.length) {
-                        firebase.initializeApp(firebaseConfig);
-                    }
-                    db = firebase.database();
-                    
-                    // Get user data from Telegram
-                    const tgUser = tg.initDataUnsafe?.user;
-                    
-                    if (tgUser) {
-                        player.id = tgUser.id;
-                        player.name = tgUser.first_name;
-                        if (tgUser.last_name) {
-                            player.name += ' ' + tgUser.last_name;
-                        }
-                        
-                        elements.userName.textContent = player.name;
-                        elements.userId.textContent = `ID: ${player.id}`;
-                        
-                        // Set avatar
-                        if (tgUser.photo_url) {
-                            elements.userAvatar.innerHTML = `<img src="${tgUser.photo_url}" style="width:40px;height:40px;border-radius:50%;">`;
-                        } else {
-                            elements.userAvatar.textContent = player.name.charAt(0).toUpperCase();
-                        }
-                    } else {
-                        // Test user for development
-                        player.id = 'test_' + Math.floor(Math.random() * 1000000);
-                        player.name = 'Test User';
-                        elements.userName.textContent = player.name;
-                        elements.userId.textContent = `ID: ${player.id}`;
-                    }
-
-                    // Reference to player data
-                    userRef = db.ref('players/' + player.id);
-
-                    // Connection status
-                    db.ref('.info/connected').on('value', (snap) => {
-                        if (snap.val() === true) {
-                            elements.connectionStatus.innerHTML = '✅ Connected';
-                            elements.connectionStatus.style.color = '#14F195';
-                        } else {
-                            elements.connectionStatus.innerHTML = '⚠️ Offline';
-                            elements.connectionStatus.style.color = '#ffaa00';
-                        }
-                    });
-
-                    // Load player data
-                    userRef.on('value', (snapshot) => {
-                        const data = snapshot.val();
-                        if (data) {
-                            player.points = data.points || 0;
-                            player.energy = data.energy ?? player.maxEnergy;
-                            player.totalTaps = data.totalTaps || 0;
-                            player.tapLevel = data.tapLevel || 1;
-                            player.maxEnergy = data.maxEnergy || 1000;
-                            updateUI();
-                        }
-                        logDebug('Data loaded successfully');
-                    }, (error) => {
-                        logDebug(error.message, true);
-                    });
-
-                } catch (error) {
-                    logDebug(error.message, true);
-                }
-            }
-
-            function saveToFirebase() {
-                if (!userRef) return;
-                
-                const dataToSave = {
-                    points: player.points,
-                    energy: player.energy,
-                    totalTaps: player.totalTaps,
-                    tapLevel: player.tapLevel,
-                    maxEnergy: player.maxEnergy,
-                    name: player.name,
-                    lastUpdate: Date.now()
-                };
-                
-                userRef.set(dataToSave).catch(error => {
-                    logDebug(error.message, true);
-                });
-            }
-
-            // ==================== GAME FUNCTIONS ====================
-            function handleTap() {
-                if (player.energy >= 1) {
-                    // Calculate tap power (base 1 * tap level)
-                    const tapPower = 1;
-                    
-                    player.points += tapPower;
-                    player.energy -= 1;
-                    player.totalTaps += 1;
-                    
-                    updateUI();
-                    
-                    // Haptic feedback
-                    if (tg.HapticFeedback) {
-                        tg.HapticFeedback.impactOccurred('light');
-                    }
-                    
-                    // Save to Firebase
-                    saveToFirebase();
-                } else {
-                    // No energy
-                    if (tg.HapticFeedback) {
-                        tg.HapticFeedback.notificationOccurred('warning');
-                    }
-                    
-                    // Flash energy bar
-                    elements.energyFill.style.background = '#ff4444';
-                    setTimeout(() => {
-                        elements.energyFill.style.background = 'linear-gradient(90deg, #14F195, #14F195)';
-                    }, 300);
-                }
-            }
-
-            function refillEnergy() {
-                player.energy = player.maxEnergy;
+        userRef.on('value', (snap) => {
+            const data = snap.val();
+            if(data) {
+                player.points = data.points || 0;
+                player.energy = data.energy ?? 1000;
+                player.totalTaps = data.totalTaps || 0;
                 updateUI();
-                saveToFirebase();
-                
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+            } else {
+                userRef.set({ points: 0, energy: 1000, name: user.first_name, totalTaps: 0 });
             }
+        });
 
-            function topUp(amount) {
-                player.points += amount;
+        document.getElementById('tap-trigger').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if(player.energy >= 1) {
+                player.points += 1;
+                player.energy -= 1;
+                player.totalTaps += 1;
                 updateUI();
-                saveToFirebase();
-                
-                elements.topupModal.classList.remove('active');
-                
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
-                
-                // Show success message
-                elements.connectionStatus.innerHTML = `✅ Added ${amount} O$!`;
-                elements.connectionStatus.style.color = '#14F195';
-                setTimeout(() => {
-                    elements.connectionStatus.innerHTML = '✅ Connected';
-                }, 2000);
+
+                userRef.update({ points: player.points, energy: player.energy, name: user.first_name, totalTaps: player.totalTaps });
+
+                // Particle
+                const touch = e.touches[0];
+                const p = document.createElement('div');
+                p.className = 'plus-one'; p.innerText = '+1';
+                p.style.left = touch.clientX + 'px'; p.style.top = touch.clientY + 'px';
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 800);
+
+                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             }
+        });
 
-            // ==================== ENERGY REGEN ====================
-            function startEnergyRegen() {
-                setInterval(() => {
-                    if (player.energy < player.maxEnergy) {
-                        player.energy = Math.min(player.energy + 1, player.maxEnergy);
-                        updateUI();
-                        saveToFirebase();
-                    }
-                }, 2000); // Regen every 2 seconds
-            }
+        function showPage(pageId, navEl) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`${pageId}-page`).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            navEl.classList.add('active');
+        }
 
-            // ==================== EVENT LISTENERS ====================
-            function initEventListeners() {
-                // Tap button
-                elements.tapButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    handleTap();
-                });
-                
-                elements.tapButton.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                });
+        function copyReferral() {
+            const link = `https://t.me/OMLLA_Coin_bot?start=${user.id}`;
+            navigator.clipboard.writeText(link);
+            tg.showAlert("Gold Referral Link Copied!");
+        }
 
-                // Refill energy
-                elements.refillBtn.addEventListener('click', () => {
-                    refillEnergy();
-                });
+        // Energy Regen
+        setInterval(() => {
+            if(player.energy < 1000) { player.energy += 1; updateUI(); }
+        }, 3000);
 
-                // Show top up modal
-                elements.showTopup.addEventListener('click', () => {
-                    elements.topupModal.classList.add('active');
-                });
+        // Countdown Logic
+        function updateListingTimer() {
+            const now = new Date();
+            const hours = 23 - now.getHours();
+            const minutes = 59 - now.getMinutes();
+            document.getElementById('countdown').innerText = `${hours}h ${minutes}m`;
+        }
+        setInterval(updateListingTimer, 60000);
+        updateListingTimer();
 
-                // Close modal
-                elements.closeModal.addEventListener('click', () => {
-                    elements.topupModal.classList.remove('active');
-                });
-
-                // Top up options
-                document.querySelectorAll('.topup-option').forEach(option => {
-                    option.addEventListener('click', () => {
-                        const amount = parseInt(option.dataset.amount);
-                        topUp(amount);
-                    });
-                });
-
-                // Close modal by clicking outside
-                elements.topupModal.addEventListener('click', (e) => {
-                    if (e.target === elements.topupModal) {
-                        elements.topupModal.classList.remove('active');
-                    }
-                });
-            }
-
-            // ==================== INITIALIZATION ====================
-            function init() {
-                try {
-                    initFirebase();
-                    initEventListeners();
-                    startEnergyRegen();
-                    updateUI();
-                    
-                    // Save on page unload
-                    window.addEventListener('beforeunload', () => {
-                        saveToFirebase();
-                    });
-                    
-                } catch (error) {
-                    logDebug(error.message, true);
-                }
-            }
-
-            // Start the game
-            init();
-
-        })();
     </script>
 </body>
 </html>
