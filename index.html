@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA BOT | OFFICIAL GOLD</title>
+    <title>OMLLA BOT | OFFICIAL</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -89,8 +89,8 @@
             color: #4a3505; font-weight: 900;
         }
 
-        /* Gold Coin Engine */
-        .tap-area { flex: 1; display: flex; justify-content: center; align-items: center; }
+        /* Gold Coin Engine – O$ */
+        .tap-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
         .omlla-gold-btn {
             width: 230px; height: 230px;
             border-radius: 50%;
@@ -102,7 +102,8 @@
             transition: transform 0.05s ease;
         }
         .omlla-gold-btn:active { transform: scale(0.94); }
-        .coin-text { font-size: 40px; font-weight: 900; color: #4a3505; letter-spacing: -1px; }
+        .coin-text { font-size: 80px; font-weight: 900; color: #4a3505; line-height: 1; }
+        .coin-text span { font-size: 40px; margin-left: 5px; }
 
         /* Navigation & Footer */
         .bottom-nav {
@@ -122,9 +123,12 @@
         .action-btn {
             background: var(--dark-light); border: 1px solid var(--primary-gold);
             border-radius: 15px; padding: 12px; color: var(--primary-gold);
-            font-weight: 700; text-align: center; font-size: 14px;
+            font-weight: 700; text-align: center; font-size: 14px; cursor: pointer;
+            transition: 0.2s;
         }
-        .action-btn.primary { background: var(--primary-gold); color: black; }
+        .action-btn:active { transform: scale(0.96); background: #222; }
+        .action-btn.primary { background: var(--primary-gold); color: black; border: none; }
+        .action-btn.primary:active { background: #e6c200; }
 
         /* Pages System */
         .page { display: none; animation: fadeIn 0.3s ease; }
@@ -140,12 +144,12 @@
         .plus-one {
             position: absolute; color: var(--primary-gold); font-weight: 900; font-size: 28px;
             pointer-events: none; animation: floatUp 0.8s forwards;
+            z-index: 1000;
         }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
     </style>
 </head>
 <body>
-
     <div class="container">
         <header>
             <div class="brand">OMLLA CAPITAL NETWORK</div>
@@ -175,9 +179,9 @@
 
         <div class="pages-content" style="flex:1">
             <div id="main-page" class="page active">
-                <div class="tap-area">
+                <div class="tap-area" id="tap-area">
                     <div class="omlla-gold-btn" id="tap-trigger">
-                        <div class="coin-text">OMLLA</div>
+                        <div class="coin-text">O<span>$</span></div>
                     </div>
                 </div>
                 
@@ -206,110 +210,177 @@
 
             <div id="profile-page" class="page">
                 <div class="stat-card"><div class="stat-label" style="font-size:10px; color:#555">TOTAL TAPS</div><div class="stat-value" id="profile-taps">0</div></div>
-                <div class="stat-card"><div class="stat-label" style="font-size:10px; color:#555">RANKING</div><div class="stat-value">#42</div></div>
+                <div class="stat-card"><div class="stat-label" style="font-size:10px; color:#555">RANKING</div><div class="stat-value" id="profile-rank">#42</div></div>
             </div>
         </div>
 
         <div class="action-buttons">
-            <button class="action-btn" onclick="copyReferral()"><i class="fas fa-link"></i> INVITE</button>
-            <button class="action-btn primary" onclick="tg.showAlert('Shop Opening Soon!')"><i class="fas fa-bolt"></i> BOOST</button>
+            <button class="action-btn" id="invite-btn"><i class="fas fa-link"></i> INVITE</button>
+            <button class="action-btn primary" id="boost-btn"><i class="fas fa-bolt"></i> BOOST</button>
         </div>
 
-        <nav class="bottom-nav">
-            <div class="nav-item active" onclick="showPage('main', this)"><i class="fas fa-home"></i><span>Home</span></div>
-            <div class="nav-item" onclick="showPage('perks', this)"><i class="fas fa-gem"></i><span>Perks</span></div>
-            <div class="nav-item" onclick="showPage('rating', this)"><i class="fas fa-trophy"></i><span>Rating</span></div>
-            <div class="nav-item" onclick="showPage('profile', this)"><i class="fas fa-user"></i><span>Profile</span></div>
+        <nav class="bottom-nav" id="bottom-nav">
+            <div class="nav-item active" data-page="main"><i class="fas fa-home"></i><span>Home</span></div>
+            <div class="nav-item" data-page="perks"><i class="fas fa-gem"></i><span>Perks</span></div>
+            <div class="nav-item" data-page="rating"><i class="fas fa-trophy"></i><span>Rating</span></div>
+            <div class="nav-item" data-page="profile"><i class="fas fa-user"></i><span>Profile</span></div>
         </nav>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        (function() {
+            'use strict';
 
-        const firebaseConfig = { databaseURL: "https://omlla-game-default-rtdb.firebaseio.com" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        
-        const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Investor' };
-        const userRef = db.ref('players/' + user.id);
+            const tg = window.Telegram.WebApp;
+            tg.expand();
 
-        let player = { points: 0, energy: 1000, totalTaps: 0 };
+            const firebaseConfig = {
+                databaseURL: "https://omlla-game-default-rtdb.firebaseio.com" // CHANGE THIS
+            };
 
-        // UI Initial Setup
-        document.getElementById('user-name').innerText = user.first_name;
-        document.getElementById('user-id').innerText = user.id;
-        document.getElementById('avatar-char').innerText = user.first_name.charAt(0).toUpperCase();
-
-        function updateUI() {
-            document.getElementById('balance-display').innerText = Math.floor(player.points).toLocaleString();
-            document.getElementById('energy-display').innerText = `${player.energy}/1000`;
-            document.getElementById('energy-fill').style.width = (player.energy / 10) + "%";
-            if(document.getElementById('profile-taps')) document.getElementById('profile-taps').innerText = player.totalTaps;
-        }
-
-        userRef.on('value', (snap) => {
-            const data = snap.val();
-            if(data) {
-                player.points = data.points || 0;
-                player.energy = data.energy ?? 1000;
-                player.totalTaps = data.totalTaps || 0;
-                updateUI();
-            } else {
-                userRef.set({ points: 0, energy: 1000, name: user.first_name, totalTaps: 0 });
+            if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
             }
-        });
+            const db = firebase.database();
+            
+            const user = tg.initDataUnsafe?.user || { id: 'dev_' + Math.random().toString(36).substr(2, 9), first_name: 'Investor' };
+            const userId = user.id;
+            const userRef = db.ref('players/' + userId);
 
-        document.getElementById('tap-trigger').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if(player.energy >= 1) {
-                player.points += 1;
-                player.energy -= 1;
-                player.totalTaps += 1;
-                updateUI();
+            let player = { points: 0, energy: 1000, totalTaps: 0 };
 
-                userRef.update({ points: player.points, energy: player.energy, name: user.first_name, totalTaps: player.totalTaps });
+            const elements = {
+                balance: document.getElementById('balance-display'),
+                energy: document.getElementById('energy-display'),
+                energyFill: document.getElementById('energy-fill'),
+                userName: document.getElementById('user-name'),
+                userId: document.getElementById('user-id'),
+                avatarChar: document.getElementById('avatar-char'),
+                profileTaps: document.getElementById('profile-taps'),
+                profileRank: document.getElementById('profile-rank'),
+                countdown: document.getElementById('countdown'),
+                tapTrigger: document.getElementById('tap-trigger'),
+                inviteBtn: document.getElementById('invite-btn'),
+                boostBtn: document.getElementById('boost-btn'),
+                navItems: document.querySelectorAll('.nav-item'),
+                pages: document.querySelectorAll('.page')
+            };
 
-                // Particle
-                const touch = e.touches[0];
-                const p = document.createElement('div');
-                p.className = 'plus-one'; p.innerText = '+1';
-                p.style.left = touch.clientX + 'px'; p.style.top = touch.clientY + 'px';
-                document.body.appendChild(p);
-                setTimeout(() => p.remove(), 800);
+            elements.userName.innerText = user.first_name;
+            elements.userId.innerText = userId;
+            elements.avatarChar.innerText = user.first_name.charAt(0).toUpperCase();
 
-                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            function updateUI() {
+                elements.balance.innerText = Math.floor(player.points).toLocaleString();
+                elements.energy.innerText = `${player.energy}/1000`;
+                elements.energyFill.style.width = (player.energy / 10) + '%';
+                if (elements.profileTaps) elements.profileTaps.innerText = player.totalTaps.toLocaleString();
+                elements.profileRank.innerText = '#' + (Math.floor(Math.random() * 100) + 1);
             }
-        });
 
-        function showPage(pageId, navEl) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(`${pageId}-page`).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            navEl.classList.add('active');
-        }
+            userRef.on('value', (snap) => {
+                const data = snap.val();
+                if (data) {
+                    player.points = data.points || 0;
+                    player.energy = data.energy ?? 1000;
+                    player.totalTaps = data.totalTaps || 0;
+                } else {
+                    userRef.set({ points: 0, energy: 1000, totalTaps: 0, name: user.first_name });
+                }
+                updateUI();
+            });
 
-        function copyReferral() {
-            const link = `https://t.me/OMLLA_Coin_bot?start=${user.id}`;
-            navigator.clipboard.writeText(link);
-            tg.showAlert("Gold Referral Link Copied!");
-        }
+            function saveEnergy() {
+                userRef.update({ energy: player.energy }).catch(() => {});
+            }
 
-        // Energy Regen
-        setInterval(() => {
-            if(player.energy < 1000) { player.energy += 1; updateUI(); }
-        }, 3000);
+            elements.tapTrigger.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (player.energy >= 1) {
+                    player.points += 1;
+                    player.energy -= 1;
+                    player.totalTaps += 1;
+                    updateUI();
+                    userRef.update({ points: player.points, energy: player.energy, totalTaps: player.totalTaps });
 
-        // Countdown Logic
-        function updateListingTimer() {
-            const now = new Date();
-            const hours = 23 - now.getHours();
-            const minutes = 59 - now.getMinutes();
-            document.getElementById('countdown').innerText = `${hours}h ${minutes}m`;
-        }
-        setInterval(updateListingTimer, 60000);
-        updateListingTimer();
+                    const touch = e.touches[0];
+                    const p = document.createElement('div');
+                    p.className = 'plus-one';
+                    p.innerText = '+1';
+                    p.style.left = touch.clientX + 'px';
+                    p.style.top = touch.clientY + 'px';
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), 800);
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                }
+            });
+            elements.tapTrigger.addEventListener('mousedown', (e) => {
+                if (player.energy >= 1) {
+                    player.points += 1;
+                    player.energy -= 1;
+                    player.totalTaps += 1;
+                    updateUI();
+                    userRef.update({ points: player.points, energy: player.energy, totalTaps: player.totalTaps });
 
+                    const p = document.createElement('div');
+                    p.className = 'plus-one';
+                    p.innerText = '+1';
+                    p.style.left = e.clientX + 'px';
+                    p.style.top = e.clientY + 'px';
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), 800);
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                }
+            });
+
+            setInterval(() => {
+                if (player.energy < 1000) {
+                    player.energy = Math.min(player.energy + 1, 1000);
+                    updateUI();
+                    saveEnergy();
+                }
+            }, 3000);
+
+            function showPage(pageId, activeNav) {
+                elements.pages.forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId + '-page').classList.add('active');
+                elements.navItems.forEach(n => n.classList.remove('active'));
+                activeNav.classList.add('active');
+            }
+
+            elements.navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const page = item.dataset.page;
+                    if (page) showPage(page, item);
+                });
+            });
+
+            elements.inviteBtn.addEventListener('click', () => {
+                const link = `https://t.me/OMLLA_Coin_bot?start=${userId}`;
+                navigator.clipboard.writeText(link).then(() => {
+                    tg.showAlert('✅ Referral link copied!');
+                }).catch(() => {
+                    tg.showAlert('❌ Copy failed, but here\'s your link:\n' + link);
+                });
+            });
+
+            elements.boostBtn.addEventListener('click', () => {
+                tg.showAlert('⚡ Boost feature coming soon!');
+            });
+
+            function updateCountdown() {
+                const now = new Date();
+                const midnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+                const diff = midnight - now;
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                elements.countdown.innerText = `${hours}h ${minutes}m`;
+            }
+            updateCountdown();
+            setInterval(updateCountdown, 60000);
+
+            updateUI();
+        })();
     </script>
 </body>
 </html>
