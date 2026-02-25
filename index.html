@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA GAME | OFFICIAL PRESTIGE</title>
+    <title>OMLLA BOT</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -11,176 +11,1054 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        :root {
-            --primary: #14F195;
-            --primary-glow: rgba(20, 241, 149, 0.4);
-            --dark: #050505;
-            --dark-light: #0f0f0f;
-            --gray: #222;
-            --text-gray: #888;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            background: var(--dark);
-            color: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f7fa;
+            color: #000000;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
         }
 
         .container {
             width: 100%;
             max-width: 400px;
-            padding: 20px;
-            height: 100vh;
+            min-height: 100vh;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            background: radial-gradient(circle at top, #0a1a12 0%, #050505 100%);
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
-        /* Header & Balance */
-        .brand { font-size: 10px; letter-spacing: 5px; color: var(--text-gray); text-align: center; margin-bottom: 10px; font-weight: 800; }
+        /* Header with Timer */
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            padding: 24px 20px;
+            color: white;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+
+        .timer-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .timer-icon {
+            width: 56px;
+            height: 56px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4CAF50;
+            font-size: 28px;
+        }
+
+        .timer-info {
+            flex: 1;
+        }
+
+        .timer-label {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .timer-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* Balance Card */
+        .balance-section {
+            padding: 20px;
+        }
+
         .balance-card {
-            background: var(--dark-light);
-            border-radius: 25px;
-            padding: 25px;
-            border: 1px solid var(--gray);
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .balance-label { font-size: 12px; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; }
-        .balance-amount {
-            font-size: 56px;
-            font-weight: 900;
-            color: var(--primary);
-            text-shadow: 0 0 20px var(--primary-glow);
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #eef2f6;
         }
 
-        /* User Info Bar */
-        .user-info {
-            background: rgba(255,255,255,0.03);
-            border-radius: 50px;
-            padding: 10px 15px;
+        .balance-left {
+            flex: 1;
+        }
+
+        .balance-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .balance-amount {
+            font-size: 40px;
+            font-weight: 800;
+            color: #4CAF50;
+            line-height: 1;
+        }
+
+        .balance-currency {
+            font-size: 18px;
+            color: #94a3b8;
+            margin-left: 4px;
+        }
+
+        .balance-right {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            padding: 0 20px 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .stat-item {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 14px 8px;
+            text-align: center;
+            border: 1px solid #eef2f6;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* Timer Section (like Bitnord) */
+        .timer-section {
+            background: #f8fafc;
+            margin: 0 20px 20px;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #eef2f6;
+        }
+
+        .timer-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e293b;
+        }
+
+        .timer-header i {
+            color: #4CAF50;
+            font-size: 20px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 75%;
+            background: linear-gradient(90deg, #4CAF50, #6fbf73);
+            border-radius: 4px;
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .step-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            border: 1px solid var(--gray);
-            margin: 15px 0;
-        }
-        .user-avatar {
-            width: 35px; height: 35px;
-            background: linear-gradient(45deg, var(--primary), #0fa86a);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: black;
+            color: #475569;
+            font-size: 14px;
         }
 
-        /* Tap Area */
-        .tap-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; }
-        .coin-btn {
-            width: 250px; height: 250px;
+        .step-item i {
+            width: 20px;
+            color: #4CAF50;
+            font-size: 16px;
+        }
+
+        .highlight-text {
+            font-weight: 700;
+            margin: 20px 0 16px;
+            text-align: center;
+            font-size: 18px;
+            color: #1e293b;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            padding: 0 20px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 18px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
             cursor: pointer;
-            transition: transform 0.05s;
-            position: relative;
-        }
-        .coin-btn:active { transform: scale(0.93); }
-        .coin-btn img {
-            width: 100%; height: 100%;
-            filter: drop-shadow(0 0 30px var(--primary));
-            animation: float 3s ease-in-out infinite;
+            transition: transform 0.1s;
+            border: none;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .action-btn:active {
+            transform: scale(0.97);
         }
 
-        /* Stamina / Energy */
-        .energy-container { background: var(--dark-light); border-radius: 20px; padding: 15px; border: 1px solid var(--gray); }
-        .energy-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
-        .energy-bar-bg { height: 8px; background: var(--gray); border-radius: 10px; overflow: hidden; }
-        .energy-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s linear; }
-
-        /* Boosters */
-        .boost-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .boost-btn {
-            background: var(--dark-light);
-            border: 1px solid var(--gray);
-            border-radius: 15px;
-            padding: 12px;
+        .action-btn.primary {
+            background: #4CAF50;
             color: white;
-            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .action-btn.secondary {
+            background: white;
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 0 20px 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .quick-item {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 12px 4px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid #eef2f6;
+            transition: all 0.2s;
+        }
+
+        .quick-item:active {
+            background: #eef2f6;
+            transform: scale(0.95);
+        }
+
+        .quick-item i {
+            font-size: 22px;
+            color: #4CAF50;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .quick-item span {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Commands Section */
+        .commands-section {
+            padding: 0 20px 20px;
+        }
+
+        .command-item {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #eef2f6;
+        }
+
+        .command-icon {
+            width: 40px;
+            height: 40px;
+            background: #4CAF50;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .command-info {
+            flex: 1;
+        }
+
+        .command-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .command-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .command-arrow {
+            color: #4CAF50;
+            font-size: 14px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            border-top: 2px solid #eef2f6;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px;
+            margin-top: auto;
+            position: sticky;
+            bottom: 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: #4CAF50;
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Perks Page */
+        .perks-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .perk-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #eef2f6;
+        }
+
+        .perk-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .perk-icon {
+            width: 44px;
+            height: 44px;
+            background: #4CAF50;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+        }
+
+        .perk-info h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .perk-info p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .perk-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4CAF50;
+        }
+
+        /* Rating Page */
+        .rating-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .rating-item {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #eef2f6;
+        }
+
+        .rank {
+            width: 36px;
+            height: 36px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .rank.gold {
+            background: #fbbf24;
+            color: white;
+        }
+
+        .rank.silver {
+            background: #94a3b8;
+            color: white;
+        }
+
+        .rank.bronze {
+            background: #b45309;
+            color: white;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .player-score {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .player-score span {
+            color: #4CAF50;
+            font-weight: 700;
+        }
+
+        .your-rank {
+            margin-top: 20px;
+            text-align: center;
+            padding: 16px;
+            background: #4CAF50;
+            border-radius: 16px;
+            color: white;
+            font-weight: 700;
+        }
+
+        /* Profile Page */
+        .profile-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #eef2f6;
+        }
+
+        .profile-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #475569;
+        }
+
+        .profile-label i {
+            color: #4CAF50;
+            width: 20px;
+        }
+
+        .profile-value {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            padding: 28px;
+            max-width: 320px;
+            width: 90%;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        .modal-option {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 18px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .modal-option:active {
+            border-color: #4CAF50;
+        }
+
+        .modal-amount {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .modal-price {
+            background: #4CAF50;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 30px;
             font-weight: 600;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .boost-btn.primary { background: var(--primary); color: black; border: none; }
 
-        .footer { text-align: center; font-size: 10px; color: var(--text-gray); padding: 15px 0; }
-
-        /* Particles */
-        .plus-one {
-            position: absolute; color: var(--primary); font-weight: 900; font-size: 28px;
-            pointer-events: none; animation: tapAnim 0.8s ease-out forwards; z-index: 100;
+        .modal-close {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 18px;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
         }
-        @keyframes tapAnim {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-120px); }
+
+        .modal-close.secondary {
+            background: #e2e8f0;
+            color: #475569;
+            margin-top: 8px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: 500;
+            display: none;
+            z-index: 2000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 100px; opacity: 1; }
+        }
+
+        .referral-link {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 16px;
+            word-break: break-all;
+            font-size: 13px;
+            margin: 16px 0;
+            border: 1px solid #eef2f6;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <header>
-            <div class="brand">OMLLA CAPITAL NETWORK</div>
+        <!-- Header with Timer -->
+        <div class="header">
+            <div class="header-title">OMLLA</div>
+            <div class="header-subtitle">bot</div>
+            
+            <div class="timer-card">
+                <div class="timer-icon">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="timer-info">
+                    <div class="timer-label">Before listing starts</div>
+                    <div class="timer-value" id="main-timer">1 Days</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Balance Card -->
+        <div class="balance-section">
             <div class="balance-card">
-                <div class="balance-label">Total Capital</div>
-                <div class="balance-amount"><span id="balance">0</span><small style="font-size: 16px; margin-left: 5px;">O$</small></div>
-            </div>
-
-            <div class="user-info">
-                <div class="user-avatar" id="user-avatar">?</div>
-                <div style="flex: 1; text-align: left;">
-                    <div id="user-name" style="font-weight: 700; font-size: 14px;">Loading Node...</div>
-                    <div id="user-id" style="font-size: 10px; color: var(--text-gray);">ID: ---</div>
+                <div class="balance-left">
+                    <div class="balance-label">Your Balance</div>
+                    <div class="balance-amount">
+                        <span id="balance-display">0</span>
+                        <span class="balance-currency">O$</span>
+                    </div>
                 </div>
-                <div style="background: var(--primary); color: black; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold;">ELITE</div>
+                <div class="balance-right" id="user-level">Beginner</div>
             </div>
-        </header>
+        </div>
 
-        <main class="tap-area">
-            <div class="coin-btn" id="tap-button">
-                <img src="https://img.icons8.com/emoji/256/turtle-emoji.png" alt="Coin">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value" id="total-taps">0</div>
+                <div class="stat-label">👏 Total</div>
             </div>
-        </main>
+            <div class="stat-item">
+                <div class="stat-value" id="energy-display">1000</div>
+                <div class="stat-label">⚡ Energy</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="referral-count">0</div>
+                <div class="stat-label">👥 Friends</div>
+            </div>
+        </div>
 
-        <footer>
-            <div class="energy-container">
-                <div class="energy-header">
-                    <span><i class="fas fa-bolt" style="color: var(--primary);"></i> STAMINA</span>
-                    <span id="energy-display">1000/1000</span>
+        <!-- MAIN PAGE (Home) -->
+        <div id="main-page" class="page active">
+            <!-- Timer Section -->
+            <div class="timer-section">
+                <div class="timer-header">
+                    <i class="fas fa-clock"></i>
+                    Dags att öka din inkomst!
                 </div>
-                <div class="energy-bar-bg">
-                    <div class="energy-bar-fill" id="energy-fill" style="width: 100%"></div>
+                
+                <div class="steps-list">
+                    <div class="step-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Du har hamnat på listan över aktiva användare</span>
+                    </div>
+                    <div class="step-item">
+                        <i class="fas fa-star"></i>
+                        <span>+25% extra bonus</span>
+                    </div>
+                </div>
+
+                <div class="timer-header" style="margin-top: 8px;">
+                    <i class="fas fa-hourglass-start"></i>
+                    Timern är redan igång - 24 timmar
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 75%"></div>
+                </div>
+                
+                <div class="steps-list">
+                    <div class="step-item">
+                        <i class="fas fa-pen"></i>
+                        <span>Skriva till ägaren</span>
+                    </div>
+                    <div class="step-item">
+                        <i class="fas fa-gift"></i>
+                        <span>Hämta din bonus</span>
+                    </div>
+                </div>
+
+                <div class="highlight-text">
+                    Agera nu!
                 </div>
             </div>
 
-            <div class="boost-section">
-                <button class="boost-btn" onclick="location.reload()"><i class="fas fa-sync"></i> Refresh</button>
-                <button class="boost-btn primary" id="show-topup"><i class="fas fa-rocket"></i> Boosters</button>
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn primary" id="action-write">
+                    <i class="fas fa-pen"></i> SKRIVA
+                </button>
+                <button class="action-btn secondary" id="action-now">
+                    <i class="fas fa-bolt"></i> NU
+                </button>
             </div>
+        </div>
 
-            <div class="footer">
-                <div id="status" style="color: var(--primary); margin-bottom: 4px;">Node Status: Synchronizing...</div>
-                <div>© 2026 OMLLA GAME | PRESTIGE EDITION</div>
+        <!-- PERKS PAGE -->
+        <div id="perks-page" class="page">
+            <div class="timer-section">
+                <div class="timer-header">
+                    <i class="fas fa-gem"></i>
+                    Perks & Bonuses
+                </div>
+                
+                <div class="perks-grid">
+                    <div class="perk-card">
+                        <div class="perk-left">
+                            <div class="perk-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="perk-info">
+                                <h4>Daily Boost</h4>
+                                <p>Claim every 24 hours</p>
+                            </div>
+                        </div>
+                        <div class="perk-value">+50</div>
+                    </div>
+                    
+                    <div class="perk-card">
+                        <div class="perk-left">
+                            <div class="perk-icon"><i class="fas fa-users"></i></div>
+                            <div class="perk-info">
+                                <h4>Referral Bonus</h4>
+                                <p>Per friend joins</p>
+                            </div>
+                        </div>
+                        <div class="perk-value">+100</div>
+                    </div>
+                    
+                    <div class="perk-card">
+                        <div class="perk-left">
+                            <div class="perk-icon"><i class="fas fa-fire"></i></div>
+                            <div class="perk-info">
+                                <h4>Streak Bonus</h4>
+                                <p>7 days consecutive</p>
+                            </div>
+                        </div>
+                        <div class="perk-value">+25%</div>
+                    </div>
+                    
+                    <div class="perk-card">
+                        <div class="perk-left">
+                            <div class="perk-icon"><i class="fas fa-trophy"></i></div>
+                            <div class="perk-info">
+                                <h4>Top 10 Bonus</h4>
+                                <p>Weekly ranking</p>
+                            </div>
+                        </div>
+                        <div class="perk-value">+500</div>
+                    </div>
+                </div>
             </div>
-        </footer>
+        </div>
+
+        <!-- RATING PAGE -->
+        <div id="rating-page" class="page">
+            <div class="timer-section">
+                <div class="timer-header">
+                    <i class="fas fa-trophy"></i>
+                    Top Players
+                </div>
+                
+                <div class="rating-list">
+                    <div class="rating-item">
+                        <div class="rank gold">1</div>
+                        <div class="player-info">
+                            <div class="player-name">CryptoKing</div>
+                            <div class="player-score"><span>15,420</span> O$</div>
+                        </div>
+                        <i class="fas fa-crown" style="color: gold;"></i>
+                    </div>
+                    
+                    <div class="rating-item">
+                        <div class="rank silver">2</div>
+                        <div class="player-info">
+                            <div class="player-name">OMLLA Master</div>
+                            <div class="player-score"><span>12,850</span> O$</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-item">
+                        <div class="rank bronze">3</div>
+                        <div class="player-info">
+                            <div class="player-name">Coin Hunter</div>
+                            <div class="player-score"><span>10,230</span> O$</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-item">
+                        <div class="rank">4</div>
+                        <div class="player-info">
+                            <div class="player-name">Tap Master</div>
+                            <div class="player-score"><span>8,940</span> O$</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-item">
+                        <div class="rank">5</div>
+                        <div class="player-info">
+                            <div class="player-name">Crypto Whale</div>
+                            <div class="player-score"><span>7,650</span> O$</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="your-rank" id="user-rank">
+                    Your Rank: #42
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE PAGE -->
+        <div id="profile-page" class="page">
+            <div class="timer-section">
+                <div class="timer-header">
+                    <i class="fas fa-user"></i>
+                    Your Profile
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="profile-row">
+                        <div class="profile-label">
+                            <i class="fas fa-id-card"></i>
+                            <span>User ID</span>
+                        </div>
+                        <div class="profile-value" id="profile-id">Loading...</div>
+                    </div>
+                    
+                    <div class="profile-row">
+                        <div class="profile-label">
+                            <i class="fas fa-level-up"></i>
+                            <span>Level</span>
+                        </div>
+                        <div class="profile-value" id="profile-level">1</div>
+                    </div>
+                    
+                    <div class="profile-row">
+                        <div class="profile-label">
+                            <i class="fas fa-hand-pointer"></i>
+                            <span>Total Taps</span>
+                        </div>
+                        <div class="profile-value" id="profile-taps">0</div>
+                    </div>
+                    
+                    <div class="profile-row">
+                        <div class="profile-label">
+                            <i class="fas fa-users"></i>
+                            <span>Referrals</span>
+                        </div>
+                        <div class="profile-value" id="profile-referrals">0</div>
+                    </div>
+                    
+                    <div class="profile-row">
+                        <div class="profile-label">
+                            <i class="fas fa-calendar"></i>
+                            <span>Member Since</span>
+                        </div>
+                        <div class="profile-value" id="member-since">2024</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions (OMLLA Coin) -->
+        <div class="quick-actions">
+            <div class="quick-item" id="tap-button">
+                <i class="fas fa-hand-pointer"></i>
+                <span>Tap</span>
+            </div>
+            <div class="quick-item" id="refill-energy">
+                <i class="fas fa-bolt"></i>
+                <span>Refill</span>
+            </div>
+            <div class="quick-item" id="boost-energy">
+                <i class="fas fa-rocket"></i>
+                <span>Boost</span>
+            </div>
+            <div class="quick-item" id="show-topup">
+                <i class="fas fa-coins"></i>
+                <span>Buy</span>
+            </div>
+        </div>
+
+        <!-- Commands Section -->
+        <div class="commands-section">
+            <div class="command-item">
+                <div class="command-icon">/</div>
+                <div class="command-info">
+                    <div class="command-name">/start</div>
+                    <div class="command-desc">Launch App</div>
+                </div>
+                <i class="fas fa-chevron-right command-arrow"></i>
+            </div>
+            <div class="command-item">
+                <div class="command-icon">🌐</div>
+                <div class="command-info">
+                    <div class="command-name">/launch</div>
+                    <div class="command-desc">Select language</div>
+                </div>
+                <i class="fas fa-chevron-right command-arrow"></i>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" data-page="main">
+                <i class="fas fa-home"></i>
+                <span>Main</span>
+            </div>
+            <div class="nav-item" data-page="perks">
+                <i class="fas fa-gem"></i>
+                <span>Perks</span>
+            </div>
+            <div class="nav-item" data-page="rating">
+                <i class="fas fa-trophy"></i>
+                <span>Rating</span>
+            </div>
+            <div class="nav-item" data-page="profile">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </div>
+        </div>
     </div>
+
+    <!-- Top Up Modal -->
+    <div class="modal" id="topup-modal">
+        <div class="modal-content">
+            <div class="modal-title">💰 Buy O$</div>
+            <div class="modal-option" data-amount="100" data-price="1">
+                <span class="modal-amount">100 O$</span>
+                <span class="modal-price">1 ⭐</span>
+            </div>
+            <div class="modal-option" data-amount="500" data-price="4">
+                <span class="modal-amount">500 O$</span>
+                <span class="modal-price">4 ⭐</span>
+            </div>
+            <div class="modal-option" data-amount="1000" data-price="7">
+                <span class="modal-amount">1,000 O$</span>
+                <span class="modal-price">7 ⭐</span>
+            </div>
+            <div class="modal-option" data-amount="5000" data-price="30">
+                <span class="modal-amount">5,000 O$</span>
+                <span class="modal-price">30 ⭐</span>
+            </div>
+            <button class="modal-close" id="close-modal">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Referral Modal -->
+    <div class="modal" id="referral-modal">
+        <div class="modal-content">
+            <div class="modal-title">👥 Your Referral Link</div>
+            <div class="referral-link" id="referral-link">Loading...</div>
+            <button class="modal-close" id="copy-link">Copy Link</button>
+            <button class="modal-close secondary" id="close-referral">Close</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Copied!</div>
 
     <script>
         (function() {
@@ -192,80 +1070,99 @@
                 databaseURL: "https://omlla-game-default-rtdb.firebaseio.com"
             };
 
-            firebase.initializeApp(firebaseConfig);
-            const db = firebase.database();
-            
-            const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Master' };
-            const userRef = db.ref('players/' + user.id);
+            const elements = {
+                balance: document.getElementById('balance-display'),
+                energy: document.getElementById('energy-display'),
+                totalTaps: document.getElementById('total-taps'),
+                referralCount: document.getElementById('referral-count'),
+                userLevel: document.getElementById('user-level'),
+                mainTimer: document.getElementById('main-timer'),
+                profileId: document.getElementById('profile-id'),
+                profileLevel: document.getElementById('profile-level'),
+                profileTaps: document.getElementById('profile-taps'),
+                profileReferrals: document.getElementById('profile-referrals'),
+                memberSince: document.getElementById('member-since'),
+                userRank: document.getElementById('user-rank'),
+                tapButton: document.getElementById('tap-button'),
+                refillBtn: document.getElementById('refill-energy'),
+                boostBtn: document.getElementById('boost-energy'),
+                showTopup: document.getElementById('show-topup'),
+                actionWrite: document.getElementById('action-write'),
+                actionNow: document.getElementById('action-now'),
+                topupModal: document.getElementById('topup-modal'),
+                closeModal: document.getElementById('close-modal'),
+                referralModal: document.getElementById('referral-modal'),
+                closeReferral: document.getElementById('close-referral'),
+                referralLink: document.getElementById('referral-link'),
+                copyLink: document.getElementById('copy-link'),
+                toast: document.getElementById('toast'),
+                navItems: document.querySelectorAll('.nav-item'),
+                pages: document.querySelectorAll('.page')
+            };
 
             let player = {
+                id: null,
+                name: 'User',
                 points: 0,
                 energy: 1000,
                 maxEnergy: 1000,
-                name: user.first_name
+                totalTaps: 0,
+                level: 1,
+                referrals: 0,
+                lastDaily: 0,
+                joinDate: new Date().getFullYear()
             };
 
-            function updateUI() {
-                document.getElementById('balance').textContent = Math.floor(player.points).toLocaleString();
-                document.getElementById('energy-display').textContent = `${Math.floor(player.energy)}/${player.maxEnergy}`;
-                document.getElementById('energy-fill').style.width = `${(player.energy / player.maxEnergy) * 100}%`;
-                document.getElementById('user-name').textContent = player.name;
-                document.getElementById('user-id').textContent = `ID: ${user.id}`;
-                document.getElementById('user-avatar').textContent = player.name.charAt(0).toUpperCase();
+            let db = null;
+            let userRef = null;
+
+            // Timer countdown
+            function updateTimer() {
+                const now = new Date();
+                const target = new Date();
+                target.setDate(target.getDate() + 1);
+                const diff = target - now;
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                if (elements.mainTimer) {
+                    elements.mainTimer.textContent = `${hours}h ${minutes}m`;
+                }
             }
 
-            // Load Data & Sync
-            userRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    player.points = data.points || 0;
-                    player.energy = data.energy ?? 1000;
-                    player.name = data.name || user.first_name;
-                    updateUI();
+            setInterval(updateTimer, 60000);
+            updateTimer();
+
+            function showToast(message) {
+                if (!elements.toast) return;
+                elements.toast.textContent = message;
+                elements.toast.classList.add('show');
+                setTimeout(() => elements.toast.classList.remove('show'), 2000);
+            }
+
+            function updateUI() {
+                if (elements.balance) elements.balance.textContent = Math.floor(player.points).toLocaleString();
+                if (elements.energy) elements.energy.textContent = player.energy;
+                if (elements.totalTaps) elements.totalTaps.textContent = player.totalTaps.toLocaleString();
+                if (elements.referralCount) elements.referralCount.textContent = player.referrals;
+                
+                // Update level
+                if (player.points < 100) {
+                    if (elements.userLevel) elements.userLevel.textContent = '🐣 Beginner';
+                } else if (player.points < 1000) {
+                    if (elements.userLevel) elements.userLevel.textContent = '🌱 Bronze';
+                } else if (player.points < 5000) {
+                    if (elements.userLevel) elements.userLevel.textContent = '🌿 Silver';
+                } else if (player.points < 10000) {
+                    if (elements.userLevel) elements.userLevel.textContent = '🔥 Gold';
                 } else {
-                    // Satisfaction of rule: newData.hasChildren(['points', 'name'])
-                    userRef.set({ points: 0, energy: 1000, name: user.first_name });
+                    if (elements.userLevel) elements.userLevel.textContent = '👑 Legend';
                 }
-                document.getElementById('status').textContent = "Node Status: Online Secure";
-            });
 
-            // Tap Logic
-            document.getElementById('tap-button').addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                if (player.energy >= 1) {
-                    player.points += 1;
-                    player.energy -= 1;
-                    updateUI();
-                    
-                    // Create Animation
-                    const touch = e.touches[0];
-                    const p = document.createElement('div');
-                    p.className = 'plus-one'; p.textContent = '+1';
-                    p.style.left = touch.clientX + 'px'; p.style.top = touch.clientY + 'px';
-                    document.body.appendChild(p);
-                    setTimeout(() => p.remove(), 800);
-
-                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-
-                    // Save (Ensuring both points and name are sent)
-                    userRef.update({
-                        points: player.points,
-                        energy: player.energy,
-                        name: user.first_name
-                    });
-                }
-            });
-
-            // Energy Regen
-            setInterval(() => {
-                if (player.energy < player.maxEnergy) {
-                    player.energy = Math.min(player.energy + 1, player.maxEnergy);
-                    updateUI();
-                }
-            }, 2500);
-
-        })();
-    </script>
-</body>
-</html>
+                // Update profile page
+                if (elements.profileLevel) elements.profileLevel.textContent = player.level;
+                if (elements.profileTaps) elements.profileTaps.textContent = player.totalTaps.toLocaleString();
+                if (elements.profileReferrals) elements.profileReferrals.textContent = player.referrals;
+                if (elements.memberSince) elements
 
