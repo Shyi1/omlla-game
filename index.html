@@ -3,255 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TURTLE PRESTIGE GLOBAL</title>
+    <title>OMLLA | Elite Mining Game</title>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Rajdhani:wght@500;700&display=swap');
 
+    <style>
         :root {
-            --emerald: #00ff88;
-            --gold: #ffcc00;
-            --dark-glass: rgba(10, 10, 10, 0.85);
-            --neon-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            --omlla-main: #14F195; /* Emerald Green */
+            --omlla-dark: #050505;
+            --omlla-glass: rgba(255, 255, 255, 0.05);
+            --omlla-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--omlla-dark);
+            color: #ffffff;
+            font-family: 'Inter', -apple-system, sans-serif;
             margin: 0;
             overflow: hidden;
+            user-select: none;
+        }
+
+        .omlla-viewport {
             height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            box-sizing: border-box;
+            background: radial-gradient(circle at top, #0a1a12 0%, #050505 100%);
         }
 
-        /* Luxury Background Animation */
-        .bg-glow {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
-            pointer-events: none; z-index: -1;
-        }
-
-        /* Master UI Container */
-        .app-container {
-            display: flex; flex-direction: column; height: 100vh; padding: 20px; box-sizing: border-box;
-        }
-
-        /* Top Header: Rank & Profile */
-        .top-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-        }
-
-        .rank-badge {
-            background: linear-gradient(45deg, #111, #222);
-            padding: 8px 15px; border-radius: 50px; border: 1px solid var(--emerald);
-            font-family: 'Orbitron', sans-serif; font-size: 10px; color: var(--emerald);
-            box-shadow: var(--neon-shadow);
-        }
-
-        /* Balance Section */
-        .balance-section { text-align: center; margin: 15px 0; }
-        .token-name { font-size: 14px; color: #888; letter-spacing: 4px; margin-bottom: 5px; }
-        .main-balance { 
-            font-family: 'Orbitron', sans-serif; font-size: 55px; font-weight: 900;
-            background: linear-gradient(to bottom, #fff 40%, var(--emerald));
+        /* Branding & Balance */
+        .branding { text-align: center; margin-top: 5px; }
+        .branding span { font-size: 10px; letter-spacing: 5px; color: #444; font-weight: 900; }
+        .omlla-balance { 
+            font-size: 55px; font-weight: 900; 
+            background: linear-gradient(to bottom, #fff, var(--omlla-main));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+            margin: 10px 0;
         }
 
-        /* Stats Luxury Dock */
-        .stats-dock {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px;
-        }
+        /* Stats Dashboard */
+        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; }
+        .stat-box { background: var(--omlla-glass); border: 1px solid var(--omlla-border); padding: 12px; border-radius: 18px; text-align: center; }
+        .stat-box small { font-size: 9px; color: #666; text-transform: uppercase; display: block; }
+        .stat-box b { color: var(--omlla-main); font-size: 16px; }
 
-        .stat-pill {
-            background: var(--dark-glass); border: 1px solid rgba(255,255,255,0.05);
-            padding: 12px; border-radius: 20px; text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-pill i { color: var(--emerald); font-size: 16px; margin-bottom: 5px; display: block; }
-        .stat-pill span { display: block; font-size: 10px; color: #666; text-transform: uppercase; }
-        .stat-pill b { font-size: 14px; font-weight: 700; }
-
-        /* The Ultimate Turtle Coin */
-        .coin-engine {
-            flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative;
-        }
-
-        .turtle-sphere {
-            width: 290px; height: 290px; border-radius: 50%;
-            background: #050505; position: relative;
+        /* The Mining Turtle */
+        .mining-core { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+        .omlla-coin {
+            width: 270px; height: 270px; border-radius: 50%;
+            background: #000; border: 4px solid #111;
+            box-shadow: 0 0 60px rgba(20, 241, 149, 0.05);
             display: flex; justify-content: center; align-items: center;
-            border: 2px solid #111;
-            box-shadow: 0 0 100px rgba(0, 255, 136, 0.05), inset 0 0 20px rgba(0,0,0,0.8);
-            cursor: pointer; transition: transform 0.05s ease;
+            cursor: pointer; transition: transform 0.05s;
         }
+        .omlla-coin:active { transform: scale(0.94); }
+        .omlla-coin img { width: 70%; filter: drop-shadow(0 0 25px var(--omlla-main)); }
 
-        /* Outer Halo Ring */
-        .halo {
-            position: absolute; width: 115%; height: 115%; border-radius: 50%;
-            border: 1px dashed rgba(0, 255, 136, 0.2); animation: spin 30s linear infinite;
+        /* Prestige Shop UI */
+        .omlla-shop {
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 75%;
+            background: #080808; border-top: 2px solid var(--omlla-main);
+            border-radius: 30px 30px 0 0; z-index: 2000; padding: 30px;
+            transition: bottom 0.4s cubic-bezier(0.1, 0.8, 0.3, 1); box-sizing: border-box;
         }
-
-        .turtle-sphere img { width: 75%; filter: drop-shadow(0 0 20px var(--emerald)); z-index: 2; }
-        .turtle-sphere:active { transform: scale(0.92); }
-
-        /* Energy & Progress */
-        .power-system { margin-bottom: 100px; }
-        .progress-meta { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 10px; color: var(--emerald); }
-        .progress-track { height: 6px; background: #111; border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #004422, var(--emerald)); box-shadow: 0 0 15px var(--emerald); transition: 0.3s; }
-
-        /* Bottom iOS Style Navigation */
-        .nav-island {
-            position: fixed; bottom: 25px; left: 5%; width: 90%; height: 75px;
-            background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(20px);
-            border-radius: 30px; border: 1px solid rgba(255,255,255,0.08);
-            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+        .omlla-shop.active { bottom: 0; }
+        .shop-item {
+            background: var(--omlla-glass); padding: 18px; border-radius: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; border: 1px solid var(--omlla-border);
         }
+        .buy-action { background: var(--omlla-main); color: #000; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 900; cursor: pointer; }
 
-        .nav-link { color: #444; text-align: center; font-size: 10px; transition: 0.3s; }
-        .nav-link i { font-size: 22px; margin-bottom: 5px; display: block; }
-        .nav-link.active { color: var(--emerald); text-shadow: 0 0 10px var(--emerald); }
-
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* Click Particles */
-        .tap-msg { position: absolute; font-family: 'Orbitron'; color: var(--emerald); font-weight: 900; animation: floatUp 0.8s ease-out forwards; pointer-events: none; z-index: 100; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-150px) scale(1.5); } }
-
-        /* Admin Secret Panel */
-        #masterMenu {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95);
-            z-index: 10000; display: none; padding: 40px; box-sizing: border-box;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="bg-glow"></div>
-
-    <div id="masterMenu">
-        <h2 style="color: var(--emerald);">ELITE CONTROL</h2>
-        <input type="number" id="newBal" placeholder="Set Balance" style="width:100%; padding:15px; background:#111; border:1px solid var(--emerald); color:white; border-radius:10px;">
-        <button onclick="applyMaster()" style="width:100%; padding:15px; margin-top:10px; background:var(--emerald); border:none; border-radius:10px; font-weight:bold;">CONFIRM CHANGES</button>
-        <button onclick="toggleMaster()" style="width:100%; margin-top:20px; background:none; color:grey; border:none;">Exit System</button>
-    </div>
-
-    <div class="app-container">
-        
-        <div class="top-header">
-            <div class="rank-badge" id="rankBadge">ROOKIE II</div>
-            <div style="background: var(--dark-glass); padding: 5px 12px; border-radius: 50px; font-size: 12px; border: 1px solid #222;">
-                <i class="fas fa-wallet" style="margin-right: 5px;"></i> SOLANA
-            </div>
-        </div>
-
-        <div class="balance-section">
-            <div class="token-name" onclick="masterTrigger()">TURTLE COINS</div>
-            <div class="main-balance" id="displayBalance">0.00</div>
-        </div>
-
-        <div class="stats-dock">
-            <div class="stat-pill"><i class="fas fa-bolt"></i><span>Energy</span><b id="energyNum">1500</b></div>
-            <div class="stat-pill"><i class="fas fa-chart-line"></i><span>Mining</span><b>2.5X</b></div>
-            <div class="stat-pill"><i class="fas fa-users"></i><span>Circle</span><b>12</b></div>
-        </div>
-
-        <div class="coin-engine">
-            <div class="halo"></div>
-            <div class="turtle-sphere" id="tapSurface">
-                <img src="https://img.icons8.com/emoji/256/turtle-emoji.png" alt="Turtle Logo">
-            </div>
-        </div>
-
-        <div class="power-system">
-            <div class="progress-meta">
-                <b>STAMINA</b>
-                <span id="percVal">100%</span>
-            </div>
-            <div class="progress-track">
-                <div class="progress-fill" id="energyFill"></div>
-            </div>
-        </div>
-
-    </div>
-
-    <nav class="nav-island">
-        <div class="nav-link active"><i class="fas fa-ghost"></i>Mine</div>
-        <div class="nav-link" onclick="tg.showAlert('Market Analysis Underway...')"><i class="fas fa-chart-pie"></i>Market</div>
-        <div class="nav-link" onclick="handleRefer()"><i class="fas fa-link"></i>Refer</div>
-        <div class="nav-link" onclick="tg.showConfirm('Enter the Vault?')"><i class="fas fa-vault"></i>Vault</div>
-    </nav>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.enableClosingConfirmation();
-        tg.setHeaderColor('#000000');
-
-        let bal = parseFloat(localStorage.getItem('zen_bal')) || 0;
-        let nrg = 1500;
-        let masterHits = 0;
-
-        function update() {
-            document.getElementById('displayBalance').innerText = bal.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('energyNum').innerText = nrg;
-            document.getElementById('energyFill').style.width = (nrg/1500*100) + "%";
-            document.getElementById('percVal').innerText = Math.floor(nrg/1500*100) + "%";
-            
-            // Auto Rank System
-            if(bal > 10000) document.getElementById('rankBadge').innerText = "LEGENDARY WHALE";
-            else if(bal > 5000) document.getElementById('rankBadge').innerText = "ELITE TRADER";
-            else if(bal > 1000) document.getElementById('rankBadge').innerText = "PRO MINER";
-        }
-
-        document.getElementById('tapSurface').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            for(let i=0; i < e.touches.length; i++) {
-                if(nrg > 0) {
-                    bal += 0.75;
-                    nrg -= 1;
-                    showTapEffect(e.touches[i].clientX, e.touches[i].clientY);
-                    if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-                }
-            }
-            update();
-            localStorage.setItem('zen_bal', bal);
-        });
-
-        function showTapEffect(x, y) {
-            const m = document.createElement('div');
-            m.className = 'tap-msg';
-            m.innerText = '+$0.75';
-            m.style.left = x + 'px'; m.style.top = y + 'px';
-            document.body.appendChild(m);
-            setTimeout(() => m.remove(), 800);
-        }
-
-        function masterTrigger() {
-            masterHits++;
-            if(masterHits >= 7) { toggleMaster(); masterHits = 0; }
-        }
-
-        function toggleMaster() {
-            const m = document.getElementById('masterMenu');
-            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function applyMaster() {
-            const v = document.getElementById('newBal').value;
-            if(v !== "") { bal = parseFloat(v); update(); toggleMaster(); }
-        }
-
-        function handleRefer() {
-            const link = `https://t.me/YourBot?start=id${tg.initDataUnsafe.user?.id || '007'}`;
-            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Join the VIP Turtle Mining circle! 🐢💰`);
-        }
-
-        setInterval(() => { if(nrg < 1500) { nrg += 2; update(); } }, 1500);
-        update();
-    </script>
-</body>
-</html>
+        /* Nav Dock */
+        .nav-dock {
+            position: fixed; bottom:
