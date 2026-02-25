@@ -1,40 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA CAPITAL | ELITE GOLD</title>
+<nav class="tab-bar">
+    <div class="tab-link active" onclick="switchPage('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
+    <div class="tab-link" onclick="switchPage('tasks', this)"><i class="fas fa-list-check"></i>TASKS</div>
+    <div class="tab-link" onclick="switchPage('referral', this)"><i class="fas fa-users"></i>FRIENDS</div>
+    <div class="tab-link" onclick="switchPage('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
+</nav>
+
+<div id="referral-page" class="page">
+    <h3 style="color:var(--gold); text-align:center; margin-bottom:10px;">VIRAL GROWTH</h3>
+    <p style="text-align:center; font-size:12px; color:#888; margin-bottom:20px;">Invite friends and earn 10% of their gold!</p>
     
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <div class="balance-master" style="margin-bottom:20px; text-align:center;">
+        <div style="font-size:10px; color:var(--gold-soft);">TOTAL FRIENDS</div>
+        <div class="val-display" id="ref-count" style="font-size:32px;">0</div>
+    </div>
 
-    <style>
-        :root {
-            --gold: #FFD700;
-            --gold-soft: #bf953f;
-            --gold-lux: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 50%, #fbf5b7 55%, #aa771c 100%);
-            --bg: #050505;
-            --card-bg: #0f0f0f;
-            --glass: rgba(255, 215, 0, 0.05);
+    <button class="btn-action" style="width:100%; height:55px; font-size:16px; margin-bottom:15px;" onclick="shareReferral()">
+        <i class="fas fa-paper-plane"></i> INVITE A FRIEND
+    </button>
+    <button class="btn-action" style="width:100%; background:transparent; border:1px solid var(--gold); color:var(--gold);" onclick="copyReferralLink()">
+        COPY LINK
+    </button>
+</div>
+
+<div id="wallet-page" class="page">
+    <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">DIGITAL ASSETS</h3>
+    
+    <div class="task-card" style="background:linear-gradient(45deg, #111, #222); border:1px solid #333;">
+        <div style="display:flex; align-items:center; gap:15px;">
+            <div style="width:40px; height:40px; background:var(--gold-lux); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#000;">
+                <i class="fas fa-coins"></i>
+            </div>
+            <div>
+                <div style="font-weight:800;">O$ CAPITAL TOKEN</div>
+                <div id="wallet-balance" style="color:var(--gold); font-size:18px; font-weight:900;">0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top:30px;">
+        <h4 style="font-size:12px; color:#555; margin-bottom:10px;">WITHDRAWAL ADDRESS</h4>
+        <input type="text" id="wallet-address" placeholder="Enter TON or SOL Address" 
+               style="width:100%; background:#111; border:1px solid #333; padding:15px; border-radius:12px; color:white; margin-bottom:20px;">
+        <button class="btn-action" style="width:100%; opacity:0.5;" onclick="tg.showAlert('Listing in progress. Withdrawal will open at 100% supply.')">
+            LINK WALLET
+        </button>
+    </div>
+</div>
+
+<script>
+    // --- PREVIOUS FIREBASE & TG CODE HERE ---
+
+    // VIRAL REFERRAL SYSTEM
+    window.shareReferral = function() {
+        const inviteLink = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
+        const shareText = `🚀 Join Omlla Capital and mine $O$ Gold with me! Get 1,000 bonus coins using my link!`;
+        const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`;
+        tg.openTelegramLink(fullUrl);
+    };
+
+    window.copyReferralLink = function() {
+        const inviteLink = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
+        const el = document.createElement('textarea');
+        el.value = inviteLink;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        tg.showAlert("✅ Gold Link Copied! Send it to your friends.");
+    };
+
+    // UPDATE WALLET UI
+    function refreshWallet() {
+        if(document.getElementById('wallet-balance')) {
+            document.getElementById('wallet-balance').innerText = Math.floor(state.points).toLocaleString() + " O$";
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            background: var(--bg);
-            color: white;
-            font-family: 'Inter', -apple-system, sans-serif;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
+        if(document.getElementById('ref-count')) {
+            document.getElementById('ref-count').innerText = state.referrals || 0;
         }
+    }
 
-        .app-shell {
-            width: 100%;
-            max-width: 420px;
+    // Call this inside your existing userRef.on('value') function
+    // Example: refreshUI(); refreshWallet();
+</script>            max-width: 420px;
             background: radial-gradient(circle at 50% -20%, #1a1a0a 0%, #050505 100%);
             display: flex;
             flex-direction: column;
@@ -269,3 +316,4 @@
     </script>
 </body>
 </html>
+
