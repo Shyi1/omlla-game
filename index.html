@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA BOT | OFFICIAL</title>
+    <title>OMLLA BOT | BUY & TRADE</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -41,9 +41,10 @@
         }
 
         /* Header Components */
-        
         .brand { font-size: 10px; letter-spacing: 5px; color: var(--primary-gold); text-align: center; margin-bottom: 15px; font-weight: 900; }
         
+        /* ===== EDITABLE COUNTDOWN TEXT ===== */
+        /* Change the text inside the span with id="countdown-title" */
         .timer-card {
             background: var(--gold-gradient);
             border-radius: 20px;
@@ -142,6 +143,64 @@
         }
         .stat-value { font-size: 24px; font-weight: 900; color: var(--primary-gold); }
 
+        /* Buy Packages Styling */
+        .package-card {
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 2px solid var(--primary-gold);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .package-info h3 { color: var(--primary-gold); margin-bottom: 5px; }
+        .package-info p { color: #888; font-size: 12px; }
+        .package-price { text-align: right; }
+        .package-price .sol { color: var(--primary-gold); font-weight: bold; font-size: 18px; }
+        .package-price .usd { color: #888; font-size: 12px; }
+        .buy-btn {
+            background: var(--primary-gold);
+            color: black;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* Payment Modal */
+        #payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: #111;
+            border: 2px solid var(--primary-gold);
+            border-radius: 30px;
+            padding: 25px;
+            max-width: 400px;
+            margin: 50px auto;
+        }
+        .wallet-address {
+            background: #222;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            word-break: break-all;
+            margin: 15px 0;
+            border: 1px solid gold;
+        }
+
         .plus-one {
             position: absolute; color: var(--primary-gold); font-weight: 900; font-size: 28px;
             pointer-events: none; animation: floatUp 0.8s forwards;
@@ -155,10 +214,14 @@
         <header>
             <div class="brand">OMLLA CAPITAL NETWORK</div>
             
+            <!-- ===== EDITABLE COUNTDOWN TEXT ===== -->
+            <!-- Change the text inside the span below to whatever you want -->
             <div class="timer-card">
                 <i class="fas fa-hourglass-half" style="font-size: 20px;"></i>
                 <div style="flex:1">
-                    <div style="font-size: 10px; font-weight: 800; text-transform: uppercase;">Listing Countdown</div>
+                    <!-- 👇 EDIT THIS TEXT 👇 -->
+                    <div style="font-size: 10px; font-weight: 800; text-transform: uppercase;" id="countdown-title">PRE-SALE ENDS IN</div>
+                    <!-- 👆 EDIT THIS TEXT 👆 -->
                     <div id="countdown" style="font-size: 20px; font-weight: 900;">23h 59m</div>
                 </div>
             </div>
@@ -197,6 +260,62 @@
                 </div>
             </div>
 
+            <div id="buy-page" class="page">
+                <h2 style="color: gold; text-align: center; margin-bottom: 20px;">💰 BUY O$ PACKAGES</h2>
+                
+                <!-- Package 1: Starter -->
+                <div class="package-card">
+                    <div class="package-info">
+                        <h3>🐢 STARTER PACK</h3>
+                        <p>1,000 O$ Coins</p>
+                    </div>
+                    <div class="package-price">
+                        <div class="sol">0.1 SOL</div>
+                        <div class="usd">≈ $15 USD</div>
+                        <button class="buy-btn" onclick="buyPackage(1000, 'Starter', 0.1)">BUY</button>
+                    </div>
+                </div>
+
+                <!-- Package 2: Gold -->
+                <div class="package-card" style="border-color: #FFD700; background: linear-gradient(145deg, #1a1a1a, #2a1a0a);">
+                    <div class="package-info">
+                        <h3 style="color: #FFD700;">👑 GOLD PACK</h3>
+                        <p>5,000 O$ Coins</p>
+                    </div>
+                    <div class="package-price">
+                        <div class="sol" style="color: #FFD700;">0.5 SOL</div>
+                        <div class="usd">≈ $75 USD</div>
+                        <button class="buy-btn" style="background: #FFD700;" onclick="buyPackage(5000, 'Gold', 0.5)">BUY</button>
+                    </div>
+                </div>
+
+                <!-- Package 3: Whale -->
+                <div class="package-card" style="border-color: #14F195; background: linear-gradient(145deg, #1a1a1a, #0a2a1a);">
+                    <div class="package-info">
+                        <h3 style="color: #14F195;">🐋 WHALE PACK</h3>
+                        <p>10,000 O$ Coins</p>
+                    </div>
+                    <div class="package-price">
+                        <div class="sol" style="color: #14F195;">1 SOL</div>
+                        <div class="usd">≈ $150 USD</div>
+                        <button class="buy-btn" style="background: #14F195;" onclick="buyPackage(10000, 'Whale', 1)">BUY</button>
+                    </div>
+                </div>
+
+                <!-- Package 4: Legendary -->
+                <div class="package-card" style="border-color: #9945FF; background: linear-gradient(145deg, #1a1a1a, #2a0a2a);">
+                    <div class="package-info">
+                        <h3 style="color: #9945FF;">⚡ LEGENDARY PACK</h3>
+                        <p>50,000 O$ Coins</p>
+                    </div>
+                    <div class="package-price">
+                        <div class="sol" style="color: #9945FF;">5 SOL</div>
+                        <div class="usd">≈ $750 USD</div>
+                        <button class="buy-btn" style="background: #9945FF;" onclick="buyPackage(50000, 'Legendary', 5)">BUY</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="perks-page" class="page">
                 <div class="stat-card">
                     <div class="stat-value">⚡ BOOST</div>
@@ -208,12 +327,6 @@
                     <div class="stat-value">📅 DAILY BONUS</div>
                     <div style="font-size:12px; margin:10px 0;">Get 100 O$ free every day</div>
                     <button class="action-btn primary" id="daily-btn">CLAIM DAILY</button>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-value">💰 BUY O$</div>
-                    <div style="font-size:12px; margin:10px 0;">Coming Soon: Buy O$ with SOL</div>
-                    <button class="action-btn primary" id="buy-btn">NOTIFY ME</button>
                 </div>
             </div>
 
@@ -237,10 +350,36 @@
 
         <nav class="bottom-nav" id="bottom-nav">
             <div class="nav-item active" data-page="main"><i class="fas fa-home"></i><span>Home</span></div>
+            <div class="nav-item" data-page="buy"><i class="fas fa-shopping-cart"></i><span>Buy</span></div>
             <div class="nav-item" data-page="perks"><i class="fas fa-gem"></i><span>Perks</span></div>
             <div class="nav-item" data-page="rating"><i class="fas fa-trophy"></i><span>Rating</span></div>
             <div class="nav-item" data-page="profile"><i class="fas fa-user"></i><span>Profile</span></div>
         </nav>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal">
+        <div class="modal-content">
+            <h2 style="color: gold; text-align: center; margin-bottom: 20px;">💳 COMPLETE PAYMENT</h2>
+            
+            <div id="payment-details" style="text-align: center;">
+                <p style="color: #888; margin-bottom: 10px;">Send exactly:</p>
+                <div style="font-size: 32px; color: gold; font-weight: bold;" id="payment-sol">0 SOL</div>
+                <div style="font-size: 14px; color: #888; margin-bottom: 15px;" id="payment-omlla">0 O$</div>
+                
+                <p style="color: #888; margin: 15px 0 5px;">To this Solana address:</p>
+                <div class="wallet-address" id="wallet-address">loading...</div>
+                
+                <p style="color: #888; font-size: 12px; margin: 10px 0;">⚠️ Send ONLY from your Solana wallet</p>
+                
+                <div style="margin: 20px 0;">
+                    <input type="text" id="tx-signature" placeholder="Enter transaction signature" style="width: 100%; padding: 15px; background: #222; border: 2px solid gold; border-radius: 10px; color: white;">
+                </div>
+                
+                <button class="action-btn primary" style="margin-bottom: 10px;" onclick="verifyPayment()">VERIFY PAYMENT</button>
+                <button class="action-btn" onclick="closePaymentModal()">CANCEL</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -273,7 +412,15 @@
             let player = { points: 0, energy: 1000, totalTaps: 0, referrals: 0 };
             let boostActive = false;
             let lastTapTime = 0;
-            const TAP_DELAY = 200; // ms between taps
+            const TAP_DELAY = 200;
+            let currentPayment = null;
+
+            // ===== EDIT COUNTDOWN TEXT HERE =====
+            // You can change the countdown title directly in the HTML
+            // Look for <div id="countdown-title"> in the HTML above
+            
+            // Set your target date here (Year, Month-1, Day, Hour, Minute)
+            const targetDate = new Date(Date.UTC(2025, 2, 1, 12, 0, 0)); // March 1, 2025
 
             // DOM elements
             const elements = {
@@ -299,19 +446,14 @@
             elements.userId.innerText = userId;
             elements.avatarChar.innerText = user.first_name.charAt(0).toUpperCase();
 
-            // =============================================
-            // FIX #1: ENERGY BAR CORRECTION
-            // =============================================
             function updateUI() {
                 elements.balance.innerText = Math.floor(player.points).toLocaleString();
                 elements.energy.innerText = `${player.energy}/1000`;
-                // FIXED: Correct percentage calculation
                 elements.energyFill.style.width = (player.energy / 1000 * 100) + '%';
                 
                 if (elements.profileTaps) elements.profileTaps.innerText = player.totalTaps.toLocaleString();
                 if (elements.profileRefs) elements.profileRefs.innerText = player.referrals || 0;
                 
-                // Random rank for demo
                 elements.profileRank.innerText = '#' + (Math.floor(Math.random() * 100) + 1);
             }
 
@@ -324,7 +466,6 @@
                     player.totalTaps = data.totalTaps || 0;
                     player.referrals = data.referrals || 0;
                 } else {
-                    // New user
                     player = { points: 0, energy: 1000, totalTaps: 0, referrals: 0 };
                     userRef.set({
                         points: 0,
@@ -337,22 +478,16 @@
                 updateUI();
             });
 
-            // =============================================
-            // FIX #2: REFERRAL REWARDS
-            // =============================================
+            // Referral detection
             const startParam = tg.initDataUnsafe?.start_param || '';
             if (startParam && startParam.startsWith('ref_')) {
                 const referrerId = startParam.replace('ref_', '');
-                
-                // Check if this user already got referral bonus
                 const rewardKey = 'referred_' + userId;
                 if (!localStorage.getItem(rewardKey)) {
-                    // Give 500 to new user
                     userRef.child('points').transaction(function(current) {
                         return (current || 0) + 500;
                     });
                     
-                    // Give 500 to referrer and increment their referral count
                     db.ref('players/' + referrerId).transaction(function(current) {
                         if (current) {
                             current.points = (current.points || 0) + 500;
@@ -361,69 +496,55 @@
                         return current;
                     });
                     
-                    // Mark as rewarded
                     localStorage.setItem(rewardKey, 'true');
                     tg.showAlert('🎁 You got 500 free coins from referral!');
                 }
             }
 
-            // =============================================
-            // FIX #3: BOOST FEATURE
-            // =============================================
+            // Boost function
             function activateBoost() {
                 if (player.points < 500) {
                     tg.showAlert('❌ Need 500 O$ for boost');
                     return;
                 }
                 
-                // Take 500 coins
                 userRef.child('points').transaction(function(current) {
                     return (current || 0) - 500;
                 });
                 
-                // Activate boost
                 boostActive = true;
                 tg.showAlert('⚡ BOOST ACTIVE for 30 seconds! 2x earnings!');
                 
-                // Turn off after 30 seconds
                 setTimeout(function() {
                     boostActive = false;
                     tg.showAlert('⏰ Boost ended');
                 }, 30000);
             }
 
-            // =============================================
-            // FIX #4: DAILY BONUS
-            // =============================================
+            // Daily bonus
             function claimDaily() {
                 const lastClaim = localStorage.getItem('daily_' + userId);
                 const now = Date.now();
                 
-                // Check if already claimed today (24 hours = 86400000 ms)
                 if (lastClaim && now - parseInt(lastClaim) < 86400000) {
                     tg.showAlert('⏳ Already claimed today! Come back tomorrow');
                     return;
                 }
                 
-                // Give 100 coins
                 userRef.child('points').transaction(function(current) {
                     return (current || 0) + 100;
                 });
                 
-                // Save claim time
                 localStorage.setItem('daily_' + userId, now.toString());
                 tg.showAlert('✅ +100 O$ claimed!');
             }
 
-            // =============================================
-            // FIX #5: LEADERBOARD
-            // =============================================
+            // Leaderboard
             function loadLeaderboard() {
                 db.ref('players').orderByChild('points').limitToLast(10).once('value', function(snapshot) {
                     const data = snapshot.val();
                     if (!data) return;
                     
-                    // Convert to array and sort
                     const players = [];
                     for (let id in data) {
                         players.push({
@@ -433,12 +554,10 @@
                         });
                     }
                     
-                    // Sort by points (highest first)
                     players.sort(function(a, b) {
                         return b.points - a.points;
                     });
                     
-                    // Build HTML
                     let html = '';
                     for (let i = 0; i < players.length; i++) {
                         html += '<div class="stat-card" style="display:flex; justify-content:space-between;">';
@@ -451,13 +570,10 @@
                 });
             }
 
-            // =============================================
-            // FIX #6: ANTI-CHEAT (Rate Limiting)
-            // =============================================
+            // Tap handler
             function handleTap(e) {
                 e.preventDefault();
                 
-                // Rate limiting
                 const now = Date.now();
                 if (now - lastTapTime < TAP_DELAY) {
                     return;
@@ -469,10 +585,8 @@
                     return;
                 }
 
-                // Calculate earnings (boost = 2x)
                 const earnAmount = boostActive ? 2 : 1;
 
-                // Update Firebase
                 userRef.transaction((currentData) => {
                     if (currentData) {
                         currentData.points = (currentData.points || 0) + earnAmount;
@@ -482,22 +596,18 @@
                     return currentData;
                 }).then((result) => {
                     if (result.committed) {
-                        // Update local player
                         player.points = result.snapshot.val().points;
                         player.energy = result.snapshot.val().energy;
                         player.totalTaps = result.snapshot.val().totalTaps;
                         updateUI();
 
-                        // Visual feedback
                         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                         showPlusOne(clientX, clientY, earnAmount);
 
                         tg.HapticFeedback?.impactOccurred('medium');
                     }
-                }).catch(err => {
-                    console.error('Tap error:', err);
-                });
+                }).catch(err => console.error('Tap error:', err));
             }
 
             function showPlusOne(x, y, amount) {
@@ -510,11 +620,48 @@
                 setTimeout(() => p.remove(), 800);
             }
 
-            // =============================================
-            // EVENT LISTENERS
-            // =============================================
-            
-            // Tap handler
+            // Buy package function
+            window.buyPackage = function(amount, name, solAmount) {
+                currentPayment = {
+                    amount: amount,
+                    name: name,
+                    solAmount: solAmount,
+                    paymentId: 'pay_' + Date.now()
+                };
+                
+                document.getElementById('payment-sol').innerText = solAmount + ' SOL';
+                document.getElementById('payment-omlla').innerText = amount + ' O$';
+                document.getElementById('wallet-address').innerText = 'YOUR_SOLANA_WALLET_ADDRESS_HERE'; // CHANGE THIS
+                document.getElementById('payment-modal').style.display = 'block';
+                
+                tg.HapticFeedback?.impactOccurred('medium');
+            };
+
+            // Verify payment
+            window.verifyPayment = function() {
+                const txSignature = document.getElementById('tx-signature').value.trim();
+                if (!txSignature) {
+                    tg.showAlert('❌ Please enter transaction signature');
+                    return;
+                }
+                
+                // Simulate verification (in production, this would call your backend)
+                tg.showAlert('✅ Payment verified! ' + currentPayment.amount + ' O$ added!');
+                
+                // Add coins to user balance
+                userRef.child('points').transaction(function(current) {
+                    return (current || 0) + currentPayment.amount;
+                });
+                
+                closePaymentModal();
+            };
+
+            window.closePaymentModal = function() {
+                document.getElementById('payment-modal').style.display = 'none';
+                currentPayment = null;
+            };
+
+            // Event listeners
             elements.tapTrigger.addEventListener('touchstart', handleTap);
             elements.tapTrigger.addEventListener('mousedown', handleTap);
 
@@ -537,7 +684,6 @@
                         elements.navItems.forEach(n => n.classList.remove('active'));
                         item.classList.add('active');
                         
-                        // Load leaderboard when rating page opens
                         if (page === 'rating') {
                             loadLeaderboard();
                         }
@@ -547,7 +693,7 @@
 
             // Invite button
             elements.inviteBtn.addEventListener('click', () => {
-                const botUsername = "OMLLA_Coin_bot"; // Replace with your bot's username
+                const botUsername = "OMLLA_Coin_bot"; // CHANGE THIS
                 const link = `https://t.me/${botUsername}?start=ref_${userId}`;
                 
                 if (tg.openTelegramLink) {
@@ -561,10 +707,9 @@
                 }
             });
 
-            // Boost button (main page)
+            // Boost buttons
             elements.boostBtn.addEventListener('click', activateBoost);
-
-            // Boost button (perks page)
+            
             setTimeout(() => {
                 const boostPageBtn = document.getElementById('boost-btn-page');
                 if (boostPageBtn) boostPageBtn.addEventListener('click', activateBoost);
@@ -576,23 +721,12 @@
                 if (dailyBtn) dailyBtn.addEventListener('click', claimDaily);
             }, 1000);
 
-            // Buy button (coming soon)
-            setTimeout(() => {
-                const buyBtn = document.getElementById('buy-btn');
-                if (buyBtn) {
-                    buyBtn.addEventListener('click', () => {
-                        tg.showAlert('📢 Buy O$ feature coming soon! You will be notified.');
-                    });
-                }
-            }, 1000);
-
             // Countdown timer
-            const targetDate = new Date(Date.UTC(2025, 2, 1, 12, 0, 0)); // March 1, 2025
             function updateCountdown() {
                 const now = new Date();
                 const diff = targetDate - now;
                 if (diff <= 0) {
-                    elements.countdown.innerText = 'LISTED!';
+                    elements.countdown.innerText = 'LIVE NOW!';
                     return;
                 }
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -603,7 +737,6 @@
             updateCountdown();
             setInterval(updateCountdown, 60000);
 
-            // Initial update
             updateUI();
 
             // Telegram buttons
