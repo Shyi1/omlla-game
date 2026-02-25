@@ -885,6 +885,7 @@
             </div>
             <div class="wallet-box" id="walletAddress">9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx</div>
             <input type="text" class="input-field" id="txSignature" placeholder="Enter transaction signature">
+            <div id="paymentStatus" style="color: var(--gold); font-size: 12px; text-align: center; margin-bottom: 10px;"></div>
             <div class="modal-buttons">
                 <div class="modal-btn primary" onclick="verifyPayment()">Verify</div>
                 <div class="modal-btn secondary" onclick="closeModal()">Cancel</div>
@@ -896,9 +897,10 @@
         (function() {
             'use strict';
 
-            // ===== CONFIGURATION =====
-            const FIREBASE_URL = "https://omlla-game-default-rtdb.firebaseio.com"; // CHANGE THIS
-            const BOT_USERNAME = "OMLLA_Coin_bot"; // CHANGE THIS
+            // ===== YOUR CONFIGURATION =====
+            const FIREBASE_URL = "https://YOUR-PROJECT.firebaseio.com"; // 🔴 CHANGE THIS
+            const BOT_USERNAME = "YOUR_BOT_USERNAME"; // 🔴 CHANGE THIS
+            const BACKEND_URL = "https://YOUR-RENDER-APP.onrender.com"; // 🔴 CHANGE THIS after deploying
             const WALLET = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx"; // Your wallet
 
             // ===== TELEGRAM INIT =====
@@ -1094,26 +1096,86 @@
                 });
             }
 
-            // ===== BUY PACKAGE =====
+            // ===== BUY PACKAGE WITH RENDER BACKEND =====
             window.buyPackage = function(amount, name, sol) {
                 currentPayment = { amount, name, sol };
-                document.getElementById('modalSol').innerText = sol + ' SOL';
-                document.getElementById('modalOmlla').innerText = amount + ' O$';
-                document.getElementById('walletAddress').innerText = WALLET;
-                document.getElementById('paymentModal').classList.add('active');
+                document.getElementById('paymentStatus').innerText = 'Creating payment...';
+                
+                fetch(BACKEND_URL + '/api/create-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        amount: amount,
+                        packageName: name,
+                        solAmount: sol
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        currentPayment.paymentId = data.paymentId;
+                        document.getElementById('modalSol').innerText = sol + ' SOL';
+                        document.getElementById('modalOmlla').innerText = amount + ' O$';
+                        document.getElementById('walletAddress').innerText = data.merchantWallet;
+                        document.getElementById('paymentStatus').innerText = 'Send SOL and enter signature';
+                        document.getElementById('paymentModal').classList.add('active');
+                    } else {
+                        tg.showAlert('❌ Error: ' + data.error);
+                    }
+                })
+                .catch(err => {
+                    tg.showAlert('❌ Payment server error. Make sure backend is running.');
+                    console.error(err);
+                });
             };
 
             window.verifyPayment = function() {
                 const tx = document.getElementById('txSignature').value.trim();
-                if (!tx) { tg.showAlert('❌ Enter transaction signature'); return; }
-                userRef.child('points').transaction(p => (p || 0) + currentPayment.amount);
-                tg.showAlert('✅ +' + currentPayment.amount + ' O$ added!');
-                closeModal();
+                if (!tx) {
+                    tg.showAlert('❌ Enter transaction signature');
+                    return;
+                }
+                
+                document.getElementById('paymentStatus').innerText = 'Verifying...';
+                
+                fetch(BACKEND_URL + '/api/verify-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        paymentId: currentPayment.paymentId,
+                        transactionSignature: tx
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        tg.showAlert('✅ Payment verified! ' + currentPayment.amount + ' O$ added!');
+                        document.getElementById('paymentStatus').innerText = 'Payment successful!';
+                        setTimeout(closeModal, 1500);
+                        // Refresh balance
+                        userRef.once('value', (snap) => {
+                            if (snap.val()) {
+                                player.points = snap.val().points || 0;
+                                updateUI();
+                            }
+                        });
+                    } else {
+                        document.getElementById('paymentStatus').innerText = '❌ ' + data.error;
+                        tg.showAlert('❌ Verification failed: ' + data.error);
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('paymentStatus').innerText = '❌ Verification error';
+                    tg.showAlert('❌ Verification error');
+                    console.error(err);
+                });
             };
 
             window.closeModal = function() {
                 document.getElementById('paymentModal').classList.remove('active');
                 document.getElementById('txSignature').value = '';
+                document.getElementById('paymentStatus').innerText = '';
                 currentPayment = null;
             };
 
@@ -1181,4 +1243,3 @@
     </script>
 </body>
 </html>
-
