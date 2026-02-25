@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA GAME | OFFICIAL</title>
+    <title>OMLLA GAME | OFFICIAL PRESTIGE</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -11,17 +11,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         :root {
             --primary: #14F195;
-            --primary-dark: #0fa86a;
+            --primary-glow: rgba(20, 241, 149, 0.4);
             --dark: #050505;
             --dark-light: #0f0f0f;
             --gray: #222;
@@ -31,11 +24,12 @@
         body {
             background: var(--dark);
             color: white;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         .container {
@@ -46,403 +40,146 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            background: radial-gradient(circle at top, #0a1a12 0%, #050505 100%);
         }
 
-        .header {
-            text-align: center;
-        }
-
-        .brand {
-            font-size: 12px;
-            letter-spacing: 4px;
-            color: var(--text-gray);
-            margin-bottom: 15px;
-        }
-
+        /* Header & Balance */
+        .brand { font-size: 10px; letter-spacing: 5px; color: var(--text-gray); text-align: center; margin-bottom: 10px; font-weight: 800; }
         .balance-card {
             background: var(--dark-light);
-            border-radius: 30px;
+            border-radius: 25px;
             padding: 25px;
             border: 1px solid var(--gray);
-            margin-bottom: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
-        .balance-label {
-            font-size: 14px;
-            color: var(--text-gray);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
+        .balance-label { font-size: 12px; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; }
         .balance-amount {
-            font-size: 64px;
+            font-size: 56px;
             font-weight: 900;
             color: var(--primary);
-            line-height: 1.2;
-            text-shadow: 0 0 30px rgba(20, 241, 149, 0.3);
+            text-shadow: 0 0 20px var(--primary-glow);
         }
 
-        .balance-currency {
-            font-size: 18px;
-            color: var(--text-gray);
-            margin-left: 5px;
-        }
-
+        /* User Info Bar */
         .user-info {
-            background: var(--dark-light);
+            background: rgba(255,255,255,0.03);
             border-radius: 50px;
-            padding: 12px 20px;
+            padding: 10px 15px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             border: 1px solid var(--gray);
             margin: 15px 0;
         }
-
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 35px; height: 35px;
             background: linear-gradient(45deg, var(--primary), #0fa86a);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            color: black;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: black;
         }
 
-        .user-details {
-            flex: 1;
-            text-align: left;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .user-id {
-            font-size: 12px;
-            color: var(--text-gray);
-        }
-
-        .user-level {
-            background: var(--primary);
-            color: black;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .tap-area {
-            text-align: center;
-            margin: 20px 0;
-        }
-
+        /* Tap Area */
+        .tap-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; }
         .coin-btn {
-            width: 240px;
-            height: 240px;
-            margin: 0 auto;
+            width: 250px; height: 250px;
             cursor: pointer;
-            transition: all 0.1s ease;
+            transition: transform 0.05s;
             position: relative;
         }
-
-        .coin-btn:active {
-            transform: scale(0.92);
-        }
-
+        .coin-btn:active { transform: scale(0.93); }
         .coin-btn img {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             filter: drop-shadow(0 0 30px var(--primary));
             animation: float 3s ease-in-out infinite;
         }
 
         @keyframes float {
-            0% { transform: translateY(0px); }
+            0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
         }
 
-        .energy-container {
-            background: var(--dark-light);
-            border-radius: 30px;
-            padding: 20px;
-            border: 1px solid var(--gray);
-            margin: 20px 0;
-        }
+        /* Stamina / Energy */
+        .energy-container { background: var(--dark-light); border-radius: 20px; padding: 15px; border: 1px solid var(--gray); }
+        .energy-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+        .energy-bar-bg { height: 8px; background: var(--gray); border-radius: 10px; overflow: hidden; }
+        .energy-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s linear; }
 
-        .energy-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .energy-bar-bg {
-            width: 100%;
-            height: 12px;
-            background: var(--gray);
-            border-radius: 50px;
-            overflow: hidden;
-        }
-
-        .energy-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #14F195);
-            border-radius: 50px;
-            transition: width 0.3s ease;
-            width: 100%;
-        }
-
-        .boost-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
+        /* Boosters */
+        .boost-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .boost-btn {
             background: var(--dark-light);
             border: 1px solid var(--gray);
-            border-radius: 20px;
-            padding: 15px 10px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .boost-btn i {
-            color: var(--primary);
-        }
-
-        .boost-btn:active {
-            background: var(--gray);
-            transform: scale(0.95);
-        }
-
-        .boost-btn.primary {
-            background: var(--primary);
-            color: black;
-            border: none;
-        }
-
-        .boost-btn.primary i {
-            color: black;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .stat-card {
-            background: var(--dark-light);
-            border: 1px solid var(--gray);
-            border-radius: 20px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-gray);
-            margin-top: 5px;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 11px;
-            color: var(--text-gray);
-            padding: 15px 0;
-        }
-
-        .status {
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .debug-log {
-            color: #ff4444;
-            font-size: 10px;
-            word-break: break-word;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--dark-light);
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 300px;
-            border: 1px solid var(--gray);
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
-
-        .topup-option {
-            background: var(--dark);
-            border: 1px solid var(--gray);
             border-radius: 15px;
-            padding: 15px;
-            margin: 10px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .topup-option:active {
-            background: var(--gray);
-        }
-
-        .topup-amount {
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .close-modal {
-            margin-top: 20px;
-            background: none;
-            border: 1px solid var(--gray);
-            color: white;
             padding: 12px;
-            border-radius: 25px;
-            width: 100%;
-            cursor: pointer;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .boost-btn.primary { background: var(--primary); color: black; border: none; }
+
+        .footer { text-align: center; font-size: 10px; color: var(--text-gray); padding: 15px 0; }
+
+        /* Particles */
+        .plus-one {
+            position: absolute; color: var(--primary); font-weight: 900; font-size: 28px;
+            pointer-events: none; animation: tapAnim 0.8s ease-out forwards; z-index: 100;
+        }
+        @keyframes tapAnim {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-120px); }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="header">
-            <div class="brand">⚡ OMLLA CAPITAL ⚡</div>
-            
+        <header>
+            <div class="brand">OMLLA CAPITAL NETWORK</div>
             <div class="balance-card">
-                <div class="balance-label">Total Balance</div>
-                <div class="balance-amount">
-                    <span id="balance-display">0</span>
-                    <span class="balance-currency">O$</span>
-                </div>
+                <div class="balance-label">Total Capital</div>
+                <div class="balance-amount"><span id="balance">0</span><small style="font-size: 16px; margin-left: 5px;">O$</small></div>
             </div>
 
-            <div class="user-info" id="user-info">
-                <div class="user-avatar" id="user-avatar">👤</div>
-                <div class="user-details">
-                    <div class="user-name" id="user-name">Loading...</div>
-                    <div class="user-id" id="user-id">ID: -</div>
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">?</div>
+                <div style="flex: 1; text-align: left;">
+                    <div id="user-name" style="font-weight: 700; font-size: 14px;">Loading Node...</div>
+                    <div id="user-id" style="font-size: 10px; color: var(--text-gray);">ID: ---</div>
                 </div>
-                <div class="user-level" id="user-level">Beginner</div>
+                <div style="background: var(--primary); color: black; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold;">ELITE</div>
             </div>
-        </div>
+        </header>
 
-        <div class="tap-area">
+        <main class="tap-area">
             <div class="coin-btn" id="tap-button">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2314F195'/%3E%3Ccircle cx='50' cy='50' r='38' fill='%23050505'/%3E%3Ctext x='50' y='70' font-size='48' text-anchor='middle' fill='%2314F195' font-family='Arial' font-weight='bold'%3EO%24%3C/text%3E%3C/svg%3E" 
-                     alt="O$ Coin">
+                <img src="https://img.icons8.com/emoji/256/turtle-emoji.png" alt="Coin">
             </div>
-        </div>
+        </main>
 
-        <div class="energy-container">
-            <div class="energy-header">
-                <span><i class="fas fa-bolt" style="color: #14F195;"></i> Energy</span>
-                <span id="energy-display">1000/1000</span>
+        <footer>
+            <div class="energy-container">
+                <div class="energy-header">
+                    <span><i class="fas fa-bolt" style="color: var(--primary);"></i> STAMINA</span>
+                    <span id="energy-display">1000/1000</span>
+                </div>
+                <div class="energy-bar-bg">
+                    <div class="energy-bar-fill" id="energy-fill" style="width: 100%"></div>
+                </div>
             </div>
-            <div class="energy-bar-bg">
-                <div class="energy-bar-fill" id="energy-fill" style="width: 100%"></div>
-            </div>
-        </div>
 
-        <div class="boost-section">
-            <button class="boost-btn" id="refill-energy">
-                <i class="fas fa-bolt"></i> Refill
-            </button>
-            <button class="boost-btn primary" id="show-topup">
-                <i class="fas fa-coins"></i> Top Up
-            </button>
-        </div>
+            <div class="boost-section">
+                <button class="boost-btn" onclick="location.reload()"><i class="fas fa-sync"></i> Refresh</button>
+                <button class="boost-btn primary" id="show-topup"><i class="fas fa-rocket"></i> Boosters</button>
+            </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="total-taps">0</div>
-                <div class="stat-label">Total Taps</div>
+            <div class="footer">
+                <div id="status" style="color: var(--primary); margin-bottom: 4px;">Node Status: Synchronizing...</div>
+                <div>© 2026 OMLLA GAME | PRESTIGE EDITION</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="tap-level">1</div>
-                <div class="stat-label">Tap Level</div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <div class="status" id="connection-status">Connecting to network...</div>
-            <div class="debug-log" id="debug-log"></div>
-            <div>© 2024 OMLLA GAME</div>
-        </div>
-    </div>
-
-    <div class="modal" id="topup-modal">
-        <div class="modal-content">
-            <div class="modal-title">💰 Top Up O$</div>
-            
-            <div class="topup-option" data-amount="100">
-                <span>100 O$</span>
-                <span class="topup-amount">$1.00</span>
-            </div>
-            
-            <div class="topup-option" data-amount="500">
-                <span>500 O$</span>
-                <span class="topup-amount">$4.50</span>
-            </div>
-            
-            <div class="topup-option" data-amount="1000">
-                <span>1,000 O$</span>
-                <span class="topup-amount">$8.00</span>
-            </div>
-            
-            <div class="topup-option" data-amount="5000">
-                <span>5,000 O$</span>
-                <span class="topup-amount">$35.00</span>
-            </div>
-            
-            <button class="close-modal" id="close-modal">Cancel</button>
-        </div>
+        </footer>
     </div>
 
     <script>
@@ -455,271 +192,79 @@
                 databaseURL: "https://omlla-game-default-rtdb.firebaseio.com"
             };
 
-            const elements = {
-                balance: document.getElementById('balance-display'),
-                energy: document.getElementById('energy-display'),
-                energyFill: document.getElementById('energy-fill'),
-                userName: document.getElementById('user-name'),
-                userId: document.getElementById('user-id'),
-                userAvatar: document.getElementById('user-avatar'),
-                userLevel: document.getElementById('user-level'),
-                totalTaps: document.getElementById('total-taps'),
-                tapLevel: document.getElementById('tap-level'),
-                connectionStatus: document.getElementById('connection-status'),
-                debugLog: document.getElementById('debug-log'),
-                tapButton: document.getElementById('tap-button'),
-                refillBtn: document.getElementById('refill-energy'),
-                showTopup: document.getElementById('show-topup'),
-                topupModal: document.getElementById('topup-modal'),
-                closeModal: document.getElementById('close-modal')
-            };
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.database();
+            
+            const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Master' };
+            const userRef = db.ref('players/' + user.id);
 
             let player = {
-                id: null,
-                name: 'Guest',
                 points: 0,
                 energy: 1000,
                 maxEnergy: 1000,
-                totalTaps: 0,
-                tapLevel: 1,
-                lastUpdate: Date.now()
+                name: user.first_name
             };
 
-            let db = null;
-            let userRef = null;
-
-            function formatNumber(num) {
-                return num.toLocaleString();
-            }
-
             function updateUI() {
-                elements.balance.textContent = formatNumber(Math.floor(player.points));
-                elements.energy.textContent = `${Math.floor(player.energy)}/${player.maxEnergy}`;
-                elements.energyFill.style.width = `${(player.energy / player.maxEnergy) * 100}%`;
-                elements.totalTaps.textContent = formatNumber(player.totalTaps);
-                elements.tapLevel.textContent = player.tapLevel;
+                document.getElementById('balance').textContent = Math.floor(player.points).toLocaleString();
+                document.getElementById('energy-display').textContent = `${Math.floor(player.energy)}/${player.maxEnergy}`;
+                document.getElementById('energy-fill').style.width = `${(player.energy / player.maxEnergy) * 100}%`;
+                document.getElementById('user-name').textContent = player.name;
+                document.getElementById('user-id').textContent = `ID: ${user.id}`;
+                document.getElementById('user-avatar').textContent = player.name.charAt(0).toUpperCase();
+            }
 
-                if (player.points < 100) {
-                    elements.userLevel.textContent = '🐣 Beginner';
-                } else if (player.points < 1000) {
-                    elements.userLevel.textContent = '🌱 Bronze';
-                } else if (player.points < 5000) {
-                    elements.userLevel.textContent = '🌿 Silver';
-                } else if (player.points < 10000) {
-                    elements.userLevel.textContent = '🔥 Gold';
+            // Load Data & Sync
+            userRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    player.points = data.points || 0;
+                    player.energy = data.energy ?? 1000;
+                    player.name = data.name || user.first_name;
+                    updateUI();
                 } else {
-                    elements.userLevel.textContent = '👑 Platinum';
+                    // Satisfaction of rule: newData.hasChildren(['points', 'name'])
+                    userRef.set({ points: 0, energy: 1000, name: user.first_name });
                 }
-            }
+                document.getElementById('status').textContent = "Node Status: Online Secure";
+            });
 
-            function logDebug(message, isError = false) {
-                console.log(message);
-                if (isError) {
-                    elements.debugLog.textContent = `Error: ${message}`;
-                }
-            }
-
-            function initFirebase() {
-                try {
-                    if (!firebase.apps.length) {
-                        firebase.initializeApp(firebaseConfig);
-                    }
-                    db = firebase.database();
-                    
-                    const tgUser = tg.initDataUnsafe?.user;
-                    
-                    if (tgUser) {
-                        player.id = tgUser.id;
-                        player.name = tgUser.first_name;
-                        if (tgUser.last_name) {
-                            player.name += ' ' + tgUser.last_name;
-                        }
-                        
-                        elements.userName.textContent = player.name;
-                        elements.userId.textContent = `ID: ${player.id}`;
-                        
-                        if (tgUser.photo_url) {
-                            elements.userAvatar.innerHTML = `<img src="${tgUser.photo_url}" style="width:40px;height:40px;border-radius:50%;">`;
-                        } else {
-                            elements.userAvatar.textContent = player.name.charAt(0).toUpperCase();
-                        }
-                    } else {
-                        player.id = 'test_' + Math.floor(Math.random() * 1000000);
-                        player.name = 'Test User';
-                        elements.userName.textContent = player.name;
-                        elements.userId.textContent = `ID: ${player.id}`;
-                    }
-
-                    userRef = db.ref('players/' + player.id);
-
-                    db.ref('.info/connected').on('value', (snap) => {
-                        if (snap.val() === true) {
-                            elements.connectionStatus.innerHTML = '✅ Connected';
-                            elements.connectionStatus.style.color = '#14F195';
-                        } else {
-                            elements.connectionStatus.innerHTML = '⚠️ Offline';
-                            elements.connectionStatus.style.color = '#ffaa00';
-                        }
-                    });
-
-                    userRef.on('value', (snapshot) => {
-                        const data = snapshot.val();
-                        if (data) {
-                            player.points = data.points || 0;
-                            player.energy = data.energy ?? player.maxEnergy;
-                            player.totalTaps = data.totalTaps || 0;
-                            player.tapLevel = data.tapLevel || 1;
-                            player.maxEnergy = data.maxEnergy || 1000;
-                            updateUI();
-                        }
-                        logDebug('Data loaded successfully');
-                    }, (error) => {
-                        logDebug(error.message, true);
-                    });
-
-                } catch (error) {
-                    logDebug(error.message, true);
-                }
-            }
-
-            function saveToFirebase() {
-                if (!userRef) return;
-                
-                const dataToSave = {
-                    points: player.points,
-                    energy: player.energy,
-                    totalTaps: player.totalTaps,
-                    tapLevel: player.tapLevel,
-                    maxEnergy: player.maxEnergy,
-                    name: player.name,
-                    lastUpdate: Date.now()
-                };
-                
-                userRef.set(dataToSave).catch(error => {
-                    logDebug(error.message, true);
-                });
-            }
-
-            function handleTap() {
+            // Tap Logic
+            document.getElementById('tap-button').addEventListener('touchstart', (e) => {
+                e.preventDefault();
                 if (player.energy >= 1) {
                     player.points += 1;
                     player.energy -= 1;
-                    player.totalTaps += 1;
-                    
                     updateUI();
                     
-                    if (tg.HapticFeedback) {
-                        tg.HapticFeedback.impactOccurred('light');
-                    }
-                    
-                    saveToFirebase();
-                } else {
-                    if (tg.HapticFeedback) {
-                        tg.HapticFeedback.notificationOccurred('warning');
-                    }
-                    
-                    elements.energyFill.style.background = '#ff4444';
-                    setTimeout(() => {
-                        elements.energyFill.style.background = 'linear-gradient(90deg, #14F195, #14F195)';
-                    }, 300);
-                }
-            }
+                    // Create Animation
+                    const touch = e.touches[0];
+                    const p = document.createElement('div');
+                    p.className = 'plus-one'; p.textContent = '+1';
+                    p.style.left = touch.clientX + 'px'; p.style.top = touch.clientY + 'px';
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), 800);
 
-            function refillEnergy() {
-                player.energy = player.maxEnergy;
-                updateUI();
-                saveToFirebase();
-                
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
-            }
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 
-            function topUp(amount) {
-                player.points += amount;
-                updateUI();
-                saveToFirebase();
-                
-                elements.topupModal.classList.remove('active');
-                
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
-                
-                elements.connectionStatus.innerHTML = `✅ Added ${amount} O$!`;
-                elements.connectionStatus.style.color = '#14F195';
-                setTimeout(() => {
-                    elements.connectionStatus.innerHTML = '✅ Connected';
-                }, 2000);
-            }
-
-            function startEnergyRegen() {
-                setInterval(() => {
-                    if (player.energy < player.maxEnergy) {
-                        player.energy = Math.min(player.energy + 1, player.maxEnergy);
-                        updateUI();
-                        saveToFirebase();
-                    }
-                }, 2000);
-            }
-
-            function initEventListeners() {
-                elements.tapButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    handleTap();
-                });
-                
-                elements.tapButton.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                });
-
-                elements.refillBtn.addEventListener('click', () => {
-                    refillEnergy();
-                });
-
-                elements.showTopup.addEventListener('click', () => {
-                    elements.topupModal.classList.add('active');
-                });
-
-                elements.closeModal.addEventListener('click', () => {
-                    elements.topupModal.classList.remove('active');
-                });
-
-                document.querySelectorAll('.topup-option').forEach(option => {
-                    option.addEventListener('click', () => {
-                        const amount = parseInt(option.dataset.amount);
-                        topUp(amount);
+                    // Save (Ensuring both points and name are sent)
+                    userRef.update({
+                        points: player.points,
+                        energy: player.energy,
+                        name: user.first_name
                     });
-                });
+                }
+            });
 
-                elements.topupModal.addEventListener('click', (e) => {
-                    if (e.target === elements.topupModal) {
-                        elements.topupModal.classList.remove('active');
-                    }
-                });
-            }
-
-            function init() {
-                try {
-                    initFirebase();
-                    initEventListeners();
-                    startEnergyRegen();
+            // Energy Regen
+            setInterval(() => {
+                if (player.energy < player.maxEnergy) {
+                    player.energy = Math.min(player.energy + 1, player.maxEnergy);
                     updateUI();
-                    
-                    window.addEventListener('beforeunload', () => {
-                        saveToFirebase();
-                    });
-                    
-                } catch (error) {
-                    logDebug(error.message, true);
                 }
-            }
+            }, 2500);
 
-            init();
         })();
-    </script>
-</body>
-</html>
     </script>
 </body>
 </html>
