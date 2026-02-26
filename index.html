@@ -24,7 +24,6 @@
             display: flex; justify-content: center; position: relative;
         }
 
-        /* Floating Particles */
         .particle {
             position: fixed; width: 4px; height: 4px; background: var(--gold);
             border-radius: 50%; filter: blur(3px); opacity: 0.3; pointer-events: none;
@@ -44,18 +43,15 @@
             position: relative; overflow: hidden;
         }
 
-        /* Header Engine */
         .header-engine { text-align: center; margin-bottom: 20px; }
         .brand-meta { font-size: 10px; letter-spacing: 4px; color: var(--gold-soft); font-weight: 900; margin-bottom: 15px; }
         .balance-master { background: var(--glass); border: 1px solid var(--border); border-radius: 30px; padding: 20px; backdrop-filter: blur(10px); }
         .val-display { font-size: 56px; font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(255,215,0,0.5); line-height: 1; }
 
-        /* Pages */
         .page { display: none; padding: 10px 0; animation: slideUp 0.3s ease-out; }
         .page.active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Coin Portal */
         .coin-portal { display: flex; justify-content: center; margin: 30px 0 20px; perspective: 1000px; }
         .engine-core {
             width: 220px; height: 220px; border-radius: 50%;
@@ -72,12 +68,10 @@
         .engine-core:active { transform: scale(0.94); }
         .core-text { font-size: 44px; font-weight: 900; color: #3d2b07; z-index: 2; }
 
-        /* Energy Wrapper */
         .energy-wrapper { margin-top: 20px; background: rgba(0,0,0,0.3); border-radius: 30px; padding: 16px; border: 1px solid var(--border); }
         .progress-track { height: 12px; background: #111; border-radius: 20px; border: 1px solid var(--gold-dark); overflow: hidden; margin-top: 8px; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--gold)); width: 100%; transition: width 0.3s; }
 
-        /* Task Cards */
         .task-card {
             background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px);
             border: 1px solid var(--border); border-radius: 20px; padding: 18px;
@@ -92,7 +86,6 @@
         .btn-action:disabled { background: #333 !important; color: #888 !important; cursor: not-allowed; transform: none; }
         .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; }
 
-        /* Tab Bar */
         .tab-bar {
             position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
             width: calc(100% - 32px); max-width: 380px; background: rgba(10, 10, 10, 0.9);
@@ -103,14 +96,12 @@
         .tab-link.active { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; }
         .tab-link i { font-size: 20px; display: block; margin-bottom: 4px; }
 
-        /* Floating Reward */
         .floating-reward {
             position: absolute; color: var(--gold); font-weight: 900; font-size: 36px;
             animation: floatUp 0.8s forwards; pointer-events: none; z-index: 2000; text-shadow: 0 0 20px gold;
         }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-120px) scale(1.5); } }
 
-        /* Toast Message */
         .toast-message {
             position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
             background: rgba(0,0,0,0.9); border: 2px solid var(--gold); border-radius: 30px;
@@ -118,12 +109,10 @@
         }
         @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
-        /* Input Field */
         input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 15px; border-radius: 20px; color: white; margin-bottom: 20px; outline: none; }
         input:focus { border-color: var(--gold); }
         .section-title { font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 20px; text-align: center; }
 
-        /* Payment Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
         .modal-content { background: var(--card-bg); border: 2px solid var(--gold); border-radius: 30px; padding: 24px; width: 100%; max-width: 360px; }
@@ -275,31 +264,25 @@
         (function() {
             'use strict';
 
-            // ===== CONFIGURATION =====
             const RENDER_URL = "https://omlla-payments-backend.onrender.com"; 
             const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
             const BOT_USERNAME = "OMLLA_Coin_bot";
             const WALLET_ADDRESS = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx";
 
-            // ===== TELEGRAM INIT =====
             const tg = window.Telegram.WebApp;
             tg.expand(); tg.ready();
 
-            // ===== FIREBASE INIT =====
             const firebaseConfig = { databaseURL: FIREBASE_URL };
             firebase.initializeApp(firebaseConfig);
             const db = firebase.database();
 
-            // ===== USER DATA =====
             const user = tg.initDataUnsafe?.user || { id: 'user_' + Math.random().toString(36).substr(2, 9), first_name: 'Player' };
             const userId = user.id.toString();
             const userRef = db.ref('players/' + userId);
 
-            // ===== GAME STATE =====
             let state = { points: 0, energy: 1000, totalTaps: 0, referrals: 0, tapMultiplier: 1, lastDaily: 0, tasks: {} };
             let boostActive = false; let boostEndTime = 0; let lastTap = 0; const TAP_DELAY = 100; let currentPayment = null;
 
-            // ===== DOM ELEMENTS =====
             const elements = {
                 balance: document.getElementById('total-balance'), usdValue: document.getElementById('usd-value'),
                 energyVal: document.getElementById('energy-val'), energyFill: document.getElementById('energy-fill'),
@@ -312,7 +295,6 @@
 
             if (elements.walletDisplay) elements.walletDisplay.innerText = WALLET_ADDRESS;
 
-            // ===== UPDATE UI FUNCTION =====
             function updateUI() {
                 elements.balance.innerText = Math.floor(state.points || 0).toLocaleString();
                 elements.usdValue.innerText = ((state.points || 0) / 5000).toFixed(2);
@@ -325,7 +307,6 @@
                 elements.refBonus.innerText = ((state.referrals || 0) * 500).toLocaleString();
                 if (elements.walletBalance) elements.walletBalance.innerText = Math.floor(state.points || 0).toLocaleString() + ' O$';
                 
-                // Task State UI Security
                 if (state.tasks) {
                     Object.keys(state.tasks).forEach(taskId => {
                         const btn = document.getElementById('btn-' + taskId);
@@ -334,7 +315,6 @@
                 }
             }
 
-            // ===== LOAD PLAYER DATA =====
             userRef.on('value', (snap) => {
                 const data = snap.val();
                 if (data) {
@@ -351,7 +331,6 @@
                 updateUI();
             });
 
-            // ===== CHECK REFERRAL =====
             const startParam = tg.initDataUnsafe?.start_param || '';
             if (startParam && startParam.startsWith('ref')) {
                 const referrerId = startParam.replace('ref', '');
@@ -366,7 +345,6 @@
                 }
             }
 
-            // ===== TAP HANDLER (Pointerdown for PC + Mobile Support) =====
             elements.tapEngine.addEventListener('pointerdown', handleTap);
 
             function handleTap(e) {
@@ -415,7 +393,6 @@
                 document.body.appendChild(toast); setTimeout(() => toast.remove(), 2000);
             }
 
-            // ===== BOOST FUNCTION =====
             if (elements.boostBtn) {
                 elements.boostBtn.addEventListener('click', () => {
                     if (state.points < 500) { showToast('❌ Need 500 O$'); return; }
@@ -426,7 +403,6 @@
                 });
             }
 
-            // ===== DAILY BONUS =====
             window.claimDaily = function() {
                 const now = Date.now(); const last = state.lastDaily || 0;
                 if (now - last < 86400000) { showToast('⏳ Already claimed today'); return; }
@@ -436,7 +412,6 @@
                 }).then(() => { showToast('✅ +200 O$ claimed!'); });
             };
 
-            // ===== SECURED TASK FUNCTION =====
             window.runTask = (taskId, url, reward) => {
                 if (state.tasks && state.tasks[taskId]) { showToast('⚠️ Mission already completed!'); return; }
                 tg.openLink(url);
@@ -456,29 +431,53 @@
                 }, 3000);
             };
 
-            // ===== PURCHASE FUNCTION =====
-            window.initiatePurchase = async (amount, pack, price) => {
-                tg.showConfirm(`Confirm purchase of ${pack} for ${price} SOL?`, async (ok) => {
+            window.initiatePurchase = async (tokenAmount, packName, solPrice) => {
+                tg.showConfirm(`Confirm protocol: ${packName} for ${solPrice} SOL?`, async (ok) => {
                     if (ok) {
+                        tg.MainButton.setText("🔄 PROCESSING...");
+                        tg.MainButton.showProgress();
+
                         try {
                             const response = await fetch(`${RENDER_URL}/api/create-payment`, {
-                                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ userId: userId, amount: amount, packageName: pack, solAmount: price })
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ 
+                                    userId: userId, 
+                                    amount: solPrice,
+                                    pack: packName, 
+                                    tokens: tokenAmount 
+                                })
                             });
+
                             const data = await response.json();
+
                             if (data.success) {
-                                currentPayment = { paymentId: data.paymentId, amount: amount, solAmount: price };
-                                document.getElementById('modal-amount').innerText = price + ' SOL';
-                                document.getElementById('modal-pack').innerText = pack + ' Pack';
+                                currentPayment = {
+                                    paymentId: data.paymentId,
+                                    amount: tokenAmount,
+                                    solAmount: solPrice
+                                };
+
+                                document.getElementById('modal-amount').innerText = solPrice + ' SOL';
+                                document.getElementById('modal-pack').innerText = packName + ' Pack';
                                 document.getElementById('modal-wallet').innerText = data.merchantWallet || WALLET_ADDRESS;
+                                
                                 document.getElementById('paymentModal').classList.add('active');
-                            } else { showToast('❌ Error: ' + data.error); }
-                        } catch (e) { showToast('⚠️ Connection Error'); }
+                                showToast('✅ Order Generated!');
+                            } else {
+                                tg.showAlert("❌ Server Error: " + (data.error || "Unknown"));
+                            }
+                        } catch (e) {
+                            tg.showAlert("⚠️ Connection failed. Make sure your Render server is LIVE.");
+                            console.error("Link Error:", e);
+                        } finally {
+                            tg.MainButton.hideProgress();
+                            tg.MainButton.setText('⚡ PLAY OMLLA ⚡');
+                        }
                     }
                 });
             };
 
-            // ===== VERIFY PAYMENT =====
             window.verifyPayment = async function() {
                 const tx = document.getElementById('tx-signature').value.trim();
                 if (!tx) { showToast('❌ Enter transaction signature'); return; }
@@ -500,7 +499,6 @@
                 document.getElementById('tx-signature').value = ''; currentPayment = null;
             };
 
-            // ===== REFERRAL & WALLET FUNCTIONS =====
             window.shareReferral = () => {
                 const link = `https://t.me/${BOT_USERNAME}?start=ref${userId}`;
                 tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🐢 Join OMLLA Capital and earn gold!')}`);
@@ -513,19 +511,16 @@
                 userRef.child('wallet').set(addr); showToast('✅ Wallet linked!');
             };
 
-            // ===== PAGE SWITCHING =====
             window.switchPage = (id, el) => {
                 document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active')); el.classList.add('active');
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id + '-page').classList.add('active');
                 tg.HapticFeedback?.impactOccurred('light');
             };
 
-            // ===== ENERGY REGENERATION =====
             setInterval(() => {
                 if (state.energy < 1000) { state.energy = Math.min(state.energy + 1, 1000); updateUI(); userRef.child('energy').set(state.energy); }
             }, 3000);
 
-            // ===== TELEGRAM BUTTONS =====
             tg.MainButton.setText('⚡ PLAY OMLLA ⚡'); tg.MainButton.show(); tg.BackButton.show();
             tg.BackButton.onClick(() => {
                 const activePage = document.querySelector('.page.active');
