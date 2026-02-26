@@ -433,6 +433,7 @@
                         try {
                             const response = await fetch(`${RENDER_URL}/api/create-payment`, {
                                 method: 'POST',
+                                mode: 'cors',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ 
                                     userId: userId, 
@@ -473,7 +474,9 @@
                 if (!tx) { showToast('❌ Enter transaction signature'); return; }
                 try {
                     const response = await fetch(`${RENDER_URL}/api/verify-payment`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        method: 'POST', 
+                        mode: 'cors',
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ paymentId: currentPayment.paymentId, transactionSignature: tx })
                     });
                     const data = await response.json();
@@ -522,4 +525,3 @@
     </script>
 </body>
 </html>
-
