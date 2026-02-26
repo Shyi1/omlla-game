@@ -162,10 +162,6 @@
                 <button id="btn-tgChannel" class="btn-action" onclick="runTask('tgChannel', 'https://t.me/OmllaChannel', 1000)">JOIN</button>
             </div>
             <div class="task-card">
-                <div><div style="font-weight:800;">Follow on X</div><div style="color:var(--gold); font-size:12px;">+500 O$</div></div>
-                <button id="btn-xFollow" class="btn-action" onclick="runTask('xFollow', 'https://x.com/omlla', 500)">FOLLOW</button>
-            </div>
-            <div class="task-card">
                 <div><div style="font-weight:800;">Daily Bonus</div><div style="color:var(--gold); font-size:12px;">+200 O$</div></div>
                 <button class="btn-action" id="daily-btn" onclick="claimDaily()">CLAIM</button>
             </div>
@@ -434,9 +430,6 @@
             window.initiatePurchase = async (tokenAmount, packName, solPrice) => {
                 tg.showConfirm(`Confirm protocol: ${packName} for ${solPrice} SOL?`, async (ok) => {
                     if (ok) {
-                        tg.MainButton.setText("🔄 PROCESSING...");
-                        tg.MainButton.showProgress();
-
                         try {
                             const response = await fetch(`${RENDER_URL}/api/create-payment`, {
                                 method: 'POST',
@@ -470,9 +463,6 @@
                         } catch (e) {
                             tg.showAlert("⚠️ Connection failed. Make sure your Render server is LIVE.");
                             console.error("Link Error:", e);
-                        } finally {
-                            tg.MainButton.hideProgress();
-                            tg.MainButton.setText('⚡ PLAY OMLLA ⚡');
                         }
                     }
                 });
@@ -521,7 +511,8 @@
                 if (state.energy < 1000) { state.energy = Math.min(state.energy + 1, 1000); updateUI(); userRef.child('energy').set(state.energy); }
             }, 3000);
 
-            tg.MainButton.setText('⚡ PLAY OMLLA ⚡'); tg.MainButton.show(); tg.BackButton.show();
+            // Back button handling
+            tg.BackButton.show();
             tg.BackButton.onClick(() => {
                 const activePage = document.querySelector('.page.active');
                 if (activePage && activePage.id === 'mine-page') { tg.close(); } else { document.querySelectorAll('.tab-link')[0].click(); }
