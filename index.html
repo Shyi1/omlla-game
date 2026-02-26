@@ -16,8 +16,7 @@
         :root {
             --gold: #FFD700; --gold-soft: #bf953f; --gold-dark: #b8860b; --emerald: #14F195;
             --bg: #050505; --card-bg: #0f0f0f; --glass: rgba(255, 215, 0, 0.05); --border: rgba(255, 215, 0, 0.15);
-            --premium: #8A2BE2; --legendary: #FF4500; --mythic: #FF00FF; --cosmic: #00FFFF;
-            --divine: #FFD700; --godly: #FF1493;
+            --premium: #8A2BE2; --legendary: #FF4500;
         }
 
         body {
@@ -108,26 +107,6 @@
         .legendary-card {
             border: 2px solid var(--legendary); background: rgba(255, 69, 0, 0.1);
         }
-        .mythic-card {
-            border: 2px solid var(--mythic); background: rgba(255, 0, 255, 0.1);
-        }
-        .cosmic-card {
-            border: 2px solid var(--cosmic); background: rgba(0, 255, 255, 0.1);
-        }
-        .divine-card {
-            border: 2px solid var(--divine); background: rgba(255, 215, 0, 0.2);
-            box-shadow: 0 0 30px gold;
-        }
-        .godly-card {
-            border: 3px solid var(--godly); background: rgba(255, 20, 147, 0.2);
-            box-shadow: 0 0 50px #FF1493;
-            animation: godlyPulse 2s infinite;
-        }
-
-        @keyframes godlyPulse {
-            0%, 100% { box-shadow: 0 0 50px #FF1493; }
-            50% { box-shadow: 0 0 80px #FFD700; }
-        }
 
         .btn-action {
             background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #000;
@@ -138,15 +117,6 @@
         .btn-action:disabled { background: #333 !important; color: #888 !important; cursor: not-allowed; transform: none; }
         .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; }
         .btn-premium { background: linear-gradient(135deg, var(--premium), #4B0082); color: white; }
-        .btn-mythic { background: linear-gradient(135deg, var(--mythic), #8B008B); color: white; }
-        .btn-cosmic { background: linear-gradient(135deg, var(--cosmic), #008B8B); color: black; }
-        .btn-divine { background: linear-gradient(135deg, #FFD700, #B8860B); color: black; }
-        .btn-godly { background: linear-gradient(135deg, #FF1493, #8B008B); color: white; animation: godlyBtn 2s infinite; }
-
-        @keyframes godlyBtn {
-            0%, 100% { box-shadow: 0 0 20px #FF1493; }
-            50% { box-shadow: 0 0 40px #FFD700; }
-        }
 
         .tab-bar {
             position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
@@ -203,14 +173,6 @@
             display: inline-block; animation: flicker 1s infinite;
         }
         @keyframes flicker { 0%,100% { opacity: 1; } 50% { opacity: 0.8; } }
-
-        /* Auto Tap Indicator */
-        .auto-tap-indicator {
-            position: absolute; bottom: 10px; right: 10px;
-            background: rgba(0,0,0,0.7); border: 1px solid var(--gold);
-            border-radius: 20px; padding: 5px 10px; font-size: 10px;
-            color: var(--gold); display: none;
-        }
     </style>
 </head>
 <body>
@@ -231,14 +193,7 @@
         </header>
 
         <div id="mine-page" class="page active">
-            <div class="coin-portal">
-                <div class="engine-core" id="tap-engine">
-                    <div class="core-text">O$</div>
-                </div>
-                <div class="auto-tap-indicator" id="auto-tap-indicator">
-                    <i class="fas fa-robot"></i> AUTO TAP
-                </div>
-            </div>
+            <div class="coin-portal"><div class="engine-core" id="tap-engine"><div class="core-text">O$</div></div></div>
             
             <!-- XP Progress Bar -->
             <div class="xp-bar">
@@ -297,82 +252,17 @@
                 <div><div style="font-weight:bold;">Premium Boost (X3)</div><div style="font-size:11px; color:#888;">Triple points for 1 min</div></div>
                 <button class="btn-gold btn-premium" id="premium-boost-btn">2,000 O$</button>
             </div>
-            <div class="task-card legendary-card">
-                <div><div style="font-weight:bold;">AUTO TAPPER</div><div style="font-size:11px; color:#888;">Auto tap every 1 second</div></div>
-                <button class="btn-gold" style="background: linear-gradient(135deg, var(--legendary), #8B0000);" id="auto-tap-btn">10,000 O$</button>
-            </div>
 
-            <div class="section-title" style="margin:25px 0 15px;">BUY OMLLA TOKENS</div>
-            
-            <!-- Starter Pack -->
+            <div class="section-title" style="margin:25px 0 15px;">BUY OMLLA TOKEN</div>
             <div class="task-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
-                <div style="width:100%; display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">🚀 STARTER PACK</span>
-                    <span style="color:var(--gold);">0.1 SOL</span>
-                </div>
-                <div style="font-size:11px; color:#888;">Get 1,000,000 O$ Tokens</div>
-                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(1000000, 'Starter', 0.1)">BUY NOW</button>
+                <div style="width:100%; display:flex; justify-content:space-between;"><span style="font-weight:bold;">Starter Pack</span><span style="color:var(--gold);">0.1 SOL</span></div>
+                <div style="font-size:11px; color:#888;">Get 1,000 O$ Tokens</div>
+                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(1000, 'Starter', 0.1)">BUY NOW</button>
             </div>
-            
-            <!-- Gold Pack -->
             <div class="task-card premium-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
-                <div style="width:100%; display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">👑 GOLD PACK</span>
-                    <span style="color:var(--gold);">0.5 SOL</span>
-                </div>
-                <div style="font-size:11px; color:#888;">Get 5,000,000 O$ + Silver Badge</div>
-                <button class="btn-action btn-premium" style="width:100%;" onclick="initiatePurchase(5000000, 'Gold', 0.5)">BUY NOW</button>
-            </div>
-            
-            <!-- Whale Pack -->
-            <div class="task-card legendary-card" style="flex-direction:column; align-items:flex-start; gap:10px; border-color: var(--legendary); background: rgba(255, 69, 0, 0.15);">
-                <div style="width:100%; display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">🐋 WHALE PACK</span>
-                    <span style="color:var(--gold);">1 SOL</span>
-                </div>
-                <div style="font-size:11px; color:#ffaa00;">Get 1,999,999,999 O$ + Gold Badge + Auto Tapper</div>
-                <button class="btn-action" style="width:100%; background: linear-gradient(135deg, #FF4500, #8B0000); color: white;" onclick="initiatePurchase(1999999999, 'Whale', 1)">BUY NOW</button>
-            </div>
-
-            <!-- Cosmic Pack (3 SOL) -->
-            <div class="task-card cosmic-card" style="flex-direction:column; align-items:flex-start; gap:10px; border-color: var(--cosmic); background: rgba(0, 255, 255, 0.15);">
-                <div style="width:100%; display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">🌌 COSMIC PACK</span>
-                    <span style="color:var(--cosmic);">3 SOL</span>
-                </div>
-                <div style="font-size:11px; color:#00ffff;">Get 9,999,999,999 O$ + Cosmic Badge + Level 50 + Auto Tapper</div>
-                <button class="btn-action btn-cosmic" style="width:100%; background: linear-gradient(135deg, #00FFFF, #008B8B); color: black;" onclick="initiatePurchase(9999999999, 'Cosmic', 3)">BUY NOW</button>
-            </div>
-
-            <!-- Divine Pack (10 SOL) -->
-            <div class="task-card divine-card" style="flex-direction:column; align-items:flex-start; gap:10px; border-color: var(--divine); background: rgba(255, 215, 0, 0.2);">
-                <div style="width:100%; display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">✨ DIVINE PACK</span>
-                    <span style="color:var(--divine);">10 SOL</span>
-                </div>
-                <div style="font-size:11px; color:#FFD700;">Get 50,000,000,000 O$ + Divine Badge + Level 200 + Auto Tapper + All Boosts</div>
-                <button class="btn-action btn-divine" style="width:100%; background: linear-gradient(135deg, #FFD700, #B8860B); color: black;" onclick="initiatePurchase(50000000000, 'Divine', 10)">BUY NOW</button>
-            </div>
-
-            <!-- NEW: GODLY PACK - MAX LEVEL 999 with ALL ACCESS for 20 SOL -->
-            <div class="task-card godly-card" style="flex-direction:column; align-items:flex-start; gap:10px; border-color: #FF1493; background: rgba(255, 20, 147, 0.2);">
-                <div style="width:100%; display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">👾 GODLY PACK</span>
-                    <span style="color:#FF1493;">20 SOL</span>
-                </div>
-                <div style="font-size:11px; color:#FF1493; font-weight:bold;">MAX LEVEL 999 • ALL ACCESS • ULTIMATE</div>
-                <div style="font-size:10px; color:#FFD700; text-align:left; width:100%;">
-                    ⚡ Get 100,000,000,000 O$ Tokens<br>
-                    ⚡ MAX LEVEL 999 instantly<br>
-                    ⚡ ALL BADGES unlocked (including Godly)<br>
-                    ⚡ PERMANENT 10x Multiplier<br>
-                    ⚡ AUTO TAPPER (1s)<br>
-                    ⚡ INFINITE ENERGY<br>
-                    ⚡ DAILY BONUS 10,000 O$<br>
-                    ⚡ PREMIUM STATUS + ALL PERKS<br>
-                    ⚡ EXCLUSIVE GODLY PROFILE
-                </div>
-                <button class="btn-action btn-godly" style="width:100%; background: linear-gradient(135deg, #FF1493, #8B008B); color: white; font-weight:bold; font-size:14px;" onclick="initiatePurchase(100000000000, 'Godly', 20)">👑 BUY GODLY PACK 👑</button>
+                <div style="width:100%; display:flex; justify-content:space-between;"><span style="font-weight:bold;">Premium Pack</span><span style="color:var(--premium);">1 SOL</span></div>
+                <div style="font-size:11px; color:#888;">Get 15,000 O$ + Premium Badge</div>
+                <button class="btn-action btn-premium" style="width:100%;" onclick="initiatePurchase(15000, 'Premium', 1)">BUY NOW</button>
             </div>
         </div>
 
@@ -396,7 +286,7 @@
             </div>
             <div class="task-card" style="margin-top:15px;">
                 <div><span style="font-weight:bold;">Total Badges</span></div>
-                <div><span id="badge-count">0</span>/10</div>
+                <div><span id="badge-count">0</span>/5</div>
             </div>
         </div>
 
@@ -471,14 +361,12 @@
                 points: 0, energy: 1000, totalTaps: 0, referrals: 0, 
                 tapMultiplier: 1, lastDaily: 0, tasks: {},
                 level: 1, xp: 0, streak: 0, lastStreak: 0,
-                badges: {}, premium: false, autoTap: false, maxLevel: false,
-                infiniteEnergy: false, godlyPack: false
+                badges: {}, premium: false
             };
             
             let boostActive = false; let premiumBoostActive = false;
             let boostEndTime = 0; let premiumBoostEndTime = 0;
             let lastTap = 0; const TAP_DELAY = 100; let currentPayment = null;
-            let autoTapInterval = null;
 
             const elements = {
                 balance: document.getElementById('total-balance'), usdValue: document.getElementById('usd-value'),
@@ -491,22 +379,17 @@
                 levelDisplay: document.getElementById('levelDisplay'), levelCurrent: document.getElementById('level-current'),
                 xpFill: document.getElementById('xp-fill'), xpProgressText: document.getElementById('xp-progress-text'),
                 streakCount: document.getElementById('streak-count'), streakBonus: document.getElementById('streak-bonus'),
-                badgeGrid: document.getElementById('badge-grid'), badgeCount: document.getElementById('badge-count'),
-                autoTapBtn: document.getElementById('auto-tap-btn'), autoTapIndicator: document.getElementById('auto-tap-indicator')
+                badgeGrid: document.getElementById('badge-grid'), badgeCount: document.getElementById('badge-count')
             };
 
             if (elements.walletDisplay) elements.walletDisplay.innerText = WALLET_ADDRESS;
 
-            // LEVEL SYSTEM - Extended to level 999
-            const xpPerLevel = [];
-            for (let i = 0; i <= 1000; i++) {
-                if (i === 0) xpPerLevel[i] = 0;
-                else xpPerLevel[i] = xpPerLevel[i-1] + Math.floor(1000 * i * 1.5);
-            }
+            // LEVEL SYSTEM
+            const xpPerLevel = [0, 1000, 2500, 5000, 10000, 20000, 40000, 80000, 160000, 320000];
             
             function calculateLevel(xp) {
                 for (let i = xpPerLevel.length - 1; i >= 0; i--) {
-                    if (xp >= xpPerLevel[i]) return i;
+                    if (xp >= xpPerLevel[i]) return i + 1;
                 }
                 return 1;
             }
@@ -515,18 +398,14 @@
                 return xpPerLevel[level] || xpPerLevel[xpPerLevel.length - 1] * 2;
             }
 
-            // ACHIEVEMENT BADGES - Added Godly badge
+            // ACHIEVEMENT BADGES
             const badges = [
                 { id: 'taps100', name: '100 TAPS', icon: '👆', condition: (s) => s.totalTaps >= 100 },
                 { id: 'taps1000', name: '1K TAPS', icon: '⚡', condition: (s) => s.totalTaps >= 1000 },
                 { id: 'ref5', name: 'INFLUENCER', icon: '👥', condition: (s) => s.referrals >= 5 },
-                { id: 'points1M', name: 'MILLIONAIRE', icon: '💰', condition: (s) => s.points >= 1000000 },
-                { id: 'points1B', name: 'BILLIONAIRE', icon: '💎', condition: (s) => s.points >= 1000000000 },
-                { id: 'points10B', name: 'COSMIC', icon: '🌌', condition: (s) => s.points >= 10000000000 },
-                { id: 'points50B', name: 'DIVINE', icon: '✨', condition: (s) => s.points >= 50000000000 },
-                { id: 'points100B', name: 'GODLY', icon: '👾', condition: (s) => s.points >= 100000000000 },
+                { id: 'points10k', name: 'WHALE', icon: '🐋', condition: (s) => s.points >= 10000 },
                 { id: 'streak7', name: 'ON FIRE', icon: '🔥', condition: (s) => s.streak >= 7 },
-                { id: 'maxLevel', name: 'MAX LEVEL', icon: '👑', condition: (s) => s.maxLevel }
+                { id: 'premium', name: 'ELITE', icon: '👑', condition: (s) => s.premium }
             ];
 
             function updateBadges() {
@@ -553,42 +432,31 @@
                 elements.balance.innerText = Math.floor(state.points || 0).toLocaleString();
                 elements.usdValue.innerText = ((state.points || 0) / 5000).toFixed(2);
                 
-                // Energy - Infinite if godly pack
-                if (state.godlyPack) {
-                    elements.energyVal.innerText = `♾️/1000`;
-                    elements.energyCurrent.innerText = '♾️';
-                    elements.energyFill.style.width = '100%';
-                } else {
-                    elements.energyVal.innerText = `${state.energy || 0}/1000`;
-                    elements.energyCurrent.innerText = state.energy || 0;
-                    elements.energyFill.style.width = ((state.energy || 0) / 1000 * 100) + '%';
-                }
+                // Energy
+                elements.energyVal.innerText = `${state.energy || 0}/1000`;
+                elements.energyCurrent.innerText = state.energy || 0;
+                elements.energyFill.style.width = ((state.energy || 0) / 1000 * 100) + '%';
                 
                 // Stats
                 elements.tapCount.innerText = (state.totalTaps || 0).toLocaleString();
-                let multiplierText = '1x';
-                if (state.godlyPack) multiplierText = '10x';
-                else if (premiumBoostActive) multiplierText = '3x';
-                else if (boostActive) multiplierText = '2x';
-                elements.boostStatus.innerText = multiplierText;
-                
+                elements.boostStatus.innerText = (boostActive ? '2x' : (premiumBoostActive ? '3x' : '1x'));
                 elements.refCount.innerText = state.referrals || 0;
                 
                 // Level System
-                const level = state.maxLevel ? 999 : (calculateLevel(state.xp || 0));
+                const level = calculateLevel(state.xp || 0);
                 state.level = level;
-                elements.levelDisplay.innerText = state.maxLevel ? 'MAX' : `LVL ${level}`;
-                elements.levelCurrent.innerText = state.maxLevel ? 'MAX LEVEL' : `Level ${level}`;
+                elements.levelDisplay.innerText = `LVL ${level}`;
+                elements.levelCurrent.innerText = `Level ${level}`;
                 
                 const nextXp = getXpForNextLevel(level);
-                const xpProgress = state.maxLevel ? 100 : ((state.xp || 0) / nextXp * 100);
+                const xpProgress = ((state.xp || 0) / nextXp * 100);
                 elements.xpFill.style.width = Math.min(xpProgress, 100) + '%';
-                elements.xpProgressText.innerText = state.maxLevel ? 'MAXED' : `${Math.floor(state.xp || 0)}/${nextXp} XP`;
+                elements.xpProgressText.innerText = `${Math.floor(state.xp || 0)}/${nextXp} XP`;
                 
                 // Streak Bonus
                 const streakBonus = Math.min(state.streak || 0, 30) * 0.5; // 0.5% per day up to 15%
                 elements.streakCount.innerText = state.streak || 0;
-                elements.streakBonus.innerText = state.godlyPack ? '+100%' : `+${streakBonus}%`;
+                elements.streakBonus.innerText = `+${streakBonus}%`;
                 
                 // Wallet
                 if (elements.walletBalance) {
@@ -601,11 +469,6 @@
                         const btn = document.getElementById('btn-' + taskId);
                         if (btn) { btn.innerText = "DONE"; btn.style.background = "#333"; btn.style.color = "#888"; btn.disabled = true; }
                     });
-                }
-                
-                // Auto Tap Indicator
-                if (elements.autoTapIndicator) {
-                    elements.autoTapIndicator.style.display = state.autoTap ? 'block' : 'none';
                 }
                 
                 updateBadges();
@@ -626,21 +489,11 @@
                     state.streak = Number(data.streak) || 0;
                     state.lastStreak = Number(data.lastStreak) || 0;
                     state.premium = data.premium || false;
-                    state.autoTap = data.autoTap || false;
-                    state.maxLevel = data.maxLevel || false;
-                    state.infiniteEnergy = data.infiniteEnergy || false;
-                    state.godlyPack = data.godlyPack || false;
-                    
-                    // Start auto tap if enabled
-                    if (state.autoTap && !autoTapInterval) {
-                        startAutoTap();
-                    }
                 } else {
                     userRef.set({ 
                         points: 0, energy: 1000, name: user.first_name, 
                         totalTaps: 0, referrals: 0, tapMultiplier: 1, 
-                        tasks: {}, level: 1, xp: 0, streak: 0, premium: false, 
-                        autoTap: false, maxLevel: false, infiniteEnergy: false, godlyPack: false 
+                        tasks: {}, level: 1, xp: 0, streak: 0, premium: false 
                     });
                 }
                 updateUI();
@@ -676,12 +529,7 @@
                 if (now - lastTap < TAP_DELAY) return;
                 lastTap = now;
                 
-                // Check energy (skip if godly pack or infinite energy)
-                if (!state.godlyPack && !state.infiniteEnergy && state.energy < 1) { 
-                    showToast('⚡ Out of energy!'); 
-                    tg.HapticFeedback?.impactOccurred('heavy'); 
-                    return; 
-                }
+                if (state.energy < 1) { showToast('⚡ Out of energy!'); tg.HapticFeedback?.impactOccurred('heavy'); return; }
 
                 if (boostActive && Date.now() > boostEndTime) {
                     boostActive = false; userRef.child('tapMultiplier').set(1);
@@ -691,80 +539,38 @@
                 }
 
                 let multiplier = 1;
-                if (state.godlyPack) multiplier = 10;
-                else if (premiumBoostActive) multiplier = 3;
+                if (premiumBoostActive) multiplier = 3;
                 else if (boostActive) multiplier = 2;
                 
                 // Apply streak bonus
-                const streakBonus = state.godlyPack ? 1 : (Math.min(state.streak || 0, 30) * 0.005);
+                const streakBonus = Math.min(state.streak || 0, 30) * 0.005; // 0.5% per day
                 multiplier = multiplier * (1 + streakBonus);
                 
                 const gain = Math.floor(multiplier);
-                const xpGain = state.maxLevel ? 0 : 1; // No XP gain at max level
+                const xpGain = 1;
                 
-                performTap(gain, xpGain);
-            }
-
-            function performTap(gain, xpGain) {
                 userRef.transaction((data) => {
                     if (data) {
                         data.points = (data.points || 0) + gain;
-                        // Only reduce energy if not godly pack
-                        if (!data.godlyPack && !data.infiniteEnergy) {
-                            data.energy = Math.max((data.energy || 1000) - 1, 0);
-                        }
+                        data.energy = Math.max((data.energy || 1000) - 1, 0);
                         data.totalTaps = (data.totalTaps || 0) + 1;
-                        if (!data.maxLevel) {
-                            data.xp = (data.xp || 0) + xpGain;
-                        }
+                        data.xp = (data.xp || 0) + xpGain;
                     }
                     return data;
                 }).then((result) => {
                     if (result.committed) {
                         const val = result.snapshot.val();
-                        state.points = val.points; 
-                        if (!state.godlyPack && !state.infiniteEnergy) {
-                            state.energy = val.energy;
-                        }
-                        state.totalTaps = val.totalTaps; 
-                        if (!state.maxLevel) {
-                            state.xp = val.xp;
-                        }
+                        state.points = val.points; state.energy = val.energy; 
+                        state.totalTaps = val.totalTaps; state.xp = val.xp;
                         updateUI();
                         
                         const rect = elements.tapEngine.getBoundingClientRect();
-                        const x = rect.left + rect.width / 2;
-                        const y = rect.top + rect.height / 2;
+                        const x = e.clientX || (rect.left + rect.width / 2);
+                        const y = e.clientY || (rect.top + rect.height / 2);
                         createFloatingText(x, y, '+' + gain);
                         tg.HapticFeedback?.impactOccurred('medium');
                     }
                 });
-            }
-
-            // AUTO TAP FUNCTION
-            function startAutoTap() {
-                if (autoTapInterval) clearInterval(autoTapInterval);
-                autoTapInterval = setInterval(() => {
-                    if (state.autoTap) {
-                        // Check energy if not godly pack
-                        if (!state.godlyPack && !state.infiniteEnergy && state.energy < 1) {
-                            return;
-                        }
-                        
-                        let multiplier = 1;
-                        if (state.godlyPack) multiplier = 10;
-                        else if (premiumBoostActive) multiplier = 3;
-                        else if (boostActive) multiplier = 2;
-                        
-                        const streakBonus = state.godlyPack ? 1 : (Math.min(state.streak || 0, 30) * 0.005);
-                        multiplier = multiplier * (1 + streakBonus);
-                        
-                        const gain = Math.floor(multiplier);
-                        const xpGain = state.maxLevel ? 0 : 1;
-                        
-                        performTap(gain, xpGain);
-                    }
-                }, 1000);
             }
 
             function createFloatingText(x, y, text) {
@@ -798,21 +604,6 @@
                 setTimeout(() => { premiumBoostActive = false; showToast('⏰ Premium Boost ended'); updateUI(); }, 60000);
             });
 
-            // AUTO TAP BUTTON
-            if (elements.autoTapBtn) {
-                elements.autoTapBtn.addEventListener('click', () => {
-                    if (state.points < 10000) { showToast('❌ Need 10,000 O$'); return; }
-                    if (state.autoTap) { showToast('✅ Auto Tap already active!'); return; }
-                    
-                    userRef.child('points').transaction(p => (p || 0) - 10000);
-                    userRef.child('autoTap').set(true);
-                    state.autoTap = true;
-                    startAutoTap();
-                    showToast('🤖 AUTO TAP ACTIVATED! Tapping every second');
-                    updateUI();
-                });
-            }
-
             // DAILY BONUS WITH STREAK
             window.claimDaily = function() {
                 const now = Date.now(); 
@@ -830,13 +621,8 @@
                     newStreak = (state.streak || 0) + 1;
                 }
                 
-                let totalReward = 200;
-                if (state.godlyPack) {
-                    totalReward = 10000; // 10,000 for godly pack
-                } else {
-                    const streakBonus = Math.min(newStreak, 30) * 10; // 10 O$ per streak day
-                    totalReward = 200 + streakBonus;
-                }
+                const streakBonus = Math.min(newStreak, 30) * 10; // 10 O$ per streak day
+                const totalReward = 200 + streakBonus;
                 
                 userRef.transaction((data) => {
                     if (data) {
@@ -846,7 +632,7 @@
                     }
                     return data;
                 }).then(() => { 
-                    showToast(`✅ +${totalReward.toLocaleString()} O$ claimed! Streak: ${newStreak} days`); 
+                    showToast(`✅ +${totalReward} O$ claimed! Streak: ${newStreak} days`); 
                 });
             };
 
@@ -870,12 +656,9 @@
                 }, 3000);
             };
 
-            // PURCHASE FUNCTION - Updated with Godly Pack (20 SOL)
+            // PURCHASE FUNCTION
             window.initiatePurchase = async (tokenAmount, packName, solPrice) => {
-                // Format token amount for display
-                const formattedAmount = tokenAmount.toLocaleString();
-                
-                tg.showConfirm(`Confirm purchase: ${packName} Pack for ${solPrice} SOL?\n\nYou will receive ${formattedAmount} O$ tokens!`, async (ok) => {
+                tg.showConfirm(`Confirm purchase: ${packName} for ${solPrice} SOL?`, async (ok) => {
                     if (ok) {
                         try {
                             const response = await fetch(`${RENDER_URL}/api/create-payment`, {
@@ -929,38 +712,9 @@
                     const data = await response.json();
                     if (data.success) {
                         userRef.child('points').transaction(p => (p || 0) + currentPayment.amount);
-                        
-                        // Special rewards based on pack
-                        if (currentPayment.amount >= 100000000000) { // Godly Pack (20 SOL)
-                            userRef.child('maxLevel').set(true);
+                        if (currentPayment.amount >= 10000) {
                             userRef.child('premium').set(true);
-                            userRef.child('autoTap').set(true);
-                            userRef.child('infiniteEnergy').set(true);
-                            userRef.child('godlyPack').set(true);
-                            userRef.child('tapMultiplier').set(10);
-                            userRef.child('xp').set(9999999999); // Max XP
-                            showToast('👾 GODLY PACK: MAX LEVEL 999 + ALL ACCESS!');
-                        } else if (currentPayment.amount >= 50000000000) { // Divine Pack (10 SOL)
-                            userRef.child('premium').set(true);
-                            userRef.child('autoTap').set(true);
-                            userRef.child('level').set(200);
-                            userRef.child('xp').set(50000000);
-                            showToast('✨ DIVINE PACK: Level 200 + All Boosts!');
-                        } else if (currentPayment.amount >= 9999999999) { // Cosmic Pack (3 SOL)
-                            userRef.child('premium').set(true);
-                            userRef.child('autoTap').set(true);
-                            userRef.child('level').set(50);
-                            userRef.child('xp').set(1000000);
-                            showToast('🌌 COSMIC PACK: Level 50 + Auto Tapper!');
-                        } else if (currentPayment.amount >= 1999999999) { // Whale Pack (1 SOL)
-                            userRef.child('premium').set(true);
-                            userRef.child('autoTap').set(true);
-                            showToast('🐋 WHALE PACK BONUS: Gold Badge + Auto Tapper!');
-                        } else if (currentPayment.amount >= 5000000) { // Gold Pack (0.5 SOL)
-                            userRef.child('premium').set(true);
-                            showToast('👑 GOLD PACK BONUS: Silver Badge!');
                         }
-                        
                         userRef.child('xp').transaction(x => (x || 0) + 500);
                         showToast('✅ Payment verified!'); closeModal();
                     } else { showToast('❌ ' + data.error); }
@@ -975,7 +729,7 @@
             // SOCIAL FUNCTIONS
             window.shareReferral = () => {
                 const link = `https://t.me/${BOT_USERNAME}?start=ref${userId}`;
-                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🐢 Join OMLLA Capital and earn millions of O$ tokens!')}`);
+                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🐢 Join OMLLA Capital and earn gold!')}`);
             };
             window.copyReferral = () => { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref${userId}`); showToast('✅ Link copied!'); };
             window.copyWallet = () => { navigator.clipboard.writeText(WALLET_ADDRESS); showToast('✅ Wallet copied!'); };
@@ -991,10 +745,10 @@
                 tg.HapticFeedback?.impactOccurred('light');
             };
 
-            // ENERGY REGEN - Skip if godly pack
+            // ENERGY REGEN
             setInterval(() => {
-                if (!state.godlyPack && !state.infiniteEnergy && state.energy < 1000) { 
-                    state.energy = Math.min(state.energy + 1, 1000); 
+                if (state.energy < 1000) { 
+                    state.energy = Math.min(state.energy + 1, 90000000000); 
                     updateUI(); 
                     userRef.child('energy').set(state.energy); 
                 }
@@ -1012,3 +766,4 @@
     </script>
 </body>
 </html>
+
