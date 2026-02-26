@@ -43,7 +43,8 @@
         .progress-fill { height: 100%; background: var(--gold-lux); width: 100%; transition: width 0.3s; }
 
         .task-card { background: var(--card-bg); border: 1px solid #222; border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-action { background: var(--gold-lux); color: #000; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; width: 100%; }
+        .btn-action { background: var(--gold-lux); color: #000; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; }
+        .btn-gold { background: var(--gold-lux); color: black; border: none; padding: 10px 15px; border-radius: 10px; font-weight: 800; cursor: pointer; }
 
         .tab-bar { position: fixed; bottom: 0; width: 100%; max-width: 420px; background: rgba(8,8,8,0.95); backdrop-filter: blur(20px); display: flex; padding: 15px 10px; border-top: 1px solid #1a1a1a; z-index: 1000; }
         .tab-link { flex: 1; text-align: center; color: #444; font-size: 10px; font-weight: 700; cursor: pointer; }
@@ -83,26 +84,48 @@
             </div>
         </div>
 
+        <div id="shop-page" class="page">
+            <h3 style="text-align:center; color:var(--gold); margin-bottom:20px;">CAPITAL BOOSTERS</h3>
+            <div class="task-card">
+                <div>
+                    <div style="font-weight:bold;">Turbo Tap (X2)</div>
+                    <div style="font-size:11px; color:#555;">Double points per tap</div>
+                </div>
+                <button class="btn-gold" onclick="activateBooster(20000)">20k O$</button>
+            </div>
+
+            <h3 style="text-align:center; color:var(--gold); margin:25px 0 15px 0;">BUY OMLLA TOKEN</h3>
+            <div class="task-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
+                <div style="width:100%; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold;">Starter Pack</span>
+                    <span style="color:var(--gold);">0.1 SOL</span>
+                </div>
+                <div style="font-size:11px; color:#888;">Get 1,000,000 O$ Tokens + Elite Badge</div>
+                <button class="btn-action" style="width:100%;" onclick="initiatePurchase('Starter', 0.1)">BUY NOW</button>
+            </div>
+        </div>
+
         <div id="friends-page" class="page">
             <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">VIRAL GROWTH</h3>
             <div class="task-card" style="flex-direction:column; text-align:center; gap:10px;">
                 <div style="font-size:10px; color:var(--gold-soft);">TOTAL FRIENDS</div>
                 <div id="ref-count" style="font-size:32px; font-weight:900; color:var(--gold);">0</div>
             </div>
-            <button class="btn-action" style="height:55px; margin-bottom:10px;" onclick="shareReferral()"><i class="fas fa-paper-plane"></i> INVITE A FRIEND</button>
-            <button class="btn-action" style="background:transparent; border:1px solid var(--gold); color:var(--gold);" onclick="copyReferral()">COPY LINK</button>
+            <button class="btn-action" style="height:55px; margin-bottom:10px; width:100%;" onclick="shareReferral()"><i class="fas fa-paper-plane"></i> INVITE A FRIEND</button>
+            <button class="btn-action" style="background:transparent; border:1px solid var(--gold); color:var(--gold); width:100%;" onclick="copyReferral()">COPY LINK</button>
         </div>
 
         <div id="wallet-page" class="page">
             <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">DIGITAL ASSETS</h3>
             <input type="text" id="wallet-addr" placeholder="Enter TON or SOL Address">
-            <button class="btn-action" onclick="linkWallet()">CONNECT WALLET</button>
+            <button class="btn-action" style="width:100%;" onclick="linkWallet()">CONNECT WALLET</button>
             <p style="text-align:center; font-size:11px; color:#555; margin-top:20px;">Withdrawal opens at 100% supply distribution.</p>
         </div>
 
         <nav class="tab-bar">
             <div class="tab-link active" onclick="switchPage('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
             <div class="tab-link" onclick="switchPage('tasks', this)"><i class="fas fa-tasks"></i>TASKS</div>
+            <div class="tab-link" onclick="switchPage('shop', this)"><i class="fas fa-shopping-cart"></i>SHOP</div>
             <div class="tab-link" onclick="switchPage('friends', this)"><i class="fas fa-users"></i>FRIENDS</div>
             <div class="tab-link" onclick="switchPage('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
         </nav>
@@ -110,13 +133,14 @@
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
+        const RENDER_URL = "https://omlla-payments-backend.onrender.com";
         const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Investor' };
         const userRef = db.ref('players/' + user.id);
 
-        let state = { points: 0, energy: 1000, referrals: 0 };
+        let state = { points: 0, energy: 1000, referrals: 0, tapMultiplier: 1 };
 
         function refreshUI() {
             document.getElementById('total-balance').innerText = Math.floor(state.points).toLocaleString();
@@ -128,16 +152,17 @@
         userRef.on('value', (snap) => {
             const data = snap.val();
             if(data) { state = { ...state, ...data }; refreshUI(); }
-            else { userRef.set({ points: 0, energy: 1000, name: user.first_name, referrals: 0 }); }
+            else { userRef.set({ points: 0, energy: 1000, name: user.first_name, referrals: 0, tapMultiplier: 1 }); }
         });
 
         document.getElementById('tap-engine').addEventListener('touchstart', (e) => {
             e.preventDefault();
             if(state.energy >= 1) {
-                state.points += 1; state.energy -= 1; refreshUI();
+                const gain = 1 * (state.tapMultiplier || 1);
+                state.points += gain; state.energy -= 1; refreshUI();
                 userRef.update({ points: state.points, energy: state.energy });
                 const t = e.touches[0]; const f = document.createElement('div');
-                f.className = 'floating-reward'; f.innerText = '+1';
+                f.className = 'floating-reward'; f.innerText = `+${gain}`;
                 f.style.left = t.clientX + 'px'; f.style.top = t.clientY + 'px';
                 document.body.appendChild(f); setTimeout(() => f.remove(), 800);
                 if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
@@ -149,6 +174,34 @@
             document.getElementById(id + '-page').classList.add('active');
             document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
+        };
+
+        window.activateBooster = (cost) => {
+            if (state.points >= cost) {
+                state.points -= cost; state.tapMultiplier = 2;
+                userRef.update({ points: state.points, tapMultiplier: 2 });
+                tg.showAlert("🚀 Booster Activated! X2 Points per tap.");
+                refreshUI();
+            } else { tg.showAlert("❌ Not enough Gold!"); }
+        };
+
+        window.initiatePurchase = async (pack, price) => {
+            tg.showConfirm(`Confirm purchase of ${pack} for ${price} SOL?`, async (ok) => {
+                if (ok) {
+                    try {
+                        const res = await fetch(`${RENDER_URL}/api/create-payment`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: user.id, pack: pack, amount: price })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            tg.showAlert(`Send ${price} SOL to:\n${data.wallet}\n\nOrder ID: ${data.paymentId}`);
+                            navigator.clipboard.writeText(data.wallet);
+                        }
+                    } catch (e) { tg.showAlert("⚠️ Connection Error."); }
+                }
+            });
         };
 
         window.runTask = (url, reward) => {
