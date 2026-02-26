@@ -3,238 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA CAPITAL • PRESTIGE</title>
+    <title>OMLLA CAPITAL • ELITE</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         :root {
             --gold: #FFD700; --gold-dark: #b8860b; --emerald: #14F195;
-            --bg: #050505; --card-bg: #0f0f0f; --border: rgba(255, 215, 0, 0.2);
+            --bg: #050505; --card-bg: rgba(15, 15, 15, 0.8); --border: rgba(255, 215, 0, 0.2);
+            --premium: #8A2BE2; --legendary: #FF4500;
         }
 
         body {
-            background: radial-gradient(circle at 50% 30%, #1a3a1a, #050505 100%);
+            background: radial-gradient(circle at 50% 0%, #1a3a1a, var(--bg) 80%);
             color: white; font-family: 'Inter', sans-serif; min-height: 100vh;
-            display: flex; justify-content: center; overflow: hidden;
+            display: flex; justify-content: center; overflow-x: hidden;
         }
 
         .app-shell {
-            width: 100%; max-width: 420px; background: rgba(5, 5, 5, 0.7);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border); border-radius: 40px;
-            margin: 10px; padding: 20px 16px 90px; position: relative;
+            width: 100%; max-width: 420px; padding: 20px 15px 100px; position: relative;
         }
 
-        .brand-meta { font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 4px; color: var(--gold); margin-bottom: 15px; text-align: center; }
-        
-        .balance-master { background: rgba(255, 215, 0, 0.05); border: 1px solid var(--border); border-radius: 30px; padding: 20px; text-align: center; }
-        .val-display { font-size: 50px; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
-
-        .page { display: none; animation: slideUp 0.3s ease-out; }
+        /* UI Framework */
+        .page { display: none; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* THE COIN */
-        .coin-portal { display: flex; justify-content: center; margin: 30px 0; }
-        .engine-core {
-            width: 200px; height: 200px; border-radius: 50%;
-            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 50%, #fbf5b7 55%, #aa771c 100%);
-            border: 8px solid #332811; box-shadow: 0 0 40px rgba(255,215,0,0.2);
-            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s;
-        }
-        .engine-core:active { transform: scale(0.92); }
-        .core-text { font-size: 40px; font-weight: 900; color: #3d2b07; }
+        .section-title { font-family: 'Orbitron', sans-serif; font-size: 18px; color: var(--gold); text-align: center; margin-bottom: 20px; letter-spacing: 1px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(10px); }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        
+        .btn-primary { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; border: none; padding: 12px 20px; border-radius: 15px; font-weight: 900; cursor: pointer; transition: 0.2s; }
+        .btn-primary:active { transform: scale(0.95); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .progress-track { height: 10px; background: #111; border-radius: 20px; border: 1px solid #333; overflow: hidden; margin: 10px 0; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--gold)); width: 100%; transition: width 0.3s; }
+        /* Mine Page Specifics */
+        .val-display { font-family: 'Orbitron', sans-serif; font-size: 50px; font-weight: 900; color: var(--gold); text-align: center; text-shadow: 0 0 20px rgba(255,215,0,0.4); margin: 10px 0; }
+        .coin-target { width: 220px; height: 220px; border-radius: 50%; background: linear-gradient(135deg, #FFD700, #b8860b); border: 8px solid #332811; box-shadow: 0 0 50px rgba(255,215,0,0.2); display: flex; align-items: center; justify-content: center; margin: 30px auto; cursor: pointer; transition: transform 0.1s; }
+        .coin-target:active { transform: scale(0.92); }
+        .coin-icon { font-size: 60px; color: #3d2b07; }
+        
+        .progress-bar { height: 10px; background: #111; border-radius: 10px; border: 1px solid #333; overflow: hidden; margin-top: 10px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--gold)); width: 100%; transition: 0.3s; }
 
-        /* CARDS */
-        .task-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-action { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #000; border: none; padding: 12px 20px; border-radius: 15px; font-weight: 800; cursor: pointer; }
+        /* Floating Nav */
+        .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; background: rgba(10, 10, 10, 0.95); border: 1px solid var(--border); border-radius: 30px; padding: 10px; display: flex; justify-content: space-around; backdrop-filter: blur(10px); z-index: 1000; }
+        .nav-item { color: #666; font-size: 10px; font-weight: 700; text-align: center; cursor: pointer; width: 20%; }
+        .nav-item i { font-size: 22px; display: block; margin-bottom: 5px; }
+        .nav-item.active { color: var(--gold); }
 
-        /* NAVIGATION */
-        .tab-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px; background: rgba(10, 10, 10, 0.95); border-radius: 25px; padding: 10px; display: flex; border: 1px solid var(--border); }
-        .tab-link { flex: 1; text-align: center; color: #555; font-size: 10px; font-weight: 700; cursor: pointer; }
-        .tab-link.active { color: var(--gold); }
-        .tab-link i { font-size: 20px; display: block; margin-bottom: 4px; }
-
-        /* MODAL */
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
         .modal-content { background: #0a0a0a; border: 2px solid var(--gold); border-radius: 30px; padding: 25px; width: 100%; max-width: 360px; text-align: center; }
-        .modal-wallet { background: #000; border: 1px solid #333; padding: 12px; border-radius: 12px; font-size: 10px; margin: 15px 0; word-break: break-all; color: var(--gold); }
-        input { width: 100%; background: #000; border: 1px solid #333; padding: 14px; border-radius: 12px; color: white; margin-bottom: 15px; text-align: center; outline: none; }
+        .input-dark { width: 100%; background: #000; border: 1px solid #333; padding: 15px; border-radius: 15px; color: white; margin: 15px 0; text-align: center; outline: none; }
         
-        .floating-reward { position: absolute; color: var(--gold); font-weight: 900; font-size: 30px; animation: floatUp 0.6s forwards; pointer-events: none; text-shadow: 0 0 10px gold; }
+        /* Effects */
+        .floating-text { position: absolute; color: var(--gold); font-weight: 900; font-size: 32px; pointer-events: none; animation: floatUp 0.7s forwards; text-shadow: 0 0 10px gold; z-index: 50; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
+        
+        /* Stats Grid */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-box { background: rgba(0,0,0,0.5); border: 1px solid #222; border-radius: 15px; padding: 15px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="app-shell">
-        <header>
-            <div class="brand-meta">OMLLA CAPITAL</div>
-            <div class="balance-master">
-                <div class="val-display" id="total-balance">0</div>
-                <div style="font-size: 10px; color: #888; letter-spacing: 2px;">GOLD RESERVES</div>
-            </div>
-        </header>
-
         <div id="mine-page" class="page active">
-            <div class="coin-portal">
-                <div class="engine-core" id="tap-engine"><div class="core-text">O$</div></div>
+            <div style="text-align:center; color:var(--gold); font-size:12px; font-weight:900; letter-spacing:3px;">OMLLA CAPITAL</div>
+            <div class="val-display" id="main-balance">0</div>
+            <p style="text-align:center; color:#888; font-size:12px;">≈ $<span id="usd-val">0.00</span> USD</p>
+
+            <div class="coin-target" id="tap-engine">
+                <i class="fas fa-coins coin-icon"></i>
             </div>
-            <div class="progress-track"><div class="progress-fill" id="energy-fill"></div></div>
-            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--gold);">
-                <span>⚡ <span id="energy-current">1000</span></span>
-                <span>MULTI: <span id="boost-status">1x</span></span>
+
+            <div class="card">
+                <div class="flex-between" style="font-size:12px; font-weight:700;">
+                    <span style="color:#888;">ENERGY SUPPLY</span>
+                    <span style="color:var(--gold);"><span id="energy-txt">1000</span> / 1000</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="energy-bar"></div></div>
+            </div>
+
+            <div class="grid-2">
+                <div class="stat-box">
+                    <i class="fas fa-hand-pointer" style="color:var(--gold); margin-bottom:5px;"></i>
+                    <div id="taps-txt" style="font-weight:900; font-size:18px;">0</div>
+                    <div style="font-size:10px; color:#666;">TOTAL TAPS</div>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-bolt" style="color:var(--emerald); margin-bottom:5px;"></i>
+                    <div style="font-weight:900; font-size:18px;">1x</div>
+                    <div style="font-size:10px; color:#666;">MULTIPLIER</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tasks-page" class="page">
+            <h2 class="section-title">MISSIONS</h2>
+            <div class="card flex-between">
+                <div>
+                    <b>Join Official Channel</b><br>
+                    <small style="color:var(--gold);">+1,000 O$</small>
+                </div>
+                <button class="btn-primary" onclick="completeTask('tg_channel', 'https://t.me/OmllaChannel', 1000)">JOIN</button>
+            </div>
+            <div class="card flex-between">
+                <div>
+                    <b>Daily Check-in</b><br>
+                    <small style="color:var(--gold);">+200 O$</small>
+                </div>
+                <button class="btn-primary" onclick="claimDaily()">CLAIM</button>
             </div>
         </div>
 
         <div id="shop-page" class="page">
-            <h3 style="text-align:center; color:var(--gold); margin-bottom:20px;">INVESTMENT HUB</h3>
-            <div class="task-card">
-                <div><b>Starter Pack</b><br><small>1,000 O$ • 0.1 SOL</small></div>
-                <button class="btn-action" onclick="initiatePurchase(1000, 'Starter', 0.1)">BUY</button>
+            <h2 class="section-title">INVESTMENT HUB</h2>
+            
+            <div class="card flex-between" style="border-color: #333;">
+                <div>
+                    <b>Starter Pack</b><br>
+                    <small style="color:#888;">Get 10,000 O$</small>
+                </div>
+                <button class="btn-primary" onclick="buyPack(10000, 'Starter', 0.1)">0.1 SOL</button>
             </div>
-            <div class="task-card" style="border-color: var(--emerald);">
-                <div><b>Gold Pack</b><br><small>5,000 O$ • 0.5 SOL</small></div>
-                <button class="btn-action" onclick="initiatePurchase(5000, 'Gold', 0.5)">BUY</button>
+
+            <div class="card flex-between" style="border-color: var(--emerald); background: rgba(20, 241, 149, 0.05);">
+                <div>
+                    <b style="color:var(--emerald)">Gold Pack</b><br>
+                    <small style="color:#888;">Get 50,000 O$</small>
+                </div>
+                <button class="btn-primary" onclick="buyPack(50000, 'Gold', 0.5)">0.5 SOL</button>
+            </div>
+
+            <div class="card flex-between" style="border-color: var(--premium); background: rgba(138, 43, 226, 0.05);">
+                <div>
+                    <b style="color:var(--premium)">Whale Pack</b><br>
+                    <small style="color:#888;">Get 120,000 O$ + VIP</small>
+                </div>
+                <button class="btn-primary" style="background:var(--premium); color:white;" onclick="buyPack(120000, 'Whale', 1)">1.0 SOL</button>
             </div>
         </div>
 
         <div id="wallet-page" class="page">
-            <h3 style="text-align:center; color:var(--gold); margin-bottom:20px;">CRYPTO ASSETS</h3>
-            <div class="task-card" style="flex-direction:column; text-align:center;">
-                <small style="color:#666;">MERCHANT ADDRESS</small>
-                <div class="modal-wallet" onclick="copyToClipboard('9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx')">
-                    9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx
+            <h2 class="section-title">DIGITAL ASSETS</h2>
+            <div class="card" style="text-align:center; padding: 30px 20px;">
+                <p style="color:#888; font-size:12px; margin-bottom:10px;">OMLLA TOKENS EQUIVALENT</p>
+                <h1 style="color:var(--emerald); font-family:'Orbitron'; font-size:36px;" id="sol-equiv">0.0000 SOL</h1>
+                
+                <div style="background:#000; padding:15px; border-radius:15px; margin-top:20px; font-size:10px; word-break:break-all; border:1px solid #333;">
+                    <span style="color:#666;">MERCHANT WALLET</span><br>
+                    <span style="color:var(--gold); font-size:12px; line-height:2;">9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx</span>
                 </div>
-                <small style="color:var(--emerald);">Tap to copy</small>
+                <button class="btn-primary" style="width:100%; margin-top:15px; background:transparent; border:1px solid var(--gold); color:var(--gold);" onclick="copyWallet()">COPY ADDRESS</button>
+            </div>
+
+            <div class="card">
+                <canvas id="chartCanvas" height="150"></canvas>
             </div>
         </div>
 
-        <nav class="tab-bar">
-            <div class="tab-link active" onclick="switchPage('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
-            <div class="tab-link" onclick="switchPage('shop', this)"><i class="fas fa-shopping-cart"></i>SHOP</div>
-            <div class="tab-link" onclick="switchPage('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
+        <nav class="nav-bar">
+            <div class="nav-item active" onclick="switchNav('mine')"><i class="fas fa-hammer"></i>MINE</div>
+            <div class="nav-item" onclick="switchNav('tasks')"><i class="fas fa-tasks"></i>TASKS</div>
+            <div class="nav-item" onclick="switchNav('shop')"><i class="fas fa-shopping-cart"></i>SHOP</div>
+            <div class="nav-item" onclick="switchNav('wallet')"><i class="fas fa-wallet"></i>WALLET</div>
         </nav>
     </div>
 
     <div class="modal" id="paymentModal">
         <div class="modal-content">
-            <h3 id="modal-pack-name" style="color:var(--gold);">Starter Pack</h3>
-            <div style="font-size:30px; font-weight:900; margin:10px 0;" id="modal-sol-amount">0.1 SOL</div>
-            <p style="font-size:11px; color:#888;">Paste your Transaction Signature below:</p>
-            <input type="text" id="tx-signature" placeholder="Transaction Signature (ID)">
-            <button class="btn-action" style="width:100%;" id="verify-btn" onclick="verifyPayment()">VERIFY BLOCKCHAIN</button>
-            <button onclick="closeModal()" style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;">Cancel</button>
+            <div style="background:var(--emerald); color:black; padding:5px 10px; border-radius:10px; display:inline-block; font-size:10px; font-weight:900; margin-bottom:15px;">SECURE CHECKOUT</div>
+            <h2 id="m-pack" style="color:white; margin-bottom:5px;">Starter Pack</h2>
+            <div id="m-price" style="font-size:35px; font-weight:900; color:var(--gold); margin-bottom:15px; font-family:'Orbitron';">0.1 SOL</div>
+            
+            <p style="font-size:11px; color:#888;">Paste your Transaction Signature (TX ID) below after sending funds via Phantom/Solflare:</p>
+            <input type="text" id="tx-signature" class="input-dark" placeholder="e.g. 5xYy...abc123">
+            
+            <button class="btn-primary" style="width:100%; margin-bottom:10px;" id="verify-btn" onclick="executeVerification()">VERIFY ON BLOCKCHAIN</button>
+            <button style="width:100%; padding:15px; background:transparent; border:none; color:#666; font-weight:700; cursor:pointer;" onclick="closeModal('paymentModal')">CANCEL</button>
         </div>
     </div>
 
     <script>
-        // CONFIG
+        // ==========================================
+        // 1. CONFIGURATION & SETUP
+        // ==========================================
         const RENDER_URL = "https://omlla-payments-backend.onrender.com";
         const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
         const WALLET_ADDRESS = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx";
 
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
 
         firebase.initializeApp({ databaseURL: FIREBASE_URL });
         const db = firebase.database();
-        const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Admin' };
-        const userRef = db.ref('players/' + user.id);
+        const userId = (tg.initDataUnsafe?.user?.id || 'DEV_USER').toString();
+        const userRef = db.ref('players/' + userId);
 
-        let state = { points: 0, energy: 1000 };
+        let state = { points: 0, energy: 1000, totalTaps: 0 };
         let activeOrder = null;
 
-        // LOAD DATA
-        userRef.on('value', (snap) => {
+        // ==========================================
+        // 2. DATA SYNCHRONIZATION
+        // ==========================================
+        userRef.on('value', snap => {
             const data = snap.val();
             if (data) {
                 state.points = data.points || 0;
                 state.energy = data.energy !== undefined ? data.energy : 1000;
-                updateUI();
+                state.totalTaps = data.totalTaps || 0;
+                updateInterface();
             } else {
-                userRef.set({ points: 0, energy: 1000, name: user.first_name });
+                userRef.set({ points: 0, energy: 1000, totalTaps: 0 });
             }
         });
 
-        function updateUI() {
-            document.getElementById('total-balance').innerText = Math.floor(state.points).toLocaleString();
-            document.getElementById('energy-current').innerText = state.energy;
-            document.getElementById('energy-fill').style.width = (state.energy / 10) + '%';
+        function updateInterface() {
+            document.getElementById('main-balance').innerText = Math.floor(state.points).toLocaleString();
+            document.getElementById('usd-val').innerText = (state.points / 10000).toFixed(2);
+            document.getElementById('energy-txt').innerText = state.energy;
+            document.getElementById('energy-bar').style.width = (state.energy / 10) + '%';
+            document.getElementById('taps-txt').innerText = state.totalTaps.toLocaleString();
+            document.getElementById('sol-equiv').innerText = (state.points / 500000).toFixed(4) + " SOL";
         }
 
-        // TAB NAVIGATION
-        window.switchPage = (pageId, el) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
-            document.getElementById(pageId + '-page').classList.add('active');
-            el.classList.add('active');
-            tg.HapticFeedback.impactOccurred('light');
-        };
-
-        // TAP ENGINE
+        // ==========================================
+        // 3. CORE GAMEPLAY (MINING)
+        // ==========================================
         document.getElementById('tap-engine').addEventListener('pointerdown', (e) => {
             if (state.energy <= 0) {
-                tg.HapticFeedback.notificationOccurred('error');
+                tg.HapticFeedback?.notificationOccurred('error');
                 return;
             }
-            state.points++;
-            state.energy--;
-            userRef.update({ points: state.points, energy: state.energy });
             
-            // Visual feedback
+            state.points += 1;
+            state.energy -= 1;
+            state.totalTaps += 1;
+            
+            // Fast local update
+            updateInterface();
+            
+            // Sync to DB
+            userRef.update({ points: state.points, energy: state.energy, totalTaps: state.totalTaps });
+            tg.HapticFeedback?.impactOccurred('medium');
+
+            // Floating Animation
             const rect = e.target.getBoundingClientRect();
-            createFloatingText(e.clientX || rect.left + 50, e.clientY || rect.top + 50, '+1');
-            tg.HapticFeedback.impactOccurred('medium');
+            const x = e.clientX || rect.left + (rect.width/2);
+            const y = e.clientY || rect.top + (rect.height/2);
+            const floatEl = document.createElement('div');
+            floatEl.className = 'floating-text';
+            floatEl.innerText = '+1';
+            floatEl.style.left = (x - 15) + 'px';
+            floatEl.style.top = (y - 30) + 'px';
+            document.body.appendChild(floatEl);
+            setTimeout(() => floatEl.remove(), 700);
         });
 
-        function createFloatingText(x, y, text) {
-            const el = document.createElement('div');
-            el.className = 'floating-reward';
-            el.innerText = text;
-            el.style.left = x + 'px'; el.style.top = y + 'px';
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 600);
-        }
+        // Energy Regeneration
+        setInterval(() => {
+            if (state.energy < 1000) {
+                state.energy = Math.min(state.energy + 1, 1000);
+                userRef.child('energy').set(state.energy);
+                updateInterface();
+            }
+        }, 3000);
 
-        // PURCHASE FLOW
-        window.initiatePurchase = async (tokens, pack, sol) => {
-            tg.showConfirm(`Confirm protocol: ${pack} for ${sol} SOL?`, async (ok) => {
-                if (!ok) return;
-                try {
-                    const res = await fetch(`${RENDER_URL}/api/create-payment`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: user.id, amount: sol, pack: pack, tokens: tokens })
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        activeOrder = { id: data.paymentId };
-                        document.getElementById('modal-pack-name').innerText = pack + " Pack";
-                        document.getElementById('modal-sol-amount').innerText = sol + " SOL";
-                        document.getElementById('paymentModal').classList.add('active');
-                        tg.openLink(`solana:${WALLET_ADDRESS}?amount=${sol}&label=OmllaCapital`);
+        // ==========================================
+        // 4. GLOBAL FUNCTIONS (Navigation & Tools)
+        // ==========================================
+        window.switchNav = function(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(pageId + '-page').classList.add('active');
+            event.currentTarget.classList.add('active');
+            tg.HapticFeedback?.impactOccurred('light');
+
+            if(pageId === 'wallet') renderChart(); // Render chart only when wallet opens
+        };
+
+        window.closeModal = function(id) {
+            document.getElementById(id).classList.remove('active');
+            document.getElementById('tx-signature').value = '';
+        };
+
+        window.copyWallet = function() {
+            navigator.clipboard.writeText(WALLET_ADDRESS);
+            tg.HapticFeedback?.notificationOccurred('success');
+            alert("Merchant Address Copied to Clipboard!");
+        };
+
+        // ==========================================
+        // 5. SECURE PAYMENT ENGINE (Anti-Cheat)
+        // ==========================================
+        window.buyPack = async function(tokens, pack, sol) {
+            tg.showConfirm(`Initiate Secure Protocol: Buy ${pack} for ${sol} SOL?`, async (ok) => {
+                if (ok) {
+                    try {
+                        const res = await fetch(`${RENDER_URL}/api/create-payment`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId, amount: sol, pack, tokens })
+                        });
+                        const data = await res.json();
+                        
+                        if (data.success) {
+                            activeOrder = { id: data.paymentId };
+                            document.getElementById('m-pack').innerText = pack + " Pack";
+                            document.getElementById('m-price').innerText = sol + " SOL";
+                            document.getElementById('paymentModal').classList.add('active');
+                            
+                            // Deep link to open user's crypto wallet automatically
+                            tg.openLink(`solana:${WALLET_ADDRESS}?amount=${sol}&label=OmllaCapital`);
+                        } else {
+                            alert("Server rejected order generation.");
+                        }
+                    } catch (e) {
+                        alert("Server Sleep/Connection Error. Ensure Render is Live.");
                     }
-                } catch (e) { alert("Server connection failed. Try again."); }
+                }
             });
         };
 
-        window.verifyPayment = async () => {
+        window.executeVerification = async function() {
             const sig = document.getElementById('tx-signature').value.trim();
-            if (!sig) return alert("Please paste the TX ID");
+            if (!sig) return alert("Please paste the Transaction Signature first.");
             
             const btn = document.getElementById('verify-btn');
-            btn.innerText = "VERIFYING..."; btn.disabled = true;
+            btn.innerText = "VERIFYING... PLEASE WAIT";
+            btn.disabled = true;
 
             try {
                 const res = await fetch(`${RENDER_URL}/api/verify-payment`, {
@@ -242,34 +352,48 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ paymentId: activeOrder.id, transactionSignature: sig })
                 });
+                
                 const data = await res.json();
+                
                 if (data.success) {
-                    alert("✅ SUCCESS! Tokens added to your account.");
-                    closeModal();
-                } else { alert("❌ Blockchain error: " + (data.error || "TX not found")); }
-            } catch (e) { alert("Network error"); }
-            btn.innerText = "VERIFY BLOCKCHAIN"; btn.disabled = false;
-        };
-
-        window.closeModal = () => {
-            document.getElementById('paymentModal').classList.remove('active');
-            document.getElementById('tx-signature').value = '';
-        };
-
-        window.copyToClipboard = (text) => {
-            navigator.clipboard.writeText(text);
-            tg.HapticFeedback.notificationOccurred('success');
-            alert("Address Copied!");
-        };
-
-        // Energy Regen
-        setInterval(() => {
-            if (state.energy < 1000) {
-                state.energy = Math.min(state.energy + 1, 1000);
-                userRef.child('energy').set(state.energy);
+                    alert("✅ SUCCESS! The Solana Network confirmed your payment. Tokens added!");
+                    closeModal('paymentModal');
+                    // Note: No need to add points here manually, the Server already did it safely!
+                } else {
+                    alert("❌ FAILED: " + (data.error || "Could not verify transaction on blockchain."));
+                }
+            } catch (e) { 
+                alert("Network timeout. The blockchain node might be busy."); 
+            } finally {
+                btn.innerText = "VERIFY ON BLOCKCHAIN";
+                btn.disabled = false;
             }
-        }, 3000);
+        };
 
+        // ==========================================
+        // 6. VISUALS (Chart.js)
+        // ==========================================
+        let myChart = null;
+        function renderChart() {
+            if (myChart) return; // Prevent re-rendering
+            const ctx = document.getElementById('chartCanvas').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Asset Value',
+                        data: [0, 1000, 1500, 3000, 2500, 5000, state.points],
+                        borderColor: '#FFD700',
+                        backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+            });
+        }
     </script>
 </body>
 </html>
