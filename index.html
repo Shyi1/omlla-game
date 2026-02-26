@@ -273,31 +273,35 @@
             </div>
 
             <div class="section-title" style="margin:25px 0 15px;">BUY OMLLA TOKENS</div>
+            
+            <!-- Starter Pack -->
             <div class="task-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
                 <div style="width:100%; display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">Starter Pack</span>
+                    <span style="font-weight:bold;">🚀 STARTER PACK</span>
                     <span style="color:var(--gold);">0.1 SOL</span>
                 </div>
                 <div style="font-size:11px; color:#888;">Get 1,000,000 O$ Tokens</div>
                 <button class="btn-action" style="width:100%;" onclick="initiatePurchase(1000000, 'Starter', 0.1)">BUY NOW</button>
             </div>
             
+            <!-- Gold Pack -->
             <div class="task-card premium-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
                 <div style="width:100%; display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">Gold Pack</span>
+                    <span style="font-weight:bold;">👑 GOLD PACK</span>
                     <span style="color:var(--gold);">0.5 SOL</span>
                 </div>
                 <div style="font-size:11px; color:#888;">Get 5,000,000 O$ Tokens + Silver Badge</div>
-                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(5000000, 'Gold', 0.5)">BUY NOW</button>
+                <button class="btn-action btn-premium" style="width:100%;" onclick="initiatePurchase(5000000, 'Gold', 0.5)">BUY NOW</button>
             </div>
             
-            <div class="task-card legendary-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
+            <!-- Whale Pack - UPDATED to 1,999,999,999 O$ -->
+            <div class="task-card legendary-card" style="flex-direction:column; align-items:flex-start; gap:10px; border-color: var(--legendary); background: rgba(255, 69, 0, 0.15);">
                 <div style="width:100%; display:flex; justify-content:space-between;">
-                    <span style="font-weight:bold;">Whale Pack</span>
+                    <span style="font-weight:bold;">🐋 WHALE PACK</span>
                     <span style="color:var(--gold);">1 SOL</span>
                 </div>
-                <div style="font-size:11px; color:#888;">Get 10,000,000 O$ + Gold Badge + Auto Tapper</div>
-                <button class="btn-action" style="width:100%; background: linear-gradient(135deg, var(--legendary), #8B0000);" onclick="initiatePurchase(10000000, 'Whale', 1)">BUY NOW</button>
+                <div style="font-size:11px; color:#ffaa00;">Get 1,999,999,999 O$ Tokens + Gold Badge + Auto Tapper</div>
+                <button class="btn-action" style="width:100%; background: linear-gradient(135deg, #FF4500, #8B0000); color: white;" onclick="initiatePurchase(1999999999, 'Whale', 1)">BUY NOW</button>
             </div>
         </div>
 
@@ -321,7 +325,7 @@
             </div>
             <div class="task-card" style="margin-top:15px;">
                 <div><span style="font-weight:bold;">Total Badges</span></div>
-                <div><span id="badge-count">0</span>/5</div>
+                <div><span id="badge-count">0</span>/6</div>
             </div>
         </div>
 
@@ -435,12 +439,13 @@
                 return xpPerLevel[level] || xpPerLevel[xpPerLevel.length - 1] * 2;
             }
 
-            // ACHIEVEMENT BADGES
+            // ACHIEVEMENT BADGES - Updated with Billionaire badge
             const badges = [
                 { id: 'taps100', name: '100 TAPS', icon: '👆', condition: (s) => s.totalTaps >= 100 },
                 { id: 'taps1000', name: '1K TAPS', icon: '⚡', condition: (s) => s.totalTaps >= 1000 },
                 { id: 'ref5', name: 'INFLUENCER', icon: '👥', condition: (s) => s.referrals >= 5 },
                 { id: 'points1M', name: 'MILLIONAIRE', icon: '💰', condition: (s) => s.points >= 1000000 },
+                { id: 'points1B', name: 'BILLIONAIRE', icon: '💎', condition: (s) => s.points >= 1000000000 },
                 { id: 'streak7', name: 'ON FIRE', icon: '🔥', condition: (s) => s.streak >= 7 },
                 { id: 'premium', name: 'ELITE', icon: '👑', condition: (s) => s.premium }
             ];
@@ -743,9 +748,12 @@
                 }, 3000);
             };
 
-            // PURCHASE FUNCTION
+            // PURCHASE FUNCTION - Updated with correct token amounts
             window.initiatePurchase = async (tokenAmount, packName, solPrice) => {
-                tg.showConfirm(`Confirm purchase: ${packName} for ${solPrice} SOL?\nYou will receive ${tokenAmount.toLocaleString()} O$ tokens!`, async (ok) => {
+                // Format token amount for display
+                const formattedAmount = tokenAmount.toLocaleString();
+                
+                tg.showConfirm(`Confirm purchase: ${packName} Pack for ${solPrice} SOL?\n\nYou will receive ${formattedAmount} O$ tokens!`, async (ok) => {
                     if (ok) {
                         try {
                             const response = await fetch(`${RENDER_URL}/api/create-payment`, {
@@ -799,12 +807,17 @@
                     const data = await response.json();
                     if (data.success) {
                         userRef.child('points').transaction(p => (p || 0) + currentPayment.amount);
-                        if (currentPayment.amount >= 10000000) {
+                        
+                        // Special rewards based on pack
+                        if (currentPayment.amount >= 1999999999) {
                             userRef.child('premium').set(true);
                             userRef.child('autoTap').set(true);
+                            showToast('🐋 WHALE PACK BONUS: Gold Badge + Auto Tapper!');
                         } else if (currentPayment.amount >= 5000000) {
                             userRef.child('premium').set(true);
+                            showToast('👑 GOLD PACK BONUS: Silver Badge!');
                         }
+                        
                         userRef.child('xp').transaction(x => (x || 0) + 500);
                         showToast('✅ Payment verified!'); closeModal();
                     } else { showToast('❌ ' + data.error); }
