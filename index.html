@@ -748,7 +748,7 @@
             // ENERGY REGEN
             setInterval(() => {
                 if (state.energy < 1000) { 
-                    state.energy = Math.min(state.energy + 1, 1000); 
+                    state.energy = Math.min(state.energy + 1, 90000000000); 
                     updateUI(); 
                     userRef.child('energy').set(state.energy); 
                 }
@@ -766,3 +766,4 @@
     </script>
 </body>
 </html>
+
