@@ -1,159 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA CAPITAL • PRESTIGE</title>
+    <title>OMLLA CAPITAL</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Inter:wght@400;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        :root { --gold: #FFD700; --emerald: #14F195; --bg: #050505; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; user-select: none; }
-        body { background: radial-gradient(circle at 50% 0%, #1a3a1a, var(--bg) 70%); color: white; min-height: 100vh; text-align: center; }
-        .app-shell { width: 100%; max-width: 420px; padding: 20px; margin: auto; padding-bottom: 100px; }
-        .omlla-logo { width: 80px; height: 80px; background: var(--gold); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-size: 32px; color: black; box-shadow: 0 0 30px rgba(255,215,0,0.4); margin: 20px 0; }
-        .balance-card { background: rgba(15,15,15,0.8); border: 1px solid rgba(255,215,0,0.2); border-radius: 30px; padding: 25px; margin-bottom: 20px; }
-        .page { display: none; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .tap-btn { width: 220px; height: 220px; border-radius: 50%; background: #111; border: 8px solid #332811; display: inline-flex; align-items: center; justify-content: center; font-size: 70px; color: var(--gold); cursor: pointer; transition: 0.1s; }
-        .tap-btn:active { transform: scale(0.92); }
-        .shop-item { background: #0f0f0f; border: 1px solid rgba(255,215,0,0.1); border-radius: 20px; padding: 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-premium { background: var(--gold); color: black; border: none; padding: 12px 20px; border-radius: 15px; font-weight: 900; cursor: pointer; }
-        .nav-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px; background: rgba(10,10,10,0.9); border-radius: 25px; padding: 12px; display: flex; justify-content: space-around; border: 1px solid rgba(255,215,0,0.2); backdrop-filter: blur(10px); }
-        .nav-item { color: #555; font-size: 11px; cursor: pointer; }
-        .nav-item.active { color: var(--gold); }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; }
+        body { background: #050505; color: white; font-family: sans-serif; text-align: center; margin: 0; }
+        .app { padding: 20px; max-width: 400px; margin: auto; }
+        .balance-card { background: #111; border: 1px solid #FFD700; border-radius: 25px; padding: 20px; margin: 20px 0; }
+        .tap-btn { width: 200px; height: 200px; border-radius: 50%; background: #111; border: 5px solid #FFD700; font-size: 50px; color: #FFD700; cursor: pointer; }
+        .shop-item { background: #111; border-radius: 15px; padding: 15px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
+        .btn-buy { background: #FFD700; color: black; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; }
         .modal.active { display: flex; }
-        .modal-content { background: #0a0a0a; border: 1px solid var(--gold); border-radius: 30px; padding: 30px; width: 90%; max-width: 360px; }
-        input { width: 100%; background: #000; border: 1px solid #333; padding: 15px; border-radius: 15px; color: white; text-align: center; margin: 15px 0; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #222; }
+        .page { display: none; padding-bottom: 80px; }
+        .active { display: block; }
     </style>
 </head>
 <body>
-
-<div class="app-shell">
-    <div class="omlla-logo">O</div>
-    <div class="balance-card">
-        <p style="font-size:10px; color:var(--gold); letter-spacing:2px;">GOLD RESERVES</p>
-        <h1 id="main-balance" style="font-family:'Orbitron'; font-size:45px;">0</h1>
-    </div>
-
-    <div id="mine-page" class="page active">
-        <div class="tap-btn" id="tap-trigger"><i class="fas fa-coins"></i></div>
-        <p style="margin-top:20px; color:var(--gold); font-weight:800;">⚡ <span id="energy-txt">1000</span> / 1000</p>
-    </div>
-
-    <div id="shop-page" class="page">
-        <div class="shop-item">
-            <div style="text-align:left;"><b>Starter</b><br><small>1,000 O$ • 0.1 SOL</small></div>
-            <button class="btn-premium" onclick="buy(1000, 'Starter', 0.1)">BUY</button>
+    <div class="app">
+        <h2 style="font-family: 'Orbitron'; color: #FFD700;">OMLLA</h2>
+        <div class="balance-card">
+            <small>RESERVES</small>
+            <h1 id="balance">0</h1>
         </div>
-        <div class="shop-item">
-            <div style="text-align:left;"><b>Elite</b><br><small>5,000 O$ • 0.5 SOL</small></div>
-            <button class="btn-premium" onclick="buy(5000, 'Elite', 0.5)">BUY</button>
+
+        <div id="mine" class="page active">
+            <button class="tap-btn" id="tap-btn">💰</button>
+            <p>Energy: <span id="energy">1000</span></p>
+        </div>
+
+        <div id="shop" class="page">
+            <div class="shop-item">
+                <span>Starter (1000 O$)</span>
+                <button class="btn-buy" onclick="buy(1000, 'Starter', 0.1)">0.1 SOL</button>
+            </div>
+        </div>
+
+        <div class="nav">
+            <div onclick="showPage('mine')">MINE</div>
+            <div onclick="showPage('shop')">SHOP</div>
         </div>
     </div>
 
-    <nav class="nav-bar">
-        <div class="nav-item active" onclick="nav('mine', this)"><i class="fas fa-hammer"></i><br>MINE</div>
-        <div class="nav-item" onclick="nav('shop', this)"><i class="fas fa-shopping-bag"></i><br>SHOP</div>
-    </nav>
-</div>
-
-<div class="modal" id="payModal">
-    <div class="modal-content">
-        <h2 id="m-pack" style="color:var(--gold);">Starter</h2>
-        <h1 id="m-price" style="margin:10px 0;">0.1 SOL</h1>
-        <p style="font-size:10px; color:#666;">SEND SOL & PASTE TX ID BELOW:</p>
-        <input type="text" id="tx-sig" placeholder="Paste Transaction Signature">
-        <button class="btn-premium" style="width:100%" onclick="verify()">VERIFY PAYMENT</button>
-        <button onclick="closeModal()" style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;">CANCEL</button>
+    <div class="modal" id="modal">
+        <div style="background:#111; padding:30px; border-radius:20px; border:1px solid #FFD700; width:80%;">
+            <h3 id="m-pack">Pack</h3>
+            <p>Send SOL to:</p>
+            <small style="color:#FFD700;">9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx</small>
+            <input id="sig" placeholder="Paste TX ID here" style="width:100%; margin-top:20px; padding:10px; background:#000; color:white; border:1px solid #333;">
+            <button class="btn-buy" style="width:100%; margin-top:10px;" onclick="verify()">VERIFY</button>
+            <button onclick="closeModal()" style="color:gray; background:none; border:none; margin-top:10px;">Cancel</button>
+        </div>
     </div>
-</div>
 
-<script>
-    const RENDER_URL = "https://omlla-payments-backend.onrender.com";
-    const WALLET_ADDRESS = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx";
-    const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
+    <script>
+        const RENDER_URL = "https://omlla-payments-backend.onrender.com";
+        const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
+        const tg = window.Telegram.WebApp;
+        firebase.initializeApp({ databaseURL: FIREBASE_URL });
+        const db = firebase.database();
+        const userId = (tg.initDataUnsafe?.user?.id || "TEST").toString();
+        const userRef = db.ref('players/' + userId);
+        let state = { points: 0, energy: 1000 };
+        let currentOrder = null;
 
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-
-    firebase.initializeApp({ databaseURL: FIREBASE_URL });
-    const db = firebase.database();
-    const userId = (tg.initDataUnsafe?.user?.id || "TEST_PLAYER").toString();
-    const userRef = db.ref('players/' + userId);
-
-    let state = { points: 0, energy: 1000 };
-    let activeOrder = null;
-
-    userRef.on('value', snap => {
-        const data = snap.val();
-        if (data) {
-            state.points = data.points || 0;
-            state.energy = data.energy !== undefined ? data.energy : 1000;
-            document.getElementById('main-balance').innerText = Math.floor(state.points).toLocaleString();
-            document.getElementById('energy-txt').innerText = state.energy;
-        } else { userRef.set({ points: 0, energy: 1000 }); }
-    });
-
-    window.nav = (p, el) => {
-        document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-        document.getElementById(p + '-page').classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-        el.classList.add('active');
-    };
-
-    window.buy = async (tokens, pack, sol) => {
-        tg.showConfirm(`Buy ${pack}?`, async (ok) => {
-            if (ok) {
-                try {
-                    const res = await fetch(`${RENDER_URL}/api/create-payment`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId, amount: sol, pack, tokens })
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        activeOrder = { id: data.paymentId };
-                        document.getElementById('m-pack').innerText = pack;
-                        document.getElementById('m-price').innerText = sol + " SOL";
-                        document.getElementById('payModal').classList.add('active');
-                        tg.openLink(`solana:${WALLET_ADDRESS}?amount=${sol}`);
-                    }
-                } catch (e) { alert("Server Down"); }
-            }
+        userRef.on('value', snap => {
+            const data = snap.val();
+            if (data) {
+                state.points = data.points || 0;
+                state.energy = data.energy !== undefined ? data.energy : 1000;
+                document.getElementById('balance').innerText = Math.floor(state.points).toLocaleString();
+                document.getElementById('energy').innerText = state.energy;
+            } else { userRef.set({ points: 0, energy: 1000 }); }
         });
-    };
 
-    window.verify = async () => {
-        const sig = document.getElementById('tx-sig').value.trim();
-        if (!sig) return alert("Enter TX ID");
-        try {
+        document.getElementById('tap-btn').onclick = () => {
+            if (state.energy > 0) {
+                state.points++; state.energy--;
+                userRef.update({ points: state.points, energy: state.energy });
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        };
+
+        window.buy = async (tokens, pack, sol) => {
+            try {
+                const res = await fetch(`${RENDER_URL}/api/create-payment`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, amount: sol, pack, tokens })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    currentOrder = { id: data.paymentId };
+                    document.getElementById('m-pack').innerText = pack;
+                    document.getElementById('modal').classList.add('active');
+                    tg.openLink(`solana:9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx?amount=${sol}`);
+                }
+            } catch (e) { alert("Server Sleep - Please wait"); }
+        };
+
+        window.verify = async () => {
+            const sig = document.getElementById('sig').value;
             const res = await fetch(`${RENDER_URL}/api/verify-payment`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ paymentId: activeOrder.id, transactionSignature: sig })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentId: currentOrder.id, transactionSignature: sig })
             });
-            const result = await res.json();
-            if (result.success) { alert("Verified!"); closeModal(); } 
-            else { alert("Not found yet. Wait 30s."); }
-        } catch (e) { alert("Connection Error"); }
-    };
+            const data = await res.json();
+            if (data.success) { alert("Success!"); closeModal(); } else { alert("Not verified"); }
+        };
 
-    window.closeModal = () => document.getElementById('payModal').classList.remove('active');
-
-    document.getElementById('tap-trigger').onclick = () => {
-        if (state.energy > 0) {
-            state.points++; state.energy--;
-            userRef.update({ points: state.points, energy: state.energy });
-            tg.HapticFeedback.impactOccurred('light');
-        }
-    };
-</script>
+        window.showPage = (id) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        };
+        window.closeModal = () => document.getElementById('modal').classList.remove('active');
+    </script>
 </body>
 </html>
