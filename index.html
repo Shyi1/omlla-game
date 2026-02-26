@@ -1,262 +1,702 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>OMLLA CAPITAL | القمة</title>
+    <title>OMLLA CAPITAL • ECOSYSTEM</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root {
-            --gold: #FFD700;
-            --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
-            --bg: #050505;
-            --card: #0f0f0f;
-            --neon-green: #14F195;
-        }
-
+        /* =========================================
+           1. NATIVE APP RESET & DESIGN TOKENS
+           ========================================= */
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         
+        :root {
+            --gold-bright: #F3BA2F;
+            --gold-deep: #b38515;
+            --solana-green: #14F195;
+            --bg-base: #000000;
+            --bg-card: #111111;
+            --glass-panel: rgba(20, 20, 20, 0.85);
+            --border-subtle: rgba(243, 186, 47, 0.15);
+        }
+
         body {
-            background: var(--bg);
-            background: radial-gradient(circle at 50% 20%, #1a1a05 0%, #050505 100%);
-            color: #fff;
-            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-base);
+            background-image: radial-gradient(circle at 50% 15%, #1f1900 0%, #000000 60%);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; 
+            touch-action: none;
             height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
+            height: var(--tg-viewport-height, 100vh);
         }
 
         .app-shell {
-            width: 100%;
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+            height: 100%; width: 100%;
+            display: flex; flex-direction: column;
+            padding-bottom: calc(85px + env(safe-area-inset-bottom));
         }
 
-        /* Header Engine */
-        .header {
-            padding: 25px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,215,0,0.1);
+        /* =========================================
+           2. HEADER & MAIN BALANCE
+           ========================================= */
+        .status-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 20px 5px;
         }
-
-        .brand-title { font-family: 'Orbitron', sans-serif; font-size: 12px; letter-spacing: 5px; color: var(--gold); margin-bottom: 10px; }
+        .pill-badge {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(255, 255, 255, 0.05); padding: 6px 14px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; border: 1px solid #333; letter-spacing: 0.5px;
+        }
+        .network-pill { border-color: var(--solana-green); color: var(--solana-green); background: rgba(20, 241, 149, 0.05); }
         
-        .balance-master {
-            background: rgba(255, 215, 0, 0.03);
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            border-radius: 30px;
-            padding: 15px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        .pulse { width: 6px; height: 6px; background: var(--solana-green); border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        .vault-display { text-align: center; margin-top: 15px; flex-shrink: 0; z-index: 2; position: relative; }
+        .vault-amount {
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            font-family: 'Montserrat', sans-serif; font-size: clamp(45px, 12vw, 60px); font-weight: 900;
+            line-height: 1; text-shadow: 0 0 40px rgba(243, 186, 47, 0.25);
+        }
+        .vault-icon { width: clamp(35px, 10vw, 45px); height: clamp(35px, 10vw, 45px); filter: brightness(0) saturate(100%) invert(80%) sepia(50%) saturate(1000%) hue-rotate(350deg); }
+        .vault-usd { font-size: 14px; color: #888; margin-top: 8px; font-weight: 600; letter-spacing: 1px; }
+
+        /* =========================================
+           3. THE MINING ENGINE (3D COIN)
+           ========================================= */
+        .mining-sector {
+            flex-grow: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; position: relative;
+        }
+        
+        .aura-glow {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 300px; height: 300px; background: rgba(243, 186, 47, 0.12);
+            border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: 1;
         }
 
-        .balance-val { font-size: 45px; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.3); }
-
-        /* Navigation Pages */
-        .page { display: none; padding: 20px; overflow-y: auto; flex: 1; padding-bottom: 100px; }
-        .page.active { display: block; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Tap Engine */
-        .coin-portal { display: flex; justify-content: center; margin: 30px 0; }
-        .main-coin {
-            width: 230px; height: 230px;
-            background: var(--gold-gradient);
-            border-radius: 50%;
-            border: 8px solid #1a1a1a;
+        .omlla-coin {
+            width: min(65vw, 280px); height: min(65vw, 280px);
+            border-radius: 50%; position: relative; z-index: 10;
+            background: radial-gradient(circle at 35% 35%, #ffe600 0%, #f3ba2f 40%, #a67c00 100%);
+            box-shadow: 
+                inset 0 0 20px rgba(255,255,255,0.6),
+                inset 0 -15px 30px rgba(0,0,0,0.6),
+                0 15px 25px rgba(0,0,0,0.6),
+                0 0 50px rgba(243, 186, 47, 0.4);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.05s;
-            box-shadow: 0 0 50px rgba(243, 186, 47, 0.15);
-            animation: float 4s infinite ease-in-out;
+            cursor: pointer; transition: transform 0.05s ease;
+            touch-action: manipulation; /* Prevents double-tap zoom on iOS */
         }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .main-coin:active { transform: scale(0.92); }
-        .coin-logo { font-family: 'Orbitron', sans-serif; font-size: 44px; color: #3d2b07; font-weight: 900; }
+        .omlla-coin::after {
+            content: 'O$'; font-family: 'Montserrat', sans-serif;
+            font-size: min(18vw, 85px); font-weight: 900; color: #fff;
+            text-shadow: 2px 4px 6px rgba(0,0,0,0.4);
+        }
+        .omlla-coin:active { 
+            transform: scale(0.94) translateY(4px); 
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.4), inset 0 -5px 15px rgba(0,0,0,0.6), 0 5px 10px rgba(0,0,0,0.5), 0 0 30px rgba(243, 186, 47, 0.3); 
+        }
 
-        /* Stats & Cards */
-        .stat-card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-gold { background: var(--gold-gradient); color: #000; border: none; padding: 15px; border-radius: 15px; font-weight: 900; cursor: pointer; width: 100%; font-family: 'Cairo'; }
+        .energy-cluster { width: 85%; max-width: 360px; margin: 30px auto 0; z-index: 2; position: relative; }
+        .energy-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; font-size: 14px; color: #fff; }
+        .energy-stats i { color: var(--gold-bright); font-size: 16px; margin-right: 4px; }
+        
+        .energy-track { height: 14px; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; overflow: hidden; }
+        .energy-fill { height: 100%; background: linear-gradient(90deg, #f3ba2f, #ffe600); width: 100%; transition: width 0.15s linear; border-radius: 12px; }
 
-        /* Energy System */
-        .energy-track { height: 10px; background: #111; border-radius: 10px; overflow: hidden; margin: 15px 0; border: 1px solid #222; }
-        .energy-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--neon-green)); width: 100%; transition: width 0.3s; }
+        /* =========================================
+           4. SCROLLABLE PAGES
+           ========================================= */
+        .page { display: none; padding: 20px; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; animation: fadeIn 0.25s ease-out; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Bottom Nav */
-        .tab-bar { position: fixed; bottom: 0; width: 100%; max-width: 420px; background: rgba(5,5,5,0.95); backdrop-filter: blur(20px); display: flex; padding: 15px 5px; border-top: 1px solid #1a1a1a; }
-        .tab-item { flex: 1; text-align: center; color: #444; font-size: 10px; font-weight: 700; cursor: pointer; }
-        .tab-item.active { color: var(--gold); }
-        .tab-item i { font-size: 22px; display: block; margin-bottom: 5px; }
+        .headline { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 900; text-align: center; margin-bottom: 20px; color: #fff; text-transform: uppercase; letter-spacing: 1px;}
 
-        /* Toast & Effects */
-        .float-reward { position: absolute; color: var(--gold); font-weight: 900; font-size: 32px; animation: floatUp 0.8s forwards; pointer-events: none; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
-        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; padding: 10px 20px; border-radius: 20px; font-weight: 900; z-index: 2000; }
+        .action-card {
+            background: var(--bg-card); border: 1px solid #222; border-radius: 20px;
+            padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .card-details { display: flex; align-items: center; gap: 14px; }
+        .card-icon {
+            width: 46px; height: 46px; border-radius: 14px; background: rgba(243, 186, 47, 0.1);
+            display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--gold-bright);
+        }
+        .card-title { font-weight: 700; font-size: 15px; margin-bottom: 3px; color: #fff; }
+        .card-desc { font-size: 12px; color: #888; display: flex; align-items: center; gap: 4px; font-weight: 500;}
+
+        .btn-action { background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 20px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .btn-action:active { transform: scale(0.92); }
+        .btn-solana { background: var(--solana-green); color: #000; }
+
+        /* =========================================
+           5. CASINO / GAMES GRID
+           ========================================= */
+        .casino-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+        .casino-game { background: var(--bg-card); border: 1px solid #222; border-radius: 20px; padding: 18px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .casino-game:active { transform: scale(0.95); border-color: var(--gold-bright); }
+        .game-symbol { width: 50px; height: 50px; background: linear-gradient(135deg, rgba(243, 186, 47, 0.2), rgba(179, 133, 21, 0.1)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 10px; color: var(--gold-bright); border: 1px solid rgba(243, 186, 47, 0.3); }
+        .game-name { font-size: 12px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+        .game-multiplier { display: inline-block; background: var(--gold-bright); color: #000; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 900; }
+
+        /* Generic Game Interface Container */
+        .play-arena { background: var(--bg-card); border: 1px solid #333; border-radius: 24px; padding: 20px; margin-top: 15px; display: none; animation: fadeIn 0.3s; }
+        .arena-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+        .arena-header h3 { color: var(--gold-bright); font-size: 16px; font-weight: 800; text-transform: uppercase; }
+        .btn-close { width: 32px; height: 32px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; border: none; }
+        
+        .flip-stage { perspective: 1000px; width: 120px; height: 120px; margin: 20px auto; }
+        .coin-3d { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 2s cubic-bezier(0.4, 2, 0.2, 1); }
+        .coin-3d.spin { animation: hyperSpin 1s linear infinite; }
+        @keyframes hyperSpin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        .side { position: absolute; width: 100%; height: 100%; border-radius: 50%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; border: 4px solid #fff; }
+        .side-h { background: var(--gold-bright); color: #000; transform: rotateY(0deg); }
+        .side-t { background: #333; color: var(--gold-bright); transform: rotateY(180deg); }
+
+        .betting-station { background: #0a0a0a; border-radius: 16px; padding: 15px; margin-top: 20px; border: 1px solid #222; }
+        .wager-input { width: 100%; background: #000; border: 1px solid #333; border-radius: 12px; padding: 14px; color: #fff; font-size: 16px; font-family: 'Montserrat'; font-weight: 800; text-align: center; margin-bottom: 10px; outline: none; }
+        .chips-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+        .chip { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 8px 0; text-align: center; font-size: 11px; font-weight: 700; color: #888; cursor: pointer; }
+        .chip:active { background: var(--gold-bright); color: #000; }
+        .btn-play-action { width: 100%; background: var(--gold-bright); color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; }
+        .btn-play-action:disabled { background: #333; color: #666; }
+
+        /* =========================================
+           6. IOS-STYLE BOTTOM NAV
+           ========================================= */
+        .dock-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--glass-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 12px 10px calc(12px + env(safe-area-inset-bottom)); z-index: 1000;
+        }
+        .dock-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #666; font-size: 10px; font-weight: 700; width: 20%; background: transparent; border: none; cursor: pointer; transition: 0.2s;
+        }
+        .dock-btn i { font-size: 22px; margin-bottom: 5px; }
+        .dock-btn.active { color: #fff; }
+        .dock-btn.active i { color: var(--gold-bright); text-shadow: 0 0 10px rgba(243, 186, 47, 0.5); transform: scale(1.1); transition: 0.2s; }
+
+        /* =========================================
+           7. SECURE PAYMENT BOTTOM SHEET (MODAL)
+           ========================================= */
+        .modal-bg { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: flex-end; }
+        .modal-bg.active { display: flex; animation: fadeBg 0.2s; }
+        @keyframes fadeBg { from { opacity: 0; } to { opacity: 1; } }
+
+        .sheet {
+            background: #111; width: 100%; border-top-left-radius: 30px; border-top-right-radius: 30px;
+            padding: 25px 20px calc(30px + env(safe-area-inset-bottom)); text-align: center;
+            border-top: 1px solid #333; animation: popUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes popUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .handle { width: 36px; height: 4px; background: #444; border-radius: 4px; margin: 0 auto 20px; }
+        .tier-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 5px; }
+        .tier-price { font-family: 'Montserrat'; font-size: 40px; color: var(--gold-bright); font-weight: 900; margin-bottom: 15px; }
+        
+        .tx-input { width: 100%; background: #000; border: 1px solid #333; padding: 18px; border-radius: 16px; color: #fff; text-align: center; font-size: 13px; outline: none; margin-bottom: 15px; font-family: monospace; }
+        .tx-input:focus { border-color: var(--gold-bright); }
+
+        .btn-verify { width: 100%; background: #fff; color: #000; padding: 16px; border-radius: 16px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; }
+        .btn-verify:disabled { background: #333; color: #888; }
+        .btn-close-modal { background: transparent; color: #666; font-size: 14px; font-weight: 600; border: none; margin-top: 15px; cursor: pointer; padding: 10px; width: 100%; }
+
+        /* =========================================
+           8. EFFECTS & UTILS
+           ========================================= */
+        .particle-txt { position: fixed; font-family: 'Montserrat'; color: #fff; font-weight: 900; font-size: 40px; pointer-events: none; z-index: 50; animation: floatAndFade 0.8s ease-out forwards; text-shadow: 0 4px 10px rgba(0,0,0,0.6); }
+        @keyframes floatAndFade { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-120px) scale(1.1); } }
     </style>
 </head>
 <body>
 
     <div class="app-shell">
-        <header class="header">
-            <div class="brand-title">OMLLA CAPITAL GLOBAL</div>
-            <div class="balance-master">
-                <div class="balance-val" id="total-bal">0</div>
-                <div style="font-size: 10px; color: #555; letter-spacing: 2px; font-weight: 900;">إجمالي الاحتياطي الذهبي</div>
+        
+        <div id="view-mine" class="page active" style="padding:0; overflow:hidden;">
+            <div class="status-header">
+                <div class="pill-badge"><i class="fas fa-user-ninja"></i> <span id="player-name">Player</span></div>
+                <div class="pill-badge network-pill"><div class="pulse"></div> MAINNET</div>
             </div>
-        </header>
 
-        <div id="mine-page" class="page active">
-            <div class="coin-portal">
-                <div class="main-coin" id="coin-trigger">
-                    <div class="coin-logo">O$</div>
+            <div class="vault-display">
+                <div class="vault-amount">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5738/5738096.png" class="vault-icon" alt="coin">
+                    <span id="score-display">0</span>
+                </div>
+                <div class="vault-usd">Est. Value: $<span id="usd-display">0.00</span></div>
+            </div>
+
+            <div class="mining-sector">
+                <div class="aura-glow"></div>
+                <div class="omlla-coin" id="btn-tap"></div>
+                
+                <div class="energy-cluster">
+                    <div class="energy-stats">
+                        <span><i class="fas fa-bolt"></i> <span id="energy-val">1000</span> / 1000</span>
+                        <span style="color:#888;">Lvl 1</span>
+                    </div>
+                    <div class="energy-track"><div class="energy-fill" id="energy-bar"></div></div>
                 </div>
             </div>
-            <div style="margin-top: 20px;">
-                <div style="display:flex; justify-content:space-between; font-size:12px; color:#666; margin-bottom:8px;">
-                    <span>الطاقة المتاحة</span>
-                    <span id="eng-text" style="color:var(--gold)">1000/1000</span>
+        </div>
+
+        <div id="view-games" class="page">
+            <h2 class="headline">CASINO</h2>
+            
+            <div class="casino-grid" id="game-selector">
+                <div class="casino-game" onclick="launchGame('coinflip')">
+                    <div class="game-symbol"><i class="fas fa-coins"></i></div>
+                    <div class="game-name">Coinflip</div>
+                    <div class="game-multiplier">2x Win</div>
                 </div>
-                <div class="energy-track"><div class="energy-fill" id="eng-bar"></div></div>
+                <div class="casino-game" onclick="tg.showAlert('Coming Soon!')">
+                    <div class="game-symbol"><i class="fas fa-chart-line"></i></div>
+                    <div class="game-name">Crash</div>
+                    <div class="game-multiplier">100x Win</div>
+                </div>
+                <div class="casino-game" onclick="tg.showAlert('Coming Soon!')">
+                    <div class="game-symbol"><i class="fas fa-dice"></i></div>
+                    <div class="game-name">Dice</div>
+                    <div class="game-multiplier">2x Win</div>
+                </div>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-                <div class="stat-card" style="margin-bottom:0; flex-direction:column;"><small style="color:#555">المستوى</small><b id="lvl-text" style="color:var(--gold)">1</b></div>
-                <div class="stat-card" style="margin-bottom:0; flex-direction:column;"><small style="color:#555">الترتيب</small><b id="rank-text" style="color:var(--neon-green)">--</b></div>
+
+            <div id="active-arena" class="play-arena">
+                <div class="arena-header">
+                    <h3 id="arena-title">GAME</h3>
+                    <button class="btn-close" onclick="exitGame()"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <div id="arena-stage"></div>
+
+                <div class="betting-station">
+                    <input type="number" id="wager-amount" class="wager-input" value="100" min="10" placeholder="Enter Bet Amount">
+                    <div class="chips-grid">
+                        <div class="chip" onclick="setWager(100)">100</div>
+                        <div class="chip" onclick="setWager(1000)">1K</div>
+                        <div class="chip" onclick="setWager(10000)">10K</div>
+                        <div class="chip" onclick="setWager('max')">MAX</div>
+                    </div>
+                    <div id="arena-controls"></div>
+                </div>
             </div>
         </div>
 
-        <div id="tasks-page" class="page">
-            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">المهام والنمو</h3>
-            <div class="stat-card">
-                <div style="text-align:right;"><b>القناة الرسمية</b><br><small style="color:var(--gold);">+5,000 O$</small></div>
-                <button class="btn-gold" style="width:auto; padding:8px 15px;" onclick="doTask('https://t.me/YourChannel', 5000)">انضم</button>
+        <div id="view-earn" class="page">
+            <h2 class="headline">Earn More</h2>
+            
+            <div class="action-card">
+                <div class="card-details">
+                    <div class="card-icon"><i class="fab fa-telegram-plane"></i></div>
+                    <div>
+                        <div class="card-title">Join Channel</div>
+                        <div class="card-desc"><i class="fas fa-coins" style="color:var(--gold-bright)"></i> +2,000 O$</div>
+                    </div>
+                </div>
+                <button class="btn-action" onclick="tg.openLink('https://t.me/OmllaChannel')">Go</button>
             </div>
-            <div class="stat-card">
-                <div style="text-align:right;"><b>دعوة الأصدقاء</b><br><small style="color:var(--neon-green);">+2,500 لكل صديق</small></div>
-                <button class="btn-gold" style="width:auto; padding:8px 15px;" onclick="shareRef()">دعوة</button>
+
+            <div class="action-card">
+                <div class="card-details">
+                    <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+                    <div>
+                        <div class="card-title">Daily Reward</div>
+                        <div class="card-desc"><i class="fas fa-coins" style="color:var(--gold-bright)"></i> +500 O$</div>
+                    </div>
+                </div>
+                <button class="btn-action" onclick="claimDailyBonus()">Claim</button>
             </div>
         </div>
 
-        <div id="top-page" class="page">
-            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">كبار المستثمرين</h3>
-            <div id="leader-list"></div>
-        </div>
-
-        <div id="wall-page" class="page">
-            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">المحفظة الرقمية</h3>
-            <div class="stat-card" style="background:linear-gradient(45deg, #0f0f0f, #1a1a1a);">
-                <div style="text-align:right;"><b>رصيد المحفظة</b><br><span id="wall-bal" style="color:var(--gold); font-size:20px;">0.00 O$</span></div>
-                <i class="fas fa-wallet" style="font-size:30px; color:var(--gold)"></i>
+        <div id="view-shop" class="page">
+            <h2 class="headline">PRE-SALE</h2>
+            <p style="text-align:center; color:#888; font-size:12px; margin-bottom:20px; padding:0 10px;">Acquire allocations via the secure Solana contract before public launch.</p>
+            
+            <div class="action-card" style="border-color: #333;">
+                <div class="card-details">
+                    <div class="card-icon" style="color:#fff;"><i class="fas fa-seedling"></i></div>
+                    <div>
+                        <div class="card-title">Investor Tier</div>
+                        <div class="card-desc"><i class="fas fa-coins" style="color:var(--gold-bright)"></i> 10,000 O$</div>
+                    </div>
+                </div>
+                <button class="btn-action" onclick="fireSecureCheckout(10000, 'Investor Tier', 0.1)">0.1 SOL</button>
             </div>
-            <input type="text" id="wall-addr" placeholder="أدخل عنوان SOL أو TON" style="width:100%; padding:15px; border-radius:15px; background:#111; border:1px solid #333; color:white; margin:15px 0;">
-            <button class="btn-gold" onclick="linkWall()">ربط المحفظة</button>
+
+            <div class="action-card" style="border-color: var(--solana-green); background: rgba(20, 241, 149, 0.05);">
+                <div class="card-details">
+                    <div class="card-icon" style="color:var(--solana-green); background: rgba(20, 241, 149, 0.1);"><i class="fas fa-rocket"></i></div>
+                    <div>
+                        <div class="card-title" style="color:var(--solana-green);">Venture Tier</div>
+                        <div class="card-desc"><i class="fas fa-coins" style="color:var(--gold-bright)"></i> 50,000 O$</div>
+                    </div>
+                </div>
+                <button class="btn-action btn-solana" onclick="fireSecureCheckout(50000, 'Venture Tier', 0.5)">0.5 SOL</button>
+            </div>
         </div>
 
-        <nav class="tab-bar">
-            <div class="tab-item active" onclick="goTab('mine', this)"><i class="fas fa-bolt"></i><span>تعدين</span></div>
-            <div class="tab-item" onclick="goTab('tasks', this)"><i class="fas fa-tasks"></i><span>مهام</span></div>
-            <div class="tab-item" onclick="goTab('top', this)"><i class="fas fa-trophy"></i><span>الأوائل</span></div>
-            <div class="tab-item" onclick="goTab('wall', this)"><i class="fas fa-wallet"></i><span>المحفظة</span></div>
-        </nav>
+        <div id="view-wallet" class="page">
+            <h2 class="headline">Airdrop Wallet</h2>
+            
+            <div style="background:#111; padding:40px 20px; border-radius:24px; text-align:center; border:1px solid #222; margin-top:20px;">
+                <i class="fab fa-solana" style="font-size:60px; color:var(--solana-green); margin-bottom:20px;"></i>
+                <h3 style="margin-bottom:10px; font-size:18px;">Solana Integration</h3>
+                <p style="font-size:13px; color:#888; margin-bottom:25px; line-height:1.5;">Linking your Phantom or Solflare wallet will be enabled closer to the TGE date to distribute your mined tokens.</p>
+                
+                <button class="btn-action btn-solana" style="width:100%; padding:16px; font-size:14px;" onclick="tg.showAlert('Node integration paused. Will open before TGE.')">Connect Wallet</button>
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="dock-nav">
+        <button class="dock-btn active" onclick="navigate('mine', this)"><i class="fas fa-bullseye"></i> Tap</button>
+        <button class="dock-btn" onclick="navigate('games', this)"><i class="fas fa-dice"></i> Play</button>
+        <button class="dock-btn" onclick="navigate('earn', this)"><i class="fas fa-tasks"></i> Earn</button>
+        <button class="dock-btn" onclick="navigate('shop', this)"><i class="fas fa-shopping-bag"></i> Buy</button>
+        <button class="dock-btn" onclick="navigate('wallet', this)"><i class="fas fa-wallet"></i> Wallet</button>
+    </nav>
+
+    <div class="modal-bg" id="checkoutSheet">
+        <div class="sheet">
+            <div class="handle"></div>
+            <div style="color:var(--solana-green); font-size:11px; font-weight:800; margin-bottom:10px; text-transform:uppercase;"><i class="fas fa-shield-alt"></i> Blockchain Secured</div>
+            <h2 class="tier-name" id="sheet-tier">Investor Tier</h2>
+            <div class="tier-price" id="sheet-sol">0.1 SOL</div>
+            
+            <p style="font-size:12px; color:#888; margin-bottom:15px; padding:0 10px;">
+                Send the exact SOL amount. Then paste your <b>Transaction Signature</b> below to claim your allocation.
+            </p>
+            
+            <input type="text" id="tx-hash-input" class="tx-input" placeholder="Paste Solana TX ID here...">
+            
+            <button class="btn-verify" id="exec-verify-btn" onclick="processValidation()">VERIFY TRANSACTION</button>
+            <button class="btn-close-modal" onclick="closeCheckout()">Cancel</button>
+        </div>
     </div>
 
     <script>
+        // --- 1. GLOBALS & CONFIG ---
+        const RENDER_URL = "https://omlla-payments-backend.onrender.com";
+        const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
+        const ADMIN_WALLET = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx";
+        const MAX_ENERGY = 1000;
+
+        // --- 2. TELEGRAM NATIVE INIT ---
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.disableVerticalSwipes();
+        tg.setHeaderColor('#000000');
+        tg.setBackgroundColor('#000000');
+        tg.ready();
 
-        // التكوين الرئيسي
-        const BACKEND_URL = "https://omlla-payments-backend.onrender.com";
-        const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
-        firebase.initializeApp(firebaseConfig);
+        // --- 3. FIREBASE CONNECTION ---
+        firebase.initializeApp({ databaseURL: FIREBASE_URL });
         const db = firebase.database();
+        const userId = (tg.initDataUnsafe?.user?.id || 'TEST_USER_99').toString();
+        const userRef = db.ref('players/' + userId);
 
-        const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Investor' };
-        const userRef = db.ref('players/' + user.id);
+        document.getElementById('player-name').innerText = tg.initDataUnsafe?.user?.first_name || 'Player';
 
-        let state = { points: 0, energy: 1000, level: 1, referrals: 0 };
+        // --- 4. GAME STATE ENGINE ---
+        let appState = { points: 0, energy: MAX_ENERGY };
+        let currentOrder = null;
+        let dbSyncTimeout = null;
 
-        function updateUI() {
-            document.getElementById('total-bal').innerText = Math.floor(state.points).toLocaleString();
-            document.getElementById('wall-bal').innerText = Math.floor(state.points).toLocaleString() + " O$";
-            document.getElementById('eng-text').innerText = `${state.energy}/1000`;
-            document.getElementById('eng-bar').style.width = (state.energy / 10) + "%";
-            document.getElementById('lvl-text').innerText = state.level;
-        }
-
-        userRef.on('value', (snap) => {
+        // Sync from Cloud
+        userRef.on('value', snap => {
             const data = snap.val();
-            if(data) { state = { ...state, ...data }; updateUI(); }
-            else { userRef.set({ points: 0, energy: 1000, level: 1, name: user.first_name }); }
+            if (data) {
+                appState.points = data.points || 0;
+                appState.energy = data.energy !== undefined ? data.energy : MAX_ENERGY;
+                renderUI();
+            } else {
+                userRef.set({ points: 0, energy: MAX_ENERGY });
+            }
         });
 
-        // نظام التعدين (Tapping)
-        document.getElementById('coin-trigger').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if(state.energy >= 1) {
-                state.points += 1; state.energy -= 1;
-                updateUI();
-                userRef.update({ points: state.points, energy: state.energy });
+        function renderUI() {
+            document.getElementById('score-display').innerText = appState.points.toLocaleString();
+            document.getElementById('usd-display').innerText = (appState.points / 10000).toFixed(2);
+            document.getElementById('energy-val').innerText = appState.energy;
+            document.getElementById('energy-bar').style.width = (appState.energy / MAX_ENERGY * 100) + '%';
+        }
+
+        // --- 5. ULTRA-FAST MINING (MULTI-TOUCH & DEBOUNCED DB WRITES) ---
+        const tapEngine = document.getElementById('btn-tap');
+        
+        function handleMining(e) {
+            e.preventDefault(); // Stop native zooming and scrolling
+            
+            if (appState.energy <= 0) {
+                tg.HapticFeedback?.notificationOccurred('error');
+                return;
+            }
+
+            // Determine if single click or multi-touch
+            let tapCount = 1;
+            let touchPoints = [{ x: e.clientX, y: e.clientY }];
+
+            if (e.type === 'touchstart') {
+                tapCount = e.changedTouches.length;
+                touchPoints = [];
+                for(let i=0; i<e.changedTouches.length; i++){
+                    touchPoints.push({
+                        x: e.changedTouches[i].clientX,
+                        y: e.changedTouches[i].clientY
+                    });
+                }
+            }
+
+            // Cap taps by available energy
+            if (appState.energy < tapCount) {
+                tapCount = appState.energy;
+                if(tapCount === 0) return;
+            }
+
+            // Math
+            appState.points += tapCount;
+            appState.energy -= tapCount;
+            
+            renderUI(); // Instant DOM update for speed
+            tg.HapticFeedback?.impactOccurred('heavy');
+
+            // Generate floating numbers exactly where the user tapped
+            touchPoints.forEach(point => {
+                let x = point.x;
+                let y = point.y;
                 
-                const t = e.touches[0];
-                const f = document.createElement('div');
-                f.className = 'float-reward'; f.innerText = '+1';
-                f.style.left = t.clientX + 'px'; f.style.top = t.clientY + 'px';
-                document.body.appendChild(f);
-                setTimeout(() => f.remove(), 800);
-                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            }
+                // Fallback coordinates
+                if (!x || !y) {
+                    const rect = tapEngine.getBoundingClientRect();
+                    x = rect.left + rect.width / 2;
+                    y = rect.top + rect.height / 2;
+                }
+
+                const floatTxt = document.createElement('div');
+                floatTxt.className = 'particle-txt';
+                floatTxt.innerText = '+1';
+                floatTxt.style.left = (x - 20) + 'px';
+                floatTxt.style.top = (y - 50) + 'px';
+                document.body.appendChild(floatTxt);
+                setTimeout(() => floatTxt.remove(), 800);
+            });
+
+            // Debounce Database Sync (Prevents freezing the app on fast clicking)
+            if (dbSyncTimeout) clearTimeout(dbSyncTimeout);
+            dbSyncTimeout = setTimeout(() => {
+                userRef.update({ points: appState.points, energy: appState.energy });
+            }, 500);
+        }
+
+        // Attach both events for perfect mobile and desktop support
+        tapEngine.addEventListener('touchstart', handleMining, {passive: false});
+        tapEngine.addEventListener('mousedown', (e) => {
+            if (e.pointerType !== 'touch') handleMining(e); // Prevent firing twice on mobile browsers
         });
 
-        // نظام التنقل
-        window.goTab = (id, el) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id + '-page').classList.add('active');
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            if(id === 'top') loadLeaders();
-        };
-
-        function loadLeaders() {
-            db.ref('players').orderByChild('points').limitToLast(10).once('value', (snap) => {
-                let h = ''; const arr = []; snap.forEach(x => { arr.push(x.val()); });
-                arr.reverse().forEach((p, i) => {
-                    h += `<div class="stat-card"><span>#${i+1} ${p.name || 'Investor'}</span><b style="color:var(--gold)">${Math.floor(p.points).toLocaleString()}</b></div>`;
-                });
-                document.getElementById('leader-list').innerHTML = h;
-            });
-        }
-
-        window.shareRef = () => {
-            const link = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
-            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=انضم إلي في تعدين عملة OMLLA واستلم مكافأة فورية!`);
-        };
-
-        window.linkWall = () => {
-            const addr = document.getElementById('wall-addr').value;
-            if(addr.length < 10) return tg.showAlert("العنوان غير صحيح");
-            userRef.update({ wallet: addr });
-            tg.showAlert("تم ربط المحفظة بنجاح!");
-        };
-
-        // تجديد الطاقة
+        // Auto Regen
         setInterval(() => {
-            if(state.energy < 1000) { 
-                state.energy += 1; 
-                updateUI(); 
-                userRef.child('energy').set(state.energy); 
+            if (appState.energy < MAX_ENERGY) {
+                appState.energy = Math.min(appState.energy + 2, MAX_ENERGY); 
+                userRef.child('energy').set(appState.energy);
+                renderUI();
             }
-        }, 3000);
+        }, 1500);
 
-        function showToast(msg) {
-            const t = document.createElement('div'); t.className = 'toast'; t.innerText = msg;
-            document.body.appendChild(t); setTimeout(() => t.remove(), 2000);
-        }
+        // --- 6. NAVIGATION SYSTEM ---
+        window.navigate = function(viewId, btnNode) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('view-' + viewId).classList.add('active');
+            btnNode.classList.add('active');
+            tg.HapticFeedback?.selectionChanged();
+        };
+
+        window.claimDailyBonus = function() {
+            appState.points += 500;
+            userRef.update({ points: appState.points });
+            tg.HapticFeedback?.notificationOccurred('success');
+            tg.showAlert("Daily Bonus Claimed!");
+        };
+
+        // --- 7. SECURE PRE-SALE CHECKOUT (ANTI-FRAUD) ---
+        window.fireSecureCheckout = async function(tokens, tier, sol) {
+            tg.HapticFeedback?.impactOccurred('medium');
+            
+            tg.showConfirm(`Confirm Pre-Sale Order: ${tier} for ${sol} SOL?`, async (ok) => {
+                if (!ok) return;
+                
+                try {
+                    const res = await fetch(`${RENDER_URL}/api/create-payment`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId, amount: sol, pack: tier, tokens })
+                    });
+                    const resData = await res.json();
+                    
+                    if (resData.success) {
+                        currentOrder = { id: resData.paymentId };
+                        document.getElementById('sheet-tier').innerText = tier;
+                        document.getElementById('sheet-sol').innerText = sol + " SOL";
+                        document.getElementById('checkoutSheet').classList.add('active');
+                        
+                        // Fire native wallet link
+                        tg.openLink(`solana:${ADMIN_WALLET}?amount=${sol}`);
+                    } else { tg.showAlert("Server busy. Try again."); }
+                } catch (e) { tg.showAlert("Connection to secure server failed."); }
+            });
+        };
+
+        window.processValidation = async function() {
+            const sig = document.getElementById('tx-hash-input').value.trim();
+            if (!sig) return tg.showAlert("Transaction Signature is required.");
+            
+            tg.HapticFeedback?.impactOccurred('light');
+            const btn = document.getElementById('exec-verify-btn');
+            btn.innerText = "VERIFYING BLOCKCHAIN...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${RENDER_URL}/api/verify-payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentId: currentOrder.id, transactionSignature: sig })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    tg.HapticFeedback?.notificationOccurred('success');
+                    tg.showAlert("SUCCESS! Blockchain verified your payment. Tokens added.");
+                    closeCheckout();
+                } else {
+                    tg.HapticFeedback?.notificationOccurred('error');
+                    tg.showAlert("FAILED: " + (data.error || "Invalid Transaction."));
+                }
+            } catch (e) { 
+                tg.showAlert("Network Timeout. Blockchain nodes might be busy."); 
+            } finally {
+                btn.innerText = "VERIFY TRANSACTION";
+                btn.disabled = false;
+            }
+        };
+
+        window.closeCheckout = function() {
+            document.getElementById('checkoutSheet').classList.remove('active');
+            document.getElementById('tx-hash-input').value = '';
+        };
+
+        // --- 8. CASINO: COINFLIP LOGIC ---
+        let gameInProgress = false;
+
+        window.launchGame = function(type) {
+            if(type !== 'coinflip') return;
+            
+            document.getElementById('game-selector').style.display = 'none';
+            document.getElementById('active-arena').style.display = 'block';
+            document.getElementById('arena-title').innerText = "COINFLIP";
+            
+            const stage = document.getElementById('arena-stage');
+            stage.innerHTML = `
+                <div class="flip-stage">
+                    <div class="coin-3d" id="flip-asset">
+                        <div class="side side-h">H</div>
+                        <div class="side side-t">T</div>
+                    </div>
+                </div>
+            `;
+            
+            const controls = document.getElementById('arena-controls');
+            controls.innerHTML = `
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-play-action" onclick="execFlip('heads')" id="btn-h">HEADS</button>
+                    <button class="btn-play-action" style="background:#333; color:var(--brand-gold);" onclick="execFlip('tails')" id="btn-t">TAILS</button>
+                </div>
+            `;
+        };
+
+        window.exitGame = function() {
+            if(gameInProgress) return tg.showAlert("Wait for the game to finish.");
+            document.getElementById('active-arena').style.display = 'none';
+            document.getElementById('game-selector').style.display = 'grid';
+        };
+
+        window.setWager = function(val) {
+            if (val === 'max') val = appState.points;
+            document.getElementById('wager-amount').value = val;
+            tg.HapticFeedback?.impactOccurred('light');
+        };
+
+        window.execFlip = function(guess) {
+            if(gameInProgress) return;
+            
+            const input = document.getElementById('wager-amount');
+            let bet = parseInt(input.value);
+            
+            if (isNaN(bet) || bet <= 0) return tg.showAlert("Enter a valid bet.");
+            if (bet > appState.points) return tg.showAlert("Insufficient balance.");
+            if (appState.energy < 5) return tg.showAlert("Not enough energy (Costs 5).");
+
+            gameInProgress = true;
+            document.getElementById('btn-h').disabled = true;
+            document.getElementById('btn-t').disabled = true;
+
+            // Deduct immediately
+            appState.points -= bet;
+            appState.energy -= 5;
+            renderUI();
+            userRef.update({ points: appState.points, energy: appState.energy });
+
+            const coin3d = document.getElementById('flip-asset');
+            coin3d.classList.add('spin');
+            tg.HapticFeedback?.impactOccurred('medium');
+
+            setTimeout(() => {
+                coin3d.classList.remove('spin');
+                const outcome = Math.random() < 0.5 ? 'heads' : 'tails';
+                
+                // Force rotation to show result
+                coin3d.style.transform = outcome === 'heads' ? 'rotateY(0deg)' : 'rotateY(180deg)';
+
+                setTimeout(() => {
+                    if (guess === outcome) {
+                        const win = bet * 2;
+                        appState.points += win;
+                        tg.HapticFeedback?.notificationOccurred('success');
+                        tg.showAlert("WIN! You doubled your bet.");
+                    } else {
+                        tg.HapticFeedback?.notificationOccurred('error');
+                        tg.showAlert("LOSS! Better luck next time.");
+                    }
+                    
+                    renderUI();
+                    userRef.update({ points: appState.points });
+                    
+                    gameInProgress = false;
+                    document.getElementById('btn-h').disabled = false;
+                    document.getElementById('btn-t').disabled = false;
+                    coin3d.style.transform = ''; // reset
+                }, 500);
+
+            }, 1500); // spin duration
+        };
+
     </script>
 </body>
 </html>
