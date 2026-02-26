@@ -21,7 +21,18 @@
         body {
             background: radial-gradient(circle at 50% 30%, #1a3a1a, #050505 100%);
             color: white; font-family: 'Inter', sans-serif; min-height: 100vh;
-            display: flex; justify-content: center; position: relative; overflow-x: hidden;
+            display: flex; justify-content: center; position: relative;
+        }
+
+        .particle {
+            position: fixed; width: 4px; height: 4px; background: var(--gold);
+            border-radius: 50%; filter: blur(3px); opacity: 0.3; pointer-events: none;
+            animation: float 20s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            50% { transform: translateY(-100px) translateX(50px); opacity: 0.6; }
+            100% { transform: translateY(0) translateX(0); opacity: 0.3; }
         }
 
         .app-shell {
@@ -33,6 +44,8 @@
         }
 
         .header-engine { text-align: center; margin-bottom: 20px; }
+        .brand-meta { font-size: 10px; letter-spacing: 4px; color: var(--gold-soft); font-weight: 900; margin-bottom: 15px; }
+        .balance-master { background: var(--glass); border: 1px solid var(--border); border-radius: 30px; padding: 20px; backdrop-filter: blur(10px); }
         .val-display { font-size: 56px; font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(255,215,0,0.5); line-height: 1; }
 
         .page { display: none; padding: 10px 0; animation: slideUp 0.3s ease-out; }
@@ -41,22 +54,37 @@
 
         .coin-portal { display: flex; justify-content: center; margin: 30px 0 20px; perspective: 1000px; }
         .engine-core {
-            width: 200px; height: 200px; border-radius: 50%;
+            width: 220px; height: 220px; border-radius: 50%;
             background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 50%, #fbf5b7 55%, #aa771c 100%);
             border: 8px solid #332811; box-shadow: 0 0 60px rgba(255,215,0,0.3);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.1s; position: relative; overflow: hidden;
+            cursor: pointer; transition: transform 0.1s; position: relative; overflow: hidden; touch-action: manipulation;
         }
+        .engine-core::before {
+            content: ''; position: absolute; width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, transparent 40%);
+            transform: rotate(25deg);
+        }
+        .engine-core:active { transform: scale(0.94); }
+        .core-text { font-size: 44px; font-weight: 900; color: #3d2b07; z-index: 2; }
+
+        .energy-wrapper { margin-top: 20px; background: rgba(0,0,0,0.3); border-radius: 30px; padding: 16px; border: 1px solid var(--border); }
+        .progress-track { height: 12px; background: #111; border-radius: 20px; border: 1px solid var(--gold-dark); overflow: hidden; margin-top: 8px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--gold)); width: 100%; transition: width 0.3s; }
 
         .task-card {
-            background: rgba(15, 15, 15, 0.7); border: 1px solid var(--border); border-radius: 20px;
-            padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(15, 15, 15, 0.7); backdrop-filter: blur(10px);
+            border: 1px solid var(--border); border-radius: 20px; padding: 18px;
+            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
         }
-
         .btn-action {
             background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #000;
-            border: none; padding: 12px 24px; border-radius: 30px; font-weight: 800; cursor: pointer;
+            border: none; padding: 12px 24px; border-radius: 30px; font-weight: 800;
+            font-size: 13px; cursor: pointer; transition: all 0.2s;
         }
+        .btn-action:active { transform: scale(0.95); }
+        .btn-action:disabled { background: #333 !important; color: #888 !important; cursor: not-allowed; transform: none; }
+        .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; }
 
         .tab-bar {
             position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
@@ -64,158 +92,436 @@
             backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 40px;
             padding: 8px; display: flex; z-index: 1000;
         }
-        .tab-link { flex: 1; text-align: center; color: #666; font-size: 10px; cursor: pointer; }
-        .tab-link.active { color: var(--gold); }
+        .tab-link { flex: 1; text-align: center; color: #666; font-size: 10px; font-weight: 700; cursor: pointer; padding: 8px 0; border-radius: 30px; transition: all 0.2s; }
+        .tab-link.active { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; }
+        .tab-link i { font-size: 20px; display: block; margin-bottom: 4px; }
 
-        /* Payment Modal Styling */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 20px;
+        .floating-reward {
+            position: absolute; color: var(--gold); font-weight: 900; font-size: 36px;
+            animation: floatUp 0.8s forwards; pointer-events: none; z-index: 2000; text-shadow: 0 0 20px gold;
         }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: #0f0f0f; border: 2px solid var(--gold); border-radius: 30px;
-            padding: 24px; width: 100%; max-width: 360px; text-align: center;
-        }
-        .wallet-box {
-            background: #000; padding: 15px; border-radius: 12px; font-size: 11px;
-            word-break: break-all; margin: 15px 0; border: 1px solid #333; color: var(--gold);
-        }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-120px) scale(1.5); } }
 
         .toast-message {
             position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-            background: #000; border: 1px solid var(--gold); padding: 10px 20px; border-radius: 20px;
-            color: var(--gold); z-index: 3000;
+            background: rgba(0,0,0,0.9); border: 2px solid var(--gold); border-radius: 30px;
+            padding: 12px 24px; color: var(--gold); font-weight: 600; z-index: 3000; animation: toastIn 0.3s ease;
         }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+        input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 15px; border-radius: 20px; color: white; margin-bottom: 20px; outline: none; }
+        input:focus { border-color: var(--gold); }
+        .section-title { font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 20px; text-align: center; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--card-bg); border: 2px solid var(--gold); border-radius: 30px; padding: 24px; width: 100%; max-width: 360px; }
+        .wallet-address { background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin: 15px 0; word-break: break-all; font-size: 12px; }
     </style>
 </head>
 <body>
+    <div class="particle" style="top:10%; left:20%;"></div>
+    <div class="particle" style="top:80%; left:80%;"></div>
+    <div class="particle" style="top:40%; left:60%;"></div>
+
     <div class="app-shell">
         <header class="header-engine">
-            <div class="val-display" id="total-balance">0</div>
-            <div style="font-size: 11px; color: #666;">GOLD RESERVES</div>
+            <div class="brand-meta">OMLLA CAPITAL • PRESTIGE</div>
+            <div class="balance-master">
+                <div class="val-display" id="total-balance">0</div>
+                <div style="font-size: 10px; color: var(--gold-soft); letter-spacing: 2px;">GOLD RESERVES</div>
+                <div style="font-size: 11px; color: #666; margin-top: 5px;">≈ $<span id="usd-value">0.00</span> USD</div>
+            </div>
         </header>
 
         <div id="mine-page" class="page active">
             <div class="coin-portal"><div class="engine-core" id="tap-engine"><div class="core-text">O$</div></div></div>
+            <div class="energy-wrapper">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom: 8px;">
+                    <span style="color:#888">POWER SUPPLY</span><span style="color:var(--gold)" id="energy-val">1000/1000</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="energy-fill" style="width: 100%"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:#666; margin-top: 5px;">
+                    <span>⚡ <span id="energy-current">1000</span></span><span>🔄 Regen +1/3s</span>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: 15px;">
+                <div class="task-card" style="padding:12px; text-align:center;">
+                    <div style="color:var(--gold); font-size:20px;" id="tap-count">0</div><div style="color:#888; font-size:10px;">TOTAL TAPS</div>
+                </div>
+                <div class="task-card" style="padding:12px; text-align:center;">
+                    <div style="color:var(--gold); font-size:20px;" id="boost-status">1x</div><div style="color:#888; font-size:10px;">MULTIPLIER</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tasks-page" class="page">
+            <div class="section-title">CAPITAL MISSIONS</div>
+            <div class="task-card">
+                <div><div style="font-weight:800;">Official Channel</div><div style="color:var(--gold); font-size:12px;">+1,000 O$</div></div>
+                <button id="btn-tgChannel" class="btn-action" onclick="runTask('tgChannel', 'https://t.me/OmllaChannel', 1000)">JOIN</button>
+            </div>
+            <div class="task-card">
+                <div><div style="font-weight:800;">Daily Bonus</div><div style="color:var(--gold); font-size:12px;">+200 O$</div></div>
+                <button class="btn-action" id="daily-btn" onclick="claimDaily()">CLAIM</button>
+            </div>
         </div>
 
         <div id="shop-page" class="page">
-            <div class="section-title" style="text-align:center; color:gold; margin-bottom:20px;">INVESTMENT STORE</div>
+            <div class="section-title">CAPITAL BOOSTERS</div>
             <div class="task-card">
-                <div><strong>Starter Pack</strong><br><small>1,000 O$ • 0.1 SOL</small></div>
-                <button class="btn-action" onclick="initiatePurchase(1000, 'Starter', 0.1)">BUY</button>
+                <div><div style="font-weight:bold;">Turbo Boost (X2)</div><div style="font-size:11px; color:#888;">Double points for 30s</div></div>
+                <button class="btn-gold" id="boost-btn">500 O$</button>
             </div>
-            <div class="task-card">
-                <div><strong>Gold Pack</strong><br><small>5,000 O$ • 0.5 SOL</small></div>
-                <button class="btn-action" onclick="initiatePurchase(5000, 'Gold', 0.5)">BUY</button>
+            <div class="section-title" style="margin:25px 0 15px;">BUY OMLLA TOKEN</div>
+            <div class="task-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
+                <div style="width:100%; display:flex; justify-content:space-between;"><span style="font-weight:bold;">Starter Pack</span><span style="color:var(--gold);">0.1 SOL</span></div>
+                <div style="font-size:11px; color:#888;">Get 1,000 O$ Tokens</div>
+                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(1000, 'Starter', 0.1)">BUY NOW</button>
+            </div>
+            <div class="task-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
+                <div style="width:100%; display:flex; justify-content:space-between;"><span style="font-weight:bold;">Gold Pack</span><span style="color:var(--gold);">0.5 SOL</span></div>
+                <div style="font-size:11px; color:#888;">Get 5,000 O$ Tokens + Badge</div>
+                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(5000, 'Gold', 0.5)">BUY NOW</button>
+            </div>
+            <div class="task-card" style="flex-direction:column; align-items:flex-start; gap:10px; border-color: var(--gold);">
+                <div style="width:100%; display:flex; justify-content:space-between;"><span style="font-weight:bold;">Whale Pack</span><span style="color:var(--gold);">1 SOL</span></div>
+                <div style="font-size:11px; color:#888;">Get 10,000 O$ Tokens + Elite</div>
+                <button class="btn-action" style="width:100%; background: var(--gold);" onclick="initiatePurchase(10000, 'Whale', 1)">BUY NOW</button>
+            </div>
+        </div>
+
+        <div id="friends-page" class="page">
+            <div class="section-title">VIRAL GROWTH</div>
+            <div class="task-card" style="flex-direction:column; text-align:center; gap:10px;">
+                <div style="font-size:10px; color:var(--gold-soft);">TOTAL FRIENDS</div>
+                <div id="ref-count" style="font-size:42px; font-weight:900; color:var(--gold);">0</div>
+                <div style="font-size:12px; color:#888;">Earn 500 O$ per friend</div>
+            </div>
+            <div style="display:grid; gap:10px; margin-top:20px;">
+                <button class="btn-action" style="height:55px;" onclick="shareReferral()"><i class="fas fa-paper-plane"></i> INVITE A FRIEND</button>
+                <button class="btn-action" style="background:transparent; border:2px solid var(--gold); color:var(--gold);" onclick="copyReferral()"><i class="fas fa-copy"></i> COPY LINK</button>
+            </div>
+            <div class="task-card" style="margin-top:20px;">
+                <div><div style="font-weight:bold;">Referral Bonus</div><div style="color:var(--gold);">+500 O$ each</div></div>
+                <div style="font-size:24px; font-weight:bold; color:var(--gold);" id="ref-bonus">0</div>
             </div>
         </div>
 
         <div id="wallet-page" class="page">
-            <div class="section-title" style="text-align:center; color:gold; margin-bottom:20px;">YOUR ASSETS</div>
-            <input type="text" id="wallet-addr" placeholder="Enter Solana Address" style="width:100%; padding:15px; border-radius:15px; background:#000; color:white; border:1px solid #333;">
-            <button class="btn-action" style="width:100%; margin-top:10px;" onclick="linkWallet()">SAVE WALLET</button>
+            <div class="section-title">DIGITAL ASSETS</div>
+            <div class="task-card" style="flex-direction:column;">
+                <div style="width:100%; margin-bottom:15px;">
+                    <div style="color:#888; margin-bottom:5px;">Your Balance</div>
+                    <div style="font-size:32px; color:var(--gold);" id="wallet-balance">0 O$</div>
+                </div>
+                <div style="width:100%; margin-bottom:15px;">
+                    <div style="color:#888; margin-bottom:5px;">Wallet Address</div>
+                    <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:12px; font-size:11px; word-break:break-all;" id="wallet-display">
+                        9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx
+                    </div>
+                </div>
+            </div>
+            <input type="text" id="wallet-addr" placeholder="Enter your wallet address">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button class="btn-action" onclick="linkWallet()">CONNECT</button>
+                <button class="btn-action" style="background:transparent; border:1px solid var(--gold);" onclick="copyWallet()">COPY</button>
+            </div>
+            <p style="text-align:center; font-size:11px; color:#666; margin-top:20px;">⚡ Withdrawal opens at 500,000 O$ balance</p>
         </div>
 
         <nav class="tab-bar">
-            <div class="tab-link active" onclick="switchPage('mine', this)">MINE</div>
-            <div class="tab-link" onclick="switchPage('shop', this)">SHOP</div>
-            <div class="tab-link" onclick="switchPage('wallet', this)">WALLET</div>
+            <div class="tab-link active" onclick="switchPage('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
+            <div class="tab-link" onclick="switchPage('tasks', this)"><i class="fas fa-tasks"></i>TASKS</div>
+            <div class="tab-link" onclick="switchPage('shop', this)"><i class="fas fa-shopping-cart"></i>SHOP</div>
+            <div class="tab-link" onclick="switchPage('friends', this)"><i class="fas fa-users"></i>FRIENDS</div>
+            <div class="tab-link" onclick="switchPage('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
         </nav>
     </div>
 
     <div class="modal" id="paymentModal">
         <div class="modal-content">
-            <h3 style="color: gold;">IN-APP PAYMENT</h3>
-            <p style="font-size: 12px; margin-top:10px; color: #888;">Send exactly to this address:</p>
-            <div class="wallet-box" id="modal-wallet">9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx</div>
-            <div style="margin: 15px 0;">
-                <span id="modal-amount" style="font-size: 24px; font-weight: bold; color: white;">0.1 SOL</span>
+            <h3 style="color: var(--gold); text-align:center; margin-bottom:20px;">💳 COMPLETE PAYMENT</h3>
+            <div style="text-align:center; margin:20px 0;">
+                <div style="font-size:32px; color:var(--gold);" id="modal-amount">0 SOL</div>
+                <div style="color:#888; font-size:14px;" id="modal-pack">Starter Pack</div>
             </div>
-            <input type="text" id="tx-signature" placeholder="Paste Transaction ID here" style="width:100%; padding:12px; border-radius:10px; background:#000; color:white; border:1px solid #444;">
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-action" style="flex: 1;" onclick="verifyPayment()">VERIFY</button>
-                <button class="btn-action" style="flex: 1; background: #333; color: white;" onclick="closeModal()">CANCEL</button>
+            <div class="wallet-address" id="modal-wallet">9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx</div>
+            <input type="text" id="tx-signature" placeholder="Enter transaction signature">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button class="btn-action" onclick="verifyPayment()">VERIFY</button>
+                <button class="btn-action" style="background:transparent; border:1px solid var(--gold);" onclick="closeModal()">CLOSE</button>
             </div>
+            <p style="font-size:10px; color:#666; text-align:center; margin-top:15px;">Send SOL and enter transaction ID to verify</p>
         </div>
     </div>
 
     <script>
-        const RENDER_URL = "https://omlla-payments-backend.onrender.com";
-        const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
-        const WALLET_ADDRESS = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx";
+        (function() {
+            'use strict';
 
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+            const RENDER_URL = "https://omlla-payments-backend.onrender.com"; 
+            const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
+            const BOT_USERNAME = "OMLLA_Coin_bot";
+            const WALLET_ADDRESS = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx";
 
-        firebase.initializeApp({ databaseURL: FIREBASE_URL });
-        const db = firebase.database();
-        const user = tg.initDataUnsafe?.user || { id: 'test_user', first_name: 'Player' };
-        const userRef = db.ref('players/' + user.id);
+            const tg = window.Telegram.WebApp;
+            tg.expand(); tg.ready();
 
-        let state = { points: 0, energy: 1000 };
-        let currentPayment = null;
+            const firebaseConfig = { databaseURL: FIREBASE_URL };
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.database();
 
-        userRef.on('value', snap => {
-            const data = snap.val();
-            if (data) { state.points = data.points || 0; document.getElementById('total-balance').innerText = Math.floor(state.points).toLocaleString(); }
-        });
+            const user = tg.initDataUnsafe?.user || { id: 'user_' + Math.random().toString(36).substr(2, 9), first_name: 'Player' };
+            const userId = user.id.toString();
+            const userRef = db.ref('players/' + userId);
 
-        // The Core Purchase Function - No Redirects
-        window.initiatePurchase = async (tokens, pack, sol) => {
-            tg.showConfirm(`Purchase ${pack} for ${sol} SOL?`, async (ok) => {
-                if (ok) {
-                    try {
-                        const res = await fetch(`${RENDER_URL}/api/create-payment`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId: user.id, amount: sol, pack: pack, tokens: tokens })
-                        });
-                        const data = await res.json();
-                        if (data.success) {
-                            currentPayment = { paymentId: data.paymentId, amount: tokens };
-                            document.getElementById('modal-amount').innerText = sol + ' SOL';
-                            document.getElementById('modal-wallet').innerText = data.merchantWallet || WALLET_ADDRESS;
-                            document.getElementById('paymentModal').classList.add('active');
-                        }
-                    } catch (e) { alert("Server Connection Error"); }
+            let state = { points: 0, energy: 1000, totalTaps: 0, referrals: 0, tapMultiplier: 1, lastDaily: 0, tasks: {} };
+            let boostActive = false; let boostEndTime = 0; let lastTap = 0; const TAP_DELAY = 100; let currentPayment = null;
+
+            const elements = {
+                balance: document.getElementById('total-balance'), usdValue: document.getElementById('usd-value'),
+                energyVal: document.getElementById('energy-val'), energyFill: document.getElementById('energy-fill'),
+                energyCurrent: document.getElementById('energy-current'), tapCount: document.getElementById('tap-count'),
+                boostStatus: document.getElementById('boost-status'), refCount: document.getElementById('ref-count'),
+                refBonus: document.getElementById('ref-bonus'), walletBalance: document.getElementById('wallet-balance'),
+                walletDisplay: document.getElementById('wallet-display'), tapEngine: document.getElementById('tap-engine'),
+                boostBtn: document.getElementById('boost-btn'), dailyBtn: document.getElementById('daily-btn')
+            };
+
+            if (elements.walletDisplay) elements.walletDisplay.innerText = WALLET_ADDRESS;
+
+            function updateUI() {
+                elements.balance.innerText = Math.floor(state.points || 0).toLocaleString();
+                elements.usdValue.innerText = ((state.points || 0) / 5000).toFixed(2);
+                elements.energyVal.innerText = `${state.energy || 0}/1000`;
+                elements.energyCurrent.innerText = state.energy || 0;
+                elements.energyFill.style.width = ((state.energy || 0) / 1000 * 100) + '%';
+                elements.tapCount.innerText = (state.totalTaps || 0).toLocaleString();
+                elements.boostStatus.innerText = (boostActive ? '2x' : '1x');
+                elements.refCount.innerText = state.referrals || 0;
+                elements.refBonus.innerText = ((state.referrals || 0) * 500).toLocaleString();
+                if (elements.walletBalance) elements.walletBalance.innerText = Math.floor(state.points || 0).toLocaleString() + ' O$';
+                
+                if (state.tasks) {
+                    Object.keys(state.tasks).forEach(taskId => {
+                        const btn = document.getElementById('btn-' + taskId);
+                        if (btn) { btn.innerText = "DONE"; btn.style.background = "#333"; btn.style.color = "#888"; btn.disabled = true; }
+                    });
                 }
+            }
+
+            userRef.on('value', (snap) => {
+                const data = snap.val();
+                if (data) {
+                    state.points = Number(data.points) || 0;
+                    state.energy = data.energy !== undefined ? Number(data.energy) : 1000;
+                    state.totalTaps = Number(data.totalTaps) || 0;
+                    state.referrals = Number(data.referrals) || 0;
+                    state.tapMultiplier = Number(data.tapMultiplier) || 1;
+                    state.lastDaily = Number(data.lastDaily) || 0;
+                    state.tasks = data.tasks || {};
+                } else {
+                    userRef.set({ points: 0, energy: 1000, name: user.first_name, totalTaps: 0, referrals: 0, tapMultiplier: 1, tasks: {} });
+                }
+                updateUI();
             });
-        };
 
-        window.verifyPayment = async () => {
-            const tx = document.getElementById('tx-signature').value;
-            if (!tx) return alert("Please paste TX ID");
-            try {
-                const res = await fetch(`${RENDER_URL}/api/verify-payment`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ paymentId: currentPayment.paymentId, transactionSignature: tx })
+            const startParam = tg.initDataUnsafe?.start_param || '';
+            if (startParam && startParam.startsWith('ref')) {
+                const referrerId = startParam.replace('ref', '');
+                const key = 'referred_' + userId;
+                if (!localStorage.getItem(key)) {
+                    userRef.child('points').transaction(p => (p || 0) + 500);
+                    db.ref('players/' + referrerId).transaction(p => {
+                        if (p) { p.points = (p.points || 0) + 500; p.referrals = (p.referrals || 0) + 1; }
+                        return p;
+                    });
+                    localStorage.setItem(key, 'true'); showToast('🎁 +500 O$ from referral!');
+                }
+            }
+
+            elements.tapEngine.addEventListener('pointerdown', handleTap);
+
+            function handleTap(e) {
+                e.preventDefault();
+                const now = Date.now();
+                if (now - lastTap < TAP_DELAY) return;
+                lastTap = now;
+                
+                if (state.energy < 1) { showToast('⚡ Out of energy!'); tg.HapticFeedback?.impactOccurred('heavy'); return; }
+
+                if (boostActive && Date.now() > boostEndTime) {
+                    boostActive = false; state.tapMultiplier = 1; userRef.child('tapMultiplier').set(1);
+                }
+
+                const gain = (boostActive ? 2 : 1) * (state.tapMultiplier || 1);
+                
+                userRef.transaction((data) => {
+                    if (data) {
+                        data.points = (data.points || 0) + gain;
+                        data.energy = Math.max((data.energy || 1000) - 1, 0);
+                        data.totalTaps = (data.totalTaps || 0) + 1;
+                    }
+                    return data;
+                }).then((result) => {
+                    if (result.committed) {
+                        const val = result.snapshot.val();
+                        state.points = val.points; state.energy = val.energy; state.totalTaps = val.totalTaps; updateUI();
+                        
+                        const rect = elements.tapEngine.getBoundingClientRect();
+                        const x = e.clientX || (rect.left + rect.width / 2);
+                        const y = e.clientY || (rect.top + rect.height / 2);
+                        createFloatingText(x, y, '+' + gain);
+                        tg.HapticFeedback?.impactOccurred('medium');
+                    }
                 });
-                const data = await res.json();
-                if (data.success) {
-                    userRef.child('points').transaction(p => (p || 0) + currentPayment.amount);
-                    alert("SUCCESS! Tokens added.");
-                    closeModal();
-                } else { alert("Verification Failed"); }
-            } catch (e) { alert("Error"); }
-        };
+            }
 
-        window.closeModal = () => document.getElementById('paymentModal').classList.remove('active');
+            function createFloatingText(x, y, text) {
+                const el = document.createElement('div'); el.className = 'floating-reward'; el.innerText = text;
+                el.style.left = (x - 20) + 'px'; el.style.top = (y - 40) + 'px';
+                document.body.appendChild(el); setTimeout(() => el.remove(), 800);
+            }
 
-        window.switchPage = (id, el) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id + '-page').classList.add('active');
-            document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-        };
+            function showToast(message) {
+                const toast = document.createElement('div'); toast.className = 'toast-message'; toast.innerText = message;
+                document.body.appendChild(toast); setTimeout(() => toast.remove(), 2000);
+            }
 
-        document.getElementById('tap-engine').onclick = () => {
-            state.points++;
-            userRef.child('points').set(state.points);
-            tg.HapticFeedback.impactOccurred('medium');
-        };
+            if (elements.boostBtn) {
+                elements.boostBtn.addEventListener('click', () => {
+                    if (state.points < 500) { showToast('❌ Need 500 O$'); return; }
+                    userRef.child('points').transaction(p => (p || 0) - 500);
+                    boostActive = true; boostEndTime = Date.now() + 30000;
+                    showToast('⚡ BOOST ACTIVE! 2x earnings for 30s'); updateUI();
+                    setTimeout(() => { boostActive = false; showToast('⏰ Boost ended'); updateUI(); }, 30000);
+                });
+            }
+
+            window.claimDaily = function() {
+                const now = Date.now(); const last = state.lastDaily || 0;
+                if (now - last < 86400000) { showToast('⏳ Already claimed today'); return; }
+                userRef.transaction((data) => {
+                    if (data) { data.points = (data.points || 0) + 200; data.lastDaily = now; }
+                    return data;
+                }).then(() => { showToast('✅ +200 O$ claimed!'); });
+            };
+
+            window.runTask = (taskId, url, reward) => {
+                if (state.tasks && state.tasks[taskId]) { showToast('⚠️ Mission already completed!'); return; }
+                tg.openLink(url);
+                setTimeout(() => {
+                    tg.showConfirm("Did you complete the task?", (ok) => {
+                        if (ok) {
+                            if (!state.tasks) state.tasks = {};
+                            if (state.tasks[taskId]) return;
+                            state.tasks[taskId] = true;
+                            userRef.child('tasks').set(state.tasks);
+                            userRef.child('points').transaction(p => (p || 0) + reward);
+                            const btn = document.getElementById('btn-' + taskId);
+                            if(btn) { btn.innerText = "DONE"; btn.style.background = "#333"; btn.style.color = "#888"; btn.disabled = true; }
+                            showToast(`✅ +${reward} O$ claimed!`);
+                        }
+                    });
+                }, 3000);
+            };
+
+            window.initiatePurchase = async (tokenAmount, packName, solPrice) => {
+                tg.showConfirm(`Confirm protocol: ${packName} for ${solPrice} SOL?`, async (ok) => {
+                    if (ok) {
+                        try {
+                            const response = await fetch(`${RENDER_URL}/api/create-payment`, {
+                                method: 'POST',
+                                mode: 'cors',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ 
+                                    userId: userId, 
+                                    amount: solPrice,
+                                    pack: packName, 
+                                    tokens: tokenAmount 
+                                })
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                currentPayment = {
+                                    paymentId: data.paymentId,
+                                    amount: tokenAmount,
+                                    solAmount: solPrice
+                                };
+
+                                document.getElementById('modal-amount').innerText = solPrice + ' SOL';
+                                document.getElementById('modal-pack').innerText = packName + ' Pack';
+                                document.getElementById('modal-wallet').innerText = data.merchantWallet || WALLET_ADDRESS;
+                                
+                                document.getElementById('paymentModal').classList.add('active');
+                                showToast('✅ Order Generated!');
+                            } else {
+                                tg.showAlert("❌ Server Error: " + (data.error || "Unknown"));
+                            }
+                        } catch (e) {
+                            tg.showAlert("⚠️ Connection failed. Make sure your Render server is LIVE.");
+                            console.error("Link Error:", e);
+                        }
+                    }
+                });
+            };
+
+            window.verifyPayment = async function() {
+                const tx = document.getElementById('tx-signature').value.trim();
+                if (!tx) { showToast('❌ Enter transaction signature'); return; }
+                try {
+                    const response = await fetch(`${RENDER_URL}/api/verify-payment`, {
+                        method: 'POST', 
+                        mode: 'cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentId: currentPayment.paymentId, transactionSignature: tx })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        userRef.child('points').transaction(p => (p || 0) + currentPayment.amount);
+                        showToast('✅ Payment verified!'); closeModal();
+                    } else { showToast('❌ ' + data.error); }
+                } catch (e) { showToast('⚠️ Verification error'); }
+            };
+
+            window.closeModal = function() {
+                document.getElementById('paymentModal').classList.remove('active');
+                document.getElementById('tx-signature').value = ''; currentPayment = null;
+            };
+
+            window.shareReferral = () => {
+                const link = `https://t.me/${BOT_USERNAME}?start=ref${userId}`;
+                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🐢 Join OMLLA Capital and earn gold!')}`);
+            };
+            window.copyReferral = () => { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref${userId}`); showToast('✅ Link copied!'); };
+            window.copyWallet = () => { navigator.clipboard.writeText(WALLET_ADDRESS); showToast('✅ Wallet copied!'); };
+            window.linkWallet = () => {
+                const addr = document.getElementById('wallet-addr').value.trim();
+                if (addr.length < 10) { showToast('❌ Invalid address'); return; }
+                userRef.child('wallet').set(addr); showToast('✅ Wallet linked!');
+            };
+
+            window.switchPage = (id, el) => {
+                document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active')); el.classList.add('active');
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id + '-page').classList.add('active');
+                tg.HapticFeedback?.impactOccurred('light');
+            };
+
+            setInterval(() => {
+                if (state.energy < 1000) { state.energy = Math.min(state.energy + 1, 1000); updateUI(); userRef.child('energy').set(state.energy); }
+            }, 3000);
+
+            // Back button handling
+            tg.BackButton.show();
+            tg.BackButton.onClick(() => {
+                const activePage = document.querySelector('.page.active');
+                if (activePage && activePage.id === 'mine-page') { tg.close(); } else { document.querySelectorAll('.tab-link')[0].click(); }
+            });
+
+        })();
     </script>
 </body>
 </html>
