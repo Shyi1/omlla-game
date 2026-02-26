@@ -3,219 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA CAPITAL • ELITE • GOLD</title>
+    <title>OMLLA CAPITAL • PRESTIGE</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         :root {
-            --gold: #FFD700; --gold-soft: #bf953f; --gold-dark: #b8860b; --emerald: #14F195;
-            --bg: #050505; --card-bg: #0f0f0f; --glass: rgba(255, 215, 0, 0.05); --border: rgba(255, 215, 0, 0.15);
+            --gold: #FFD700; --gold-dark: #B8860B; --emerald: #14F195;
+            --bg: #050505; --card: #0f0f0f; --border: rgba(255, 215, 0, 0.2);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; user-select: none; }
+        
         body {
-            background: radial-gradient(circle at 50% 30%, #1a3a1a, #050505 100%);
-            color: white; font-family: 'Inter', sans-serif; min-height: 100vh;
-            display: flex; justify-content: center; position: relative; overflow-x: hidden;
+            background: radial-gradient(circle at 50% 0%, #1a3a1a 0%, var(--bg) 70%);
+            color: white; min-height: 100vh; display: flex; justify-content: center; overflow-x: hidden;
+        }
+
+        /* Trendy Logo Design */
+        .logo-container { text-align: center; margin: 20px 0; }
+        .omlla-logo {
+            width: 80px; height: 80px; background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 32px; color: black;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); border: 4px solid #332811;
         }
 
         .app-shell {
-            width: 100%; max-width: 420px; background: rgba(5, 5, 5, 0.7);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 48px;
-            margin: 10px; padding: 20px 16px 90px; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
-            position: relative; overflow: hidden;
+            width: 100%; max-width: 420px; padding: 20px; position: relative; padding-bottom: 100px;
         }
 
-        .header-engine { text-align: center; margin-bottom: 20px; }
-        .val-display { font-size: 56px; font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(255,215,0,0.5); line-height: 1; }
+        /* Balance Display */
+        .balance-card {
+            background: rgba(15, 15, 15, 0.8); border: 1px solid var(--border); border-radius: 32px;
+            padding: 30px; text-align: center; backdrop-filter: blur(15px); margin-bottom: 25px;
+        }
+        .balance-label { font-size: 10px; letter-spacing: 3px; color: var(--gold); opacity: 0.8; margin-bottom: 8px; font-weight: 800; }
+        .balance-amount { font-family: 'Orbitron', sans-serif; font-size: 48px; font-weight: 900; color: white; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
 
-        .page { display: none; padding: 10px 0; animation: slideUp 0.3s ease-out; }
+        /* Pages System */
+        .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .coin-portal { display: flex; justify-content: center; margin: 30px 0 20px; perspective: 1000px; }
-        .engine-core {
-            width: 200px; height: 200px; border-radius: 50%;
-            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 50%, #fbf5b7 55%, #aa771c 100%);
-            border: 8px solid #332811; box-shadow: 0 0 60px rgba(255,215,0,0.3);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.1s; position: relative; overflow: hidden;
+        /* Mining Area */
+        .mine-hub { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+        .tap-target {
+            width: 240px; height: 240px; border-radius: 50%; cursor: pointer;
+            background: url('https://i.ibb.co/Xz9R2Ym/coin-placeholder.png') center/cover; /* Replace with your actual coin image */
+            box-shadow: 0 0 50px rgba(20, 241, 149, 0.1); border: 10px solid #111;
+            transition: transform 0.1s; display: flex; align-items: center; justify-content: center;
+        }
+        .tap-target:active { transform: scale(0.92); }
+        .tap-target i { font-size: 80px; color: var(--gold); opacity: 0.9; }
+
+        /* Shop Cards */
+        .shop-item {
+            background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+            padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
+            transition: 0.3s;
+        }
+        .shop-item:hover { border-color: var(--gold); background: rgba(255,215,0,0.03); }
+
+        .btn-premium {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: black; border: none; padding: 12px 24px; border-radius: 18px;
+            font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        .task-card {
-            background: rgba(15, 15, 15, 0.7); border: 1px solid var(--border); border-radius: 20px;
-            padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+        /* Bottom Nav */
+        .nav-bar {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 380px; background: rgba(10, 10, 10, 0.95);
+            border: 1px solid var(--border); border-radius: 25px; padding: 12px;
+            display: flex; justify-content: space-around; backdrop-filter: blur(10px); z-index: 1000;
         }
+        .nav-item { color: #666; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; transition: 0.3s; }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: var(--gold); }
 
-        .btn-action {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #000;
-            border: none; padding: 12px 24px; border-radius: 30px; font-weight: 800; cursor: pointer;
-        }
-
-        .tab-bar {
-            position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
-            width: calc(100% - 32px); max-width: 380px; background: rgba(10, 10, 10, 0.9);
-            backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 40px;
-            padding: 8px; display: flex; z-index: 1000;
-        }
-        .tab-link { flex: 1; text-align: center; color: #666; font-size: 10px; cursor: pointer; }
-        .tab-link.active { color: var(--gold); }
-
-        /* Payment Modal Styling */
+        /* Modal Security Design */
         .modal {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 20px;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px;
         }
         .modal.active { display: flex; }
         .modal-content {
-            background: #0f0f0f; border: 2px solid var(--gold); border-radius: 30px;
-            padding: 24px; width: 100%; max-width: 360px; text-align: center;
+            background: #0a0a0a; border: 2px solid var(--gold); border-radius: 35px;
+            padding: 30px; width: 100%; max-width: 360px; text-align: center; position: relative;
         }
-        .wallet-box {
-            background: #000; padding: 15px; border-radius: 12px; font-size: 11px;
-            word-break: break-all; margin: 15px 0; border: 1px solid #333; color: var(--gold);
+        .sol-badge { background: var(--emerald); color: black; font-size: 10px; font-weight: 900; padding: 4px 12px; border-radius: 10px; margin-bottom: 15px; display: inline-block; }
+        
+        input {
+            width: 100%; background: #000; border: 1px solid #333; padding: 15px;
+            border-radius: 15px; color: white; text-align: center; margin: 15px 0; outline: none;
         }
-
-        .toast-message {
-            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-            background: #000; border: 1px solid var(--gold); padding: 10px 20px; border-radius: 20px;
-            color: var(--gold); z-index: 3000;
-        }
+        input:focus { border-color: var(--gold); }
     </style>
 </head>
 <body>
-    <div class="app-shell">
-        <header class="header-engine">
-            <div class="val-display" id="total-balance">0</div>
-            <div style="font-size: 11px; color: #666;">GOLD RESERVES</div>
-        </header>
 
-        <div id="mine-page" class="page active">
-            <div class="coin-portal"><div class="engine-core" id="tap-engine"><div class="core-text">O$</div></div></div>
-        </div>
-
-        <div id="shop-page" class="page">
-            <div class="section-title" style="text-align:center; color:gold; margin-bottom:20px;">INVESTMENT STORE</div>
-            <div class="task-card">
-                <div><strong>Starter Pack</strong><br><small>1,000 O$ • 0.1 SOL</small></div>
-                <button class="btn-action" onclick="initiatePurchase(1000, 'Starter', 0.1)">BUY</button>
-            </div>
-            <div class="task-card">
-                <div><strong>Gold Pack</strong><br><small>5,000 O$ • 0.5 SOL</small></div>
-                <button class="btn-action" onclick="initiatePurchase(5000, 'Gold', 0.5)">BUY</button>
-            </div>
-        </div>
-
-        <div id="wallet-page" class="page">
-            <div class="section-title" style="text-align:center; color:gold; margin-bottom:20px;">YOUR ASSETS</div>
-            <input type="text" id="wallet-addr" placeholder="Enter Solana Address" style="width:100%; padding:15px; border-radius:15px; background:#000; color:white; border:1px solid #333;">
-            <button class="btn-action" style="width:100%; margin-top:10px;" onclick="linkWallet()">SAVE WALLET</button>
-        </div>
-
-        <nav class="tab-bar">
-            <div class="tab-link active" onclick="switchPage('mine', this)">MINE</div>
-            <div class="tab-link" onclick="switchPage('shop', this)">SHOP</div>
-            <div class="tab-link" onclick="switchPage('wallet', this)">WALLET</div>
-        </nav>
+<div class="app-shell">
+    <div class="logo-container">
+        <div class="omlla-logo">O</div>
+        <div style="margin-top:10px; font-weight:800; letter-spacing:3px; font-size:12px; color:var(--gold)">OMLLA CAPITAL</div>
     </div>
 
-    <div class="modal" id="paymentModal">
-        <div class="modal-content">
-            <h3 style="color: gold;">IN-APP PAYMENT</h3>
-            <p style="font-size: 12px; margin-top:10px; color: #888;">Send exactly to this address:</p>
-            <div class="wallet-box" id="modal-wallet">9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx</div>
-            <div style="margin: 15px 0;">
-                <span id="modal-amount" style="font-size: 24px; font-weight: bold; color: white;">0.1 SOL</span>
+    <div class="balance-card">
+        <div class="balance-label">TOTAL ASSETS</div>
+        <div class="balance-amount" id="main-balance">0</div>
+        <div style="color:var(--emerald); font-size:12px; margin-top:5px; font-weight:700;">+ <span id="sol-value">0.00</span> SOL Equivalent</div>
+    </div>
+
+    <div id="mine-page" class="page active">
+        <div class="mine-hub">
+            <div class="tap-target" id="tap-btn">
+                <i class="fas fa-coins"></i>
             </div>
-            <input type="text" id="tx-signature" placeholder="Paste Transaction ID here" style="width:100%; padding:12px; border-radius:10px; background:#000; color:white; border:1px solid #444;">
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn-action" style="flex: 1;" onclick="verifyPayment()">VERIFY</button>
-                <button class="btn-action" style="flex: 1; background: #333; color: white;" onclick="closeModal()">CANCEL</button>
+            <div style="margin-top:30px; text-align:center;">
+                <div style="font-size:12px; color:#888;">ENERGY SUPPLY</div>
+                <div style="width:200px; height:6px; background:#111; border-radius:10px; margin-top:10px; overflow:hidden;">
+                    <div id="energy-bar" style="width:100%; height:100%; background:var(--gold); transition:0.3s;"></div>
+                </div>
+                <div id="energy-text" style="font-size:14px; margin-top:8px; color:var(--gold); font-weight:800;">1000 / 1000</div>
             </div>
         </div>
     </div>
 
-    <script>
-        const RENDER_URL = "https://omlla-payments-backend.onrender.com";
-        const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
-        const WALLET_ADDRESS = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx";
+    <div id="shop-page" class="page">
+        <h2 style="text-align:center; color:var(--gold); margin-bottom:20px; font-family:'Orbitron'">MARKETPLACE</h2>
+        <div class="shop-item">
+            <div><b style="font-size:16px;">Starter Pack</b><br><small style="color:#888;">1,000 O$ • Level 1 Access</small></div>
+            <button class="btn-premium" onclick="startOrder(1000, 'Starter', 0.1)">0.1 SOL</button>
+        </div>
+        <div class="shop-item">
+            <div><b style="font-size:16px;">Elite Pack</b><br><small style="color:#888;">5,000 O$ • Multiplier x2</small></div>
+            <button class="btn-premium" onclick="startOrder(5000, 'Elite', 0.5)">0.5 SOL</button>
+        </div>
+        <div class="shop-item" style="border-color:var(--emerald)">
+            <div><b style="font-size:16px;">Whale Pack</b><br><small style="color:#888;">10,000 O$ • VIP Badge</small></div>
+            <button class="btn-premium" style="background:var(--emerald)" onclick="startOrder(10000, 'Whale', 1)">1.0 SOL</button>
+        </div>
+    </div>
 
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+    <div id="wallet-page" class="page">
+        <h2 style="text-align:center; color:var(--gold); margin-bottom:20px;">SAFE DEPOSIT</h2>
+        <div style="background:var(--card); padding:20px; border-radius:24px; border:1px solid var(--border);">
+            <p style="font-size:12px; color:#888; margin-bottom:10px;">RECEIVING ADDRESS</p>
+            <div id="display-wallet" style="background:#000; padding:15px; border-radius:12px; font-size:10px; word-break:break-all; color:var(--gold);">---</div>
+        </div>
+        <input type="text" id="user-wallet" placeholder="Link your Solana wallet address">
+        <button class="btn-premium" style="width:100%;" onclick="saveWallet()">LINK WALLET</button>
+    </div>
 
-        firebase.initializeApp({ databaseURL: FIREBASE_URL });
-        const db = firebase.database();
-        const user = tg.initDataUnsafe?.user || { id: 'test_user', first_name: 'Player' };
-        const userRef = db.ref('players/' + user.id);
+    <nav class="nav-bar">
+        <div class="nav-item active" onclick="nav('mine', this)"><i class="fas fa-hammer"></i>MINE</div>
+        <div class="nav-item" onclick="nav('shop', this)"><i class="fas fa-shopping-bag"></i>SHOP</div>
+        <div class="nav-item" onclick="nav('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
+    </nav>
+</div>
 
-        let state = { points: 0, energy: 1000 };
-        let currentPayment = null;
+<div class="modal" id="orderModal">
+    <div class="modal-content">
+        <div class="sol-badge">SECURE SOLANA PAY</div>
+        <h2 id="m-pack" style="color:white; margin-bottom:10px;">Starter Pack</h2>
+        <div id="m-price" style="font-size:32px; font-weight:900; color:var(--gold); margin-bottom:15px;">0.1 SOL</div>
+        
+        <p style="font-size:11px; color:#666; margin-bottom:10px;">SEND FUNDS TO:</p>
+        <div id="m-wallet" style="background:#000; padding:12px; border-radius:12px; font-size:10px; word-break:break-all; border:1px solid #222; color:var(--gold); margin-bottom:15px;">---</div>
+        
+        <input type="text" id="tx-sig" placeholder="Paste Transaction Signature (TX ID)">
+        
+        <div style="display:flex; gap:10px;">
+            <button class="btn-premium" style="flex:2;" onclick="confirmPayment()">VERIFY PAYMENT</button>
+            <button class="btn-premium" style="flex:1; background:#222; color:white;" onclick="closeOrder()">CLOSE</button>
+        </div>
+    </div>
+</div>
 
-        userRef.on('value', snap => {
-            const data = snap.val();
-            if (data) { state.points = data.points || 0; document.getElementById('total-balance').innerText = Math.floor(state.points).toLocaleString(); }
+<script>
+    const RENDER_URL = "https://omlla-payments-backend.onrender.com";
+    const WALLET_ADDRESS = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx";
+    const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
+
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.ready();
+
+    firebase.initializeApp({ databaseURL: FIREBASE_URL });
+    const db = firebase.database();
+    const userId = (tg.initDataUnsafe?.user?.id || 'TEST_USER').toString();
+    const userRef = db.ref('players/' + userId);
+
+    let state = { points: 0, energy: 1000 };
+    let activeOrder = null;
+
+    // Load Data
+    userRef.on('value', snap => {
+        const data = snap.val();
+        if (data) {
+            state.points = data.points || 0;
+            state.energy = data.energy !== undefined ? data.energy : 1000;
+            renderUI();
+        } else {
+            userRef.set({ points: 0, energy: 1000, wallet: '' });
+        }
+    });
+
+    function renderUI() {
+        document.getElementById('main-balance').innerText = Math.floor(state.points).toLocaleString();
+        document.getElementById('sol-value').innerText = (state.points / 100000).toFixed(4); // Example rate
+        document.getElementById('energy-text').innerText = `${state.energy} / 1000`;
+        document.getElementById('energy-bar').style.width = (state.energy / 10) + '%';
+        document.getElementById('display-wallet').innerText = WALLET_ADDRESS;
+    }
+
+    // Tap Logic
+    document.getElementById('tap-btn').onclick = () => {
+        if (state.energy <= 0) return;
+        state.points++;
+        state.energy--;
+        userRef.update({ points: state.points, energy: state.energy });
+        tg.HapticFeedback.impactOccurred('medium');
+    };
+
+    // Navigation
+    function nav(pageId, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId + '-page').classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    // Secure Order System
+    window.startOrder = async (tokens, pack, sol) => {
+        tg.showConfirm(`Initiate ${pack} protocol for ${sol} SOL?`, async (ok) => {
+            if (ok) {
+                try {
+                    const res = await fetch(`${RENDER_URL}/api/create-payment`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId, amount: sol, pack, tokens })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        activeOrder = { id: data.paymentId, tokens: tokens };
+                        document.getElementById('m-pack').innerText = pack + " Pack";
+                        document.getElementById('m-price').innerText = sol + " SOL";
+                        document.getElementById('m-wallet').innerText = data.merchantWallet || WALLET_ADDRESS;
+                        document.getElementById('orderModal').classList.add('active');
+                        
+                        // Deep link to Solana Wallet
+                        tg.openLink(`solana:${WALLET_ADDRESS}?amount=${sol}&label=OmllaCapital`);
+                    }
+                } catch (e) { alert("Server connectivity issue."); }
+            }
         });
+    };
 
-        // The Core Purchase Function - No Redirects
-        window.initiatePurchase = async (tokens, pack, sol) => {
-            tg.showConfirm(`Purchase ${pack} for ${sol} SOL?`, async (ok) => {
-                if (ok) {
-                    try {
-                        const res = await fetch(`${RENDER_URL}/api/create-payment`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId: user.id, amount: sol, pack: pack, tokens: tokens })
-                        });
-                        const data = await res.json();
-                        if (data.success) {
-                            currentPayment = { paymentId: data.paymentId, amount: tokens };
-                            document.getElementById('modal-amount').innerText = sol + ' SOL';
-                            document.getElementById('modal-wallet').innerText = data.merchantWallet || WALLET_ADDRESS;
-                            document.getElementById('paymentModal').classList.add('active');
-                        }
-                    } catch (e) { alert("Server Connection Error"); }
-                }
+    window.confirmPayment = async () => {
+        const sig = document.getElementById('tx-sig').value.trim();
+        if (!sig) return alert("Please paste Transaction Signature");
+
+        tg.MainButton.setText("VERIFYING BLOCKCHAIN...").show();
+        try {
+            const res = await fetch(`${RENDER_URL}/api/verify-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentId: activeOrder.id, transactionSignature: sig })
             });
-        };
+            const result = await res.json();
+            if (result.success) {
+                alert("BLOCKCHAIN CONFIRMED! Your tokens have been added.");
+                closeOrder();
+            } else { alert("Failed: " + (result.error || "Transaction invalid")); }
+        } catch (e) { alert("Blockchain node busy. Try again."); }
+        tg.MainButton.hide();
+    };
 
-        window.verifyPayment = async () => {
-            const tx = document.getElementById('tx-signature').value;
-            if (!tx) return alert("Please paste TX ID");
-            try {
-                const res = await fetch(`${RENDER_URL}/api/verify-payment`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ paymentId: currentPayment.paymentId, transactionSignature: tx })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    userRef.child('points').transaction(p => (p || 0) + currentPayment.amount);
-                    alert("SUCCESS! Tokens added.");
-                    closeModal();
-                } else { alert("Verification Failed"); }
-            } catch (e) { alert("Error"); }
-        };
+    window.closeOrder = () => {
+        document.getElementById('orderModal').classList.remove('active');
+        document.getElementById('tx-sig').value = '';
+        activeOrder = null;
+    };
 
-        window.closeModal = () => document.getElementById('paymentModal').classList.remove('active');
+    window.saveWallet = () => {
+        const addr = document.getElementById('user-wallet').value.trim();
+        if (addr.length < 32) return alert("Invalid Solana Address");
+        userRef.update({ wallet: addr });
+        alert("Wallet Linked Successfully");
+    };
 
-        window.switchPage = (id, el) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id + '-page').classList.add('active');
-            document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-        };
+    // Energy Regen
+    setInterval(() => {
+        if (state.energy < 1000) {
+            state.energy++;
+            userRef.update({ energy: state.energy });
+        }
+    }, 5000);
+</script>
 
-        document.getElementById('tap-engine').onclick = () => {
-            state.points++;
-            userRef.child('points').set(state.points);
-            tg.HapticFeedback.impactOccurred('medium');
-        };
-    </script>
 </body>
 </html>
