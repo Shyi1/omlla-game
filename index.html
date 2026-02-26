@@ -8,6 +8,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.0.1/web3.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -16,7 +17,7 @@
         :root {
             --gold: #FFD700; --gold-soft: #bf953f; --gold-dark: #b8860b; --emerald: #14F195;
             --bg: #050505; --card-bg: #0f0f0f; --glass: rgba(255, 215, 0, 0.05); --border: rgba(255, 215, 0, 0.15);
-            --premium: #8A2BE2; --legendary: #FF4500;
+            --premium: #8A2BE2; --legendary: #FF4500; --airdrop: #FF69B4;
         }
 
         body {
@@ -107,6 +108,14 @@
         .legendary-card {
             border: 2px solid var(--legendary); background: rgba(255, 69, 0, 0.1);
         }
+        .airdrop-card {
+            border: 2px solid var(--airdrop); background: rgba(255, 105, 180, 0.1);
+            animation: airdropPulse 2s infinite;
+        }
+        @keyframes airdropPulse {
+            0%, 100% { box-shadow: 0 0 20px #FF69B4; }
+            50% { box-shadow: 0 0 40px #FFD700; }
+        }
 
         .btn-action {
             background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #000;
@@ -117,6 +126,11 @@
         .btn-action:disabled { background: #333 !important; color: #888 !important; cursor: not-allowed; transform: none; }
         .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; }
         .btn-premium { background: linear-gradient(135deg, var(--premium), #4B0082); color: white; }
+        .btn-airdrop { background: linear-gradient(135deg, #FF69B4, #8B008B); color: white; animation: btnAirdrop 2s infinite; }
+        @keyframes btnAirdrop {
+            0%, 100% { box-shadow: 0 0 20px #FF69B4; }
+            50% { box-shadow: 0 0 40px #FFD700; }
+        }
 
         .tab-bar {
             position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
@@ -173,6 +187,19 @@
             display: inline-block; animation: flicker 1s infinite;
         }
         @keyframes flicker { 0%,100% { opacity: 1; } 50% { opacity: 0.8; } }
+
+        /* Airdrop Notification */
+        .airdrop-notification {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, #FF69B4, #8B008B);
+            border: 2px solid gold; border-radius: 30px; padding: 15px 25px;
+            color: white; font-weight: bold; z-index: 10000;
+            animation: slideDown 0.5s ease;
+        }
+        @keyframes slideDown {
+            from { top: -100px; }
+            to { top: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -188,7 +215,10 @@
             <div class="balance-master">
                 <div class="val-display" id="total-balance">0</div>
                 <div style="font-size: 10px; color: var(--gold-soft); letter-spacing: 2px;">GOLD RESERVES</div>
-                <div style="font-size: 11px; color: #666; margin-top: 5px;">≈ $<span id="usd-value">0.00</span> USD</div>
+                <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                    <span style="font-size: 11px; color: #888;">≈ $<span id="usd-value">0.00</span> USD</span>
+                    <span style="font-size: 11px; color: var(--gold);" id="sol-equivalent">0 SOL</span>
+                </div>
             </div>
         </header>
 
@@ -254,15 +284,79 @@
             </div>
 
             <div class="section-title" style="margin:25px 0 15px;">BUY OMLLA TOKEN</div>
+            
+            <!-- Updated Packs with 100,000 O$ = 1 SOL pricing -->
             <div class="task-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
-                <div style="width:100%; display:flex; justify-content:space-between;"><span style="font-weight:bold;">Starter Pack</span><span style="color:var(--gold);">0.1 SOL</span></div>
-                <div style="font-size:11px; color:#888;">Get 1,000 O$ Tokens</div>
-                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(1000, 'Starter', 0.1)">BUY NOW</button>
+                <div style="width:100%; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold;">Starter Pack</span>
+                    <span style="color:var(--gold);">0.1 SOL</span>
+                </div>
+                <div style="font-size:11px; color:#888;">Get 10,000 O$ Tokens</div>
+                <div style="font-size:10px; color:#666;">(100,000 O$ = 1 SOL)</div>
+                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(10000, 'Starter', 0.1)">BUY NOW</button>
             </div>
+            
             <div class="task-card premium-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
-                <div style="width:100%; display:flex; justify-content:space-between;"><span style="font-weight:bold;">Premium Pack</span><span style="color:var(--premium);">1 SOL</span></div>
-                <div style="font-size:11px; color:#888;">Get 15,000 O$ + Premium Badge</div>
-                <button class="btn-action btn-premium" style="width:100%;" onclick="initiatePurchase(15000, 'Premium', 1)">BUY NOW</button>
+                <div style="width:100%; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold;">Premium Pack</span>
+                    <span style="color:var(--gold);">1 SOL</span>
+                </div>
+                <div style="font-size:11px; color:#888;">Get 100,000 O$ + Premium Badge</div>
+                <div style="font-size:10px; color:#666;">⭐ Best Value</div>
+                <button class="btn-action btn-premium" style="width:100%;" onclick="initiatePurchase(100000, 'Premium', 1)">BUY NOW</button>
+            </div>
+
+            <div class="task-card legendary-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
+                <div style="width:100%; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold;">Whale Pack</span>
+                    <span style="color:var(--gold);">10 SOL</span>
+                </div>
+                <div style="font-size:11px; color:#888;">Get 1,000,000 O$ + Legendary Badge</div>
+                <div style="font-size:10px; color:#666;">🚀 10x Value</div>
+                <button class="btn-action" style="width:100%; background: linear-gradient(135deg, #FF4500, #8B0000); color: white;" onclick="initiatePurchase(1000000, 'Whale', 10)">BUY NOW</button>
+            </div>
+        </div>
+
+        <div id="airdrop-page" class="page">
+            <div class="section-title">🎁 OMLLA AIRDROP</div>
+            
+            <div class="task-card airdrop-card" style="flex-direction:column; gap:15px;">
+                <div style="text-align:center;">
+                    <i class="fas fa-gift" style="font-size:50px; color:#FF69B4; margin-bottom:10px;"></i>
+                    <h3 style="color:#FF69B4;">Airdrop Coming Soon!</h3>
+                    <p style="color:#888; font-size:12px; margin:10px 0;">Get notified when OMLLA launches</p>
+                </div>
+
+                <div style="width:100%;">
+                    <div class="task-card" style="background:rgba(255,105,180,0.05);">
+                        <div>
+                            <div style="font-weight:bold;">💰 Airdrop Amount</div>
+                            <div style="color:#FF69B4;">1,000,000 O$</div>
+                        </div>
+                        <div style="font-size:12px;">per user</div>
+                    </div>
+
+                    <div class="task-card" style="background:rgba(255,105,180,0.05);">
+                        <div>
+                            <div style="font-weight:bold;">👥 Total Participants</div>
+                            <div style="color:#FF69B4;" id="participant-count">0</div>
+                        </div>
+                        <div style="font-size:12px;">registered</div>
+                    </div>
+                </div>
+
+                <div style="display:grid; gap:10px; width:100%;">
+                    <button class="btn-action btn-airdrop" onclick="registerForAirdrop()">
+                        <i class="fas fa-bell"></i> NOTIFY ME
+                    </button>
+                    <button class="btn-action" style="background:transparent; border:2px solid #FF69B4; color:#FF69B4;" onclick="checkAirdropStatus()">
+                        <i class="fas fa-info-circle"></i> CHECK STATUS
+                    </button>
+                </div>
+
+                <div style="font-size:10px; color:#666; text-align:center;">
+                    ✅ You will be notified when airdrop starts
+                </div>
             </div>
         </div>
 
@@ -286,7 +380,7 @@
             </div>
             <div class="task-card" style="margin-top:15px;">
                 <div><span style="font-weight:bold;">Total Badges</span></div>
-                <div><span id="badge-count">0</span>/5</div>
+                <div><span id="badge-count">0</span>/6</div>
             </div>
         </div>
 
@@ -296,6 +390,7 @@
                 <div style="width:100%; margin-bottom:15px;">
                     <div style="color:#888; margin-bottom:5px;">Your Balance</div>
                     <div style="font-size:32px; color:var(--gold);" id="wallet-balance">0 O$</div>
+                    <div style="font-size:12px; color:#888;">≈ <span id="wallet-sol">0 SOL</span></div>
                 </div>
                 <div style="width:100%; margin-bottom:15px;">
                     <div style="color:#888; margin-bottom:5px;">Wallet Address</div>
@@ -315,8 +410,8 @@
             <div class="tab-link active" onclick="switchPage('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
             <div class="tab-link" onclick="switchPage('tasks', this)"><i class="fas fa-tasks"></i>TASKS</div>
             <div class="tab-link" onclick="switchPage('shop', this)"><i class="fas fa-shopping-cart"></i>SHOP</div>
+            <div class="tab-link" onclick="switchPage('airdrop', this)"><i class="fas fa-gift"></i>AIRDROP</div>
             <div class="tab-link" onclick="switchPage('friends', this)"><i class="fas fa-users"></i>FRIENDS</div>
-            <div class="tab-link" onclick="switchPage('achievements', this)"><i class="fas fa-trophy"></i>BADGES</div>
         </nav>
     </div>
 
@@ -326,6 +421,7 @@
             <div style="text-align:center; margin:20px 0;">
                 <div style="font-size:32px; color:var(--gold);" id="modal-amount">0 SOL</div>
                 <div style="color:#888; font-size:14px;" id="modal-pack">Starter Pack</div>
+                <div style="font-size:12px; color:#666;" id="modal-tokens">0 O$</div>
             </div>
             <div class="wallet-address" id="modal-wallet">9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx</div>
             <input type="text" id="tx-signature" placeholder="Enter transaction signature">
@@ -356,33 +452,60 @@
             const userId = user.id.toString();
             const userRef = db.ref('players/' + userId);
 
+            // Pricing: 100,000 O$ = 1 SOL
+            const SOL_RATE = 100000; // 1 SOL = 100,000 O$
+
             // UPGRADED STATE WITH LEVEL SYSTEM
             let state = { 
                 points: 0, energy: 1000, totalTaps: 0, referrals: 0, 
                 tapMultiplier: 1, lastDaily: 0, tasks: {},
                 level: 1, xp: 0, streak: 0, lastStreak: 0,
-                badges: {}, premium: false
+                badges: {}, premium: false, airdropRegistered: false
             };
+            
+            // Airdrop participants count
+            let airdropParticipants = 0;
             
             let boostActive = false; let premiumBoostActive = false;
             let boostEndTime = 0; let premiumBoostEndTime = 0;
             let lastTap = 0; const TAP_DELAY = 100; let currentPayment = null;
 
             const elements = {
-                balance: document.getElementById('total-balance'), usdValue: document.getElementById('usd-value'),
-                energyVal: document.getElementById('energy-val'), energyFill: document.getElementById('energy-fill'),
-                energyCurrent: document.getElementById('energy-current'), tapCount: document.getElementById('tap-count'),
-                boostStatus: document.getElementById('boost-status'), refCount: document.getElementById('ref-count'),
+                balance: document.getElementById('total-balance'), 
+                usdValue: document.getElementById('usd-value'),
+                solEquivalent: document.getElementById('sol-equivalent'),
+                energyVal: document.getElementById('energy-val'), 
+                energyFill: document.getElementById('energy-fill'),
+                energyCurrent: document.getElementById('energy-current'), 
+                tapCount: document.getElementById('tap-count'),
+                boostStatus: document.getElementById('boost-status'), 
+                refCount: document.getElementById('ref-count'),
                 walletBalance: document.getElementById('wallet-balance'),
-                walletDisplay: document.getElementById('wallet-display'), tapEngine: document.getElementById('tap-engine'),
-                boostBtn: document.getElementById('boost-btn'), dailyBtn: document.getElementById('daily-btn'),
-                levelDisplay: document.getElementById('levelDisplay'), levelCurrent: document.getElementById('level-current'),
-                xpFill: document.getElementById('xp-fill'), xpProgressText: document.getElementById('xp-progress-text'),
-                streakCount: document.getElementById('streak-count'), streakBonus: document.getElementById('streak-bonus'),
-                badgeGrid: document.getElementById('badge-grid'), badgeCount: document.getElementById('badge-count')
+                walletSol: document.getElementById('wallet-sol'),
+                walletDisplay: document.getElementById('wallet-display'), 
+                tapEngine: document.getElementById('tap-engine'),
+                boostBtn: document.getElementById('boost-btn'), 
+                dailyBtn: document.getElementById('daily-btn'),
+                levelDisplay: document.getElementById('levelDisplay'), 
+                levelCurrent: document.getElementById('level-current'),
+                xpFill: document.getElementById('xp-fill'), 
+                xpProgressText: document.getElementById('xp-progress-text'),
+                streakCount: document.getElementById('streak-count'), 
+                streakBonus: document.getElementById('streak-bonus'),
+                badgeGrid: document.getElementById('badge-grid'), 
+                badgeCount: document.getElementById('badge-count'),
+                participantCount: document.getElementById('participant-count')
             };
 
             if (elements.walletDisplay) elements.walletDisplay.innerText = WALLET_ADDRESS;
+
+            // Load airdrop participants count
+            db.ref('airdrop/participants').once('value', (snap) => {
+                airdropParticipants = snap.val() || 0;
+                if (elements.participantCount) {
+                    elements.participantCount.innerText = airdropParticipants.toLocaleString();
+                }
+            });
 
             // LEVEL SYSTEM
             const xpPerLevel = [0, 1000, 2500, 5000, 10000, 20000, 40000, 80000, 160000, 320000];
@@ -403,7 +526,8 @@
                 { id: 'taps100', name: '100 TAPS', icon: '👆', condition: (s) => s.totalTaps >= 100 },
                 { id: 'taps1000', name: '1K TAPS', icon: '⚡', condition: (s) => s.totalTaps >= 1000 },
                 { id: 'ref5', name: 'INFLUENCER', icon: '👥', condition: (s) => s.referrals >= 5 },
-                { id: 'points10k', name: 'WHALE', icon: '🐋', condition: (s) => s.points >= 10000 },
+                { id: 'points100k', name: 'GOLDEN', icon: '💰', condition: (s) => s.points >= 100000 },
+                { id: 'points1M', name: 'WHALE', icon: '🐋', condition: (s) => s.points >= 1000000 },
                 { id: 'streak7', name: 'ON FIRE', icon: '🔥', condition: (s) => s.streak >= 7 },
                 { id: 'premium', name: 'ELITE', icon: '👑', condition: (s) => s.premium }
             ];
@@ -432,6 +556,10 @@
                 elements.balance.innerText = Math.floor(state.points || 0).toLocaleString();
                 elements.usdValue.innerText = ((state.points || 0) / 5000).toFixed(2);
                 
+                // SOL Equivalent (100,000 O$ = 1 SOL)
+                const solValue = ((state.points || 0) / SOL_RATE).toFixed(4);
+                elements.solEquivalent.innerText = solValue + ' SOL';
+                
                 // Energy
                 elements.energyVal.innerText = `${state.energy || 0}/1000`;
                 elements.energyCurrent.innerText = state.energy || 0;
@@ -454,13 +582,16 @@
                 elements.xpProgressText.innerText = `${Math.floor(state.xp || 0)}/${nextXp} XP`;
                 
                 // Streak Bonus
-                const streakBonus = Math.min(state.streak || 0, 30) * 0.5; // 0.5% per day up to 15%
+                const streakBonus = Math.min(state.streak || 0, 30) * 0.5;
                 elements.streakCount.innerText = state.streak || 0;
                 elements.streakBonus.innerText = `+${streakBonus}%`;
                 
                 // Wallet
                 if (elements.walletBalance) {
                     elements.walletBalance.innerText = Math.floor(state.points || 0).toLocaleString() + ' O$';
+                }
+                if (elements.walletSol) {
+                    elements.walletSol.innerText = solValue + ' SOL';
                 }
                 
                 // Task buttons
@@ -489,11 +620,13 @@
                     state.streak = Number(data.streak) || 0;
                     state.lastStreak = Number(data.lastStreak) || 0;
                     state.premium = data.premium || false;
+                    state.airdropRegistered = data.airdropRegistered || false;
                 } else {
                     userRef.set({ 
                         points: 0, energy: 1000, name: user.first_name, 
                         totalTaps: 0, referrals: 0, tapMultiplier: 1, 
-                        tasks: {}, level: 1, xp: 0, streak: 0, premium: false 
+                        tasks: {}, level: 1, xp: 0, streak: 0, premium: false,
+                        airdropRegistered: false
                     });
                 }
                 updateUI();
@@ -543,7 +676,7 @@
                 else if (boostActive) multiplier = 2;
                 
                 // Apply streak bonus
-                const streakBonus = Math.min(state.streak || 0, 30) * 0.005; // 0.5% per day
+                const streakBonus = Math.min(state.streak || 0, 30) * 0.005;
                 multiplier = multiplier * (1 + streakBonus);
                 
                 const gain = Math.floor(multiplier);
@@ -584,6 +717,14 @@
                 document.body.appendChild(toast); setTimeout(() => toast.remove(), 2000);
             }
 
+            function showAirdropNotification() {
+                const notif = document.createElement('div');
+                notif.className = 'airdrop-notification';
+                notif.innerHTML = '<i class="fas fa-gift"></i> You\'re registered for OMLLA Airdrop!';
+                document.body.appendChild(notif);
+                setTimeout(() => notif.remove(), 3000);
+            }
+
             // BOOST FUNCTIONS
             if (elements.boostBtn) {
                 elements.boostBtn.addEventListener('click', () => {
@@ -621,7 +762,7 @@
                     newStreak = (state.streak || 0) + 1;
                 }
                 
-                const streakBonus = Math.min(newStreak, 30) * 10; // 10 O$ per streak day
+                const streakBonus = Math.min(newStreak, 30) * 10;
                 const totalReward = 200 + streakBonus;
                 
                 userRef.transaction((data) => {
@@ -656,9 +797,41 @@
                 }, 3000);
             };
 
+            // AIRDROP FUNCTIONS
+            window.registerForAirdrop = function() {
+                if (state.airdropRegistered) {
+                    showToast('✅ Already registered for airdrop!');
+                    return;
+                }
+                
+                userRef.child('airdropRegistered').set(true);
+                state.airdropRegistered = true;
+                
+                // Update global count
+                db.ref('airdrop/participants').transaction(count => (count || 0) + 1);
+                airdropParticipants++;
+                if (elements.participantCount) {
+                    elements.participantCount.innerText = airdropParticipants.toLocaleString();
+                }
+                
+                showAirdropNotification();
+                tg.showAlert('✅ You are now registered for OMLLA Airdrop!\nYou will be notified when it starts.');
+            };
+
+            window.checkAirdropStatus = function() {
+                if (state.airdropRegistered) {
+                    tg.showAlert('✅ You are registered!\nAirdrop starts: Coming Soon\nReward: 1,000,000 O$');
+                } else {
+                    tg.showAlert('❌ Not registered yet\nClick "NOTIFY ME" to register');
+                }
+            };
+
             // PURCHASE FUNCTION
             window.initiatePurchase = async (tokenAmount, packName, solPrice) => {
-                tg.showConfirm(`Confirm purchase: ${packName} for ${solPrice} SOL?`, async (ok) => {
+                const solValue = solPrice;
+                const tokenValue = tokenAmount.toLocaleString();
+                
+                tg.showConfirm(`Confirm purchase: ${packName} Pack for ${solValue} SOL?\n\nYou will receive ${tokenValue} O$ tokens!\n(100,000 O$ = 1 SOL)`, async (ok) => {
                     if (ok) {
                         try {
                             const response = await fetch(`${RENDER_URL}/api/create-payment`, {
@@ -684,6 +857,7 @@
 
                                 document.getElementById('modal-amount').innerText = solPrice + ' SOL';
                                 document.getElementById('modal-pack').innerText = packName + ' Pack';
+                                document.getElementById('modal-tokens').innerText = tokenAmount.toLocaleString() + ' O$';
                                 document.getElementById('modal-wallet').innerText = data.merchantWallet || WALLET_ADDRESS;
                                 
                                 document.getElementById('paymentModal').classList.add('active');
@@ -712,7 +886,7 @@
                     const data = await response.json();
                     if (data.success) {
                         userRef.child('points').transaction(p => (p || 0) + currentPayment.amount);
-                        if (currentPayment.amount >= 10000) {
+                        if (currentPayment.amount >= 100000) {
                             userRef.child('premium').set(true);
                         }
                         userRef.child('xp').transaction(x => (x || 0) + 500);
@@ -729,7 +903,7 @@
             // SOCIAL FUNCTIONS
             window.shareReferral = () => {
                 const link = `https://t.me/${BOT_USERNAME}?start=ref${userId}`;
-                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🐢 Join OMLLA Capital and earn gold!')}`);
+                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🐢 Join OMLLA Capital and earn O$ tokens! 100,000 O$ = 1 SOL')}`);
             };
             window.copyReferral = () => { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref${userId}`); showToast('✅ Link copied!'); };
             window.copyWallet = () => { navigator.clipboard.writeText(WALLET_ADDRESS); showToast('✅ Wallet copied!'); };
@@ -748,7 +922,7 @@
             // ENERGY REGEN
             setInterval(() => {
                 if (state.energy < 1000) { 
-                    state.energy = Math.min(state.energy + 1, 90000000000); 
+                    state.energy = Math.min(state.energy + 1, 1000); 
                     updateUI(); 
                     userRef.child('energy').set(state.energy); 
                 }
@@ -766,4 +940,3 @@
     </script>
 </body>
 </html>
-
