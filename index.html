@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA CAPITAL | ELITE</title>
+    <title>OMLLA CAPITAL | ELITE GOLD</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -13,408 +13,137 @@
     <style>
         :root {
             --gold: #FFD700;
+            --gold-soft: #bf953f;
             --gold-lux: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 50%, #fbf5b7 55%, #aa771c 100%);
             --bg: #050505;
-            --card: #111111;
+            --card-bg: #0f0f0f;
+            --glass: rgba(255, 215, 0, 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: white; font-family: 'Inter', -apple-system, sans-serif; height: 100vh; overflow: hidden; }
+        body { background: var(--bg); color: white; font-family: 'Inter', -apple-system, sans-serif; height: 100vh; overflow: hidden; display: flex; justify-content: center; }
         
-        /* Container Shell */
-        .app-shell { width: 100%; max-width: 420px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; position: relative; }
-        
-        /* Header */
-        .lux-header { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,215,0,0.1); }
-        .balance-box { background: rgba(255,215,0,0.03); border: 1px solid rgba(255,215,0,0.1); border-radius: 25px; padding: 15px; margin-top: 10px; }
-        .balance-val { font-size: 48px; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.2); }
-
-        /* Navigation */
-        .page { display: none; padding: 20px; overflow-y: auto; flex: 1; padding-bottom: 100px; }
-        .page.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Coin Tap */
-        .coin-wrap { display: flex; justify-content: center; margin: 40px 0; }
-        .main-coin { width: 220px; height: 220px; border-radius: 50%; background: var(--gold-lux); border: 6px solid #221a0a; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; box-shadow: 0 0 50px rgba(186,141,10,0.1); }
-        .main-coin:active { transform: scale(0.94); }
-        .coin-logo { font-size: 50px; font-weight: 900; color: #3d2b07; }
-
-        /* UI Components */
-        .stat-card { background: var(--card); border-radius: 20px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1a1a1a; }
-        .btn-gold { background: var(--gold-lux); color: black; border: none; padding: 15px; border-radius: 15px; font-weight: 900; width: 100%; margin-top: 10px; cursor: pointer; }
-        
-        /* Nav Bar */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 420px; background: rgba(10,10,10,0.95); backdrop-filter: blur(15px); display: flex; padding: 15px 0; border-top: 1px solid #1a1a1a; }
-        .nav-link { flex: 1; text-align: center; color: #444; font-size: 10px; font-weight: 700; }
-        .nav-link.active { color: var(--gold); }
-        .nav-link i { font-size: 22px; display: block; margin-bottom: 4px; }
-
-        /* Effects */
-        .float-val { position: absolute; color: var(--gold); font-weight: 900; font-size: 32px; animation: floatUp 0.8s forwards; pointer-events: none; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
-    </style>
-</head>
-<body>
-
-    <div class="app-shell">
-        <header class="lux-header">
-            <div style="font-size: 10px; letter-spacing: 4px; color: var(--gold); font-weight: 900;">OMLLA CAPITAL</div>
-            <div class="balance-box">
-                <div class="balance-val" id="bal">0</div>
-                <div style="font-size: 10px; color: #555; letter-spacing: 2px;">GOLD RESERVES</div>
-            </div>
-        </header>
-
-        <div id="mine-page" class="page active">
-            <div class="coin-wrap"><div class="main-coin" id="coin-btn"><div class="coin-logo">O$</div></div></div>
-            <div style="margin-top: 20px;">
-                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>ENERGY</span><span id="eng">1000/1000</span></div>
-                <div style="height:10px; background:#111; border-radius:10px;"><div id="eng-bar" style="height:100%; width:100%; background:var(--gold-lux); border-radius:10px;"></div></div>
-            </div>
-        </div>
-
-        <div id="ref-page" class="page">
-            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">INVITE FRIENDS</h3>
-            <div class="stat-card"><span>Total Referrals</span><span id="ref-total" style="color:var(--gold);">0</span></div>
-            <button class="btn-gold" onclick="shareRef()"><i class="fas fa-paper-plane"></i> INVITE A FRIEND</button>
-            <button class="btn-gold" style="background:#1a1a1a; color:var(--gold); border:1px solid var(--gold);" onclick="copyRef()">COPY LINK</button>
-        </div>
-
-        <div id="wall-page" class="page">
-            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">WALLET CONNECT</h3>
-            <input type="text" id="wall-addr" placeholder="Enter TON or SOL Address" style="width:100%; padding:15px; border-radius:15px; background:#111; border:1px solid #222; color:white; margin-bottom:15px;">
-            <button class="btn-gold" onclick="linkWall()">CONNECT WALLET</button>
-            <p style="text-align:center; font-size:11px; color:#555; margin-top:15px;">Withdrawal opens at 100% supply distribution.</p>
-        </div>
-
-        <nav class="nav-bar">
-            <div class="nav-link active" onclick="goTab('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
-            <div class="nav-link" onclick="goTab('ref', this)"><i class="fas fa-users"></i>FRIENDS</div>
-            <div class="nav-link" onclick="goTab('wall', this)"><i class="fas fa-wallet"></i>WALLET</div>
-        </nav>
-    </div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        const firebaseConfig = { databaseURL: "https://omlla-game-default-rtdb.firebaseio.com" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Master' };
-        const userRef = db.ref('players/' + user.id);
-
-        let p = { points: 0, energy: 1000, referrals: 0 };
-
-        function updateUI() {
-            document.getElementById('bal').innerText = Math.floor(p.points).toLocaleString();
-            document.getElementById('eng').innerText = `${p.energy}/1000`;
-            document.getElementById('eng-bar').style.width = (p.energy / 10) + "%";
-            if(document.getElementById('ref-total')) document.getElementById('ref-total').innerText = p.referrals || 0;
-        }
-
-        userRef.on('value', (s) => {
-            const d = s.val();
-            if(d) { p = { ...p, ...d }; updateUI(); }
-            else { userRef.set({ points: 0, energy: 1000, name: user.first_name, referrals: 0 }); }
-        });
-
-        document.getElementById('coin-btn').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if(p.energy >= 1) {
-                p.points += 1; p.energy -= 1; updateUI();
-                userRef.update({ points: p.points, energy: p.energy, name: user.first_name });
-                
-                const t = e.touches[0];
-                const f = document.createElement('div');
-                f.className = 'float-val'; f.innerText = '+1';
-                f.style.left = t.clientX + 'px'; f.style.top = t.clientY + 'px';
-                document.body.appendChild(f);
-                setTimeout(() => f.remove(), 800);
-                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            }
-        });
-
-        window.goTab = (id, el) => {
-            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-            document.getElementById(id + '-page').classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
-            el.classList.add('active');
-        };
-
-        window.shareRef = () => {
-            const link = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
-            const text = `Mine Gold with me on Omlla Capital! 🚀`;
-            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
-        };
-
-        window.copyRef = () => {
-            const link = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
-            navigator.clipboard.writeText(link);
-            tg.showAlert("✅ Link Copied!");
-        };
-
-        window.linkWall = () => {
-            const addr = document.getElementById('wall-addr').value;
-            if(addr.length < 10) return tg.showAlert("Invalid Address");
-            userRef.update({ wallet: addr });
-            tg.showAlert("✅ Wallet Linked!");
-        };
-
-        setInterval(() => { if(p.energy < 1000) { p.energy += 1; updateUI(); userRef.child('energy').set(p.energy); } }, 3000);
-    </script>
-</body>
-</html>        </div>
-    </div>
-
-    <div style="margin-top:30px;">
-        <h4 style="font-size:12px; color:#555; margin-bottom:10px;">WITHDRAWAL ADDRESS</h4>
-        <input type="text" id="wallet-address" placeholder="Enter TON or SOL Address" 
-               style="width:100%; background:#111; border:1px solid #333; padding:15px; border-radius:12px; color:white; margin-bottom:20px;">
-        <button class="btn-action" style="width:100%; opacity:0.5;" onclick="tg.showAlert('Listing in progress. Withdrawal will open at 100% supply.')">
-            LINK WALLET
-        </button>
-    </div>
-</div>
-
-<script>
-    // --- PREVIOUS FIREBASE & TG CODE HERE ---
-
-    // VIRAL REFERRAL SYSTEM
-    window.shareReferral = function() {
-        const inviteLink = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
-        const shareText = `🚀 Join Omlla Capital and mine $O$ Gold with me! Get 1,000 bonus coins using my link!`;
-        const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`;
-        tg.openTelegramLink(fullUrl);
-    };
-
-    window.copyReferralLink = function() {
-        const inviteLink = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
-        const el = document.createElement('textarea');
-        el.value = inviteLink;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-        tg.showAlert("✅ Gold Link Copied! Send it to your friends.");
-    };
-
-    // UPDATE WALLET UI
-    function refreshWallet() {
-        if(document.getElementById('wallet-balance')) {
-            document.getElementById('wallet-balance').innerText = Math.floor(state.points).toLocaleString() + " O$";
-        }
-        if(document.getElementById('ref-count')) {
-            document.getElementById('ref-count').innerText = state.referrals || 0;
-        }
-    }
-
-    // Call this inside your existing userRef.on('value') function
-    // Example: refreshUI(); refreshWallet();
-</script>            max-width: 420px;
-            background: radial-gradient(circle at 50% -20%, #1a1a0a 0%, #050505 100%);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* Luxury Header */
-        .header-engine {
-            padding: 25px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,215,0,0.1);
-        }
-
+        .app-shell { width: 100%; max-width: 420px; background: radial-gradient(circle at 50% -20%, #1a1a0a 0%, #050505 100%); display: flex; flex-direction: column; position: relative; }
+        .header-engine { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,215,0,0.1); }
         .brand-meta { font-size: 10px; letter-spacing: 4px; color: var(--gold-soft); font-weight: 900; margin-bottom: 15px; }
-
-        .balance-master {
-            background: var(--glass);
-            border: 1px solid rgba(255,215,0,0.15);
-            border-radius: 30px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-
+        .balance-master { background: var(--glass); border: 1px solid rgba(255,215,0,0.15); border-radius: 30px; padding: 20px; backdrop-filter: blur(10px); }
         .val-display { font-size: 48px; font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(255,215,0,0.3); }
 
-        /* Navigation Engine */
-        .page { display: none; padding: 20px; height: 100%; overflow-y: auto; padding-bottom: 100px; }
+        .page { display: none; padding: 20px; height: 100%; overflow-y: auto; padding-bottom: 100px; flex: 1; }
         .page.active { display: block; animation: slideUp 0.3s ease-out; }
-
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Tap Engine UI */
-        .coin-portal {
-            display: flex;
-            justify-content: center;
-            margin: 40px 0;
-        }
-
-        .engine-core {
-            width: 240px;
-            height: 240px;
-            border-radius: 50%;
-            background: var(--gold-lux);
-            border: 8px solid #332811;
-            box-shadow: 0 0 60px rgba(186,141,10,0.15), inset 0 0 20px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.05s;
-        }
-
+        .coin-portal { display: flex; justify-content: center; margin: 40px 0; }
+        .engine-core { width: 220px; height: 220px; border-radius: 50%; background: var(--gold-lux); border: 8px solid #332811; box-shadow: 0 0 60px rgba(186,141,10,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s; }
         .engine-core:active { transform: scale(0.94); }
-        .core-text { font-size: 44px; font-weight: 900; color: #3d2b07; text-shadow: 1px 1px 0px rgba(255,255,255,0.2); }
+        .core-text { font-size: 44px; font-weight: 900; color: #3d2b07; }
 
-        /* Energy System */
         .energy-wrapper { margin-top: 30px; }
-        .progress-track { height: 12px; background: #111; border-radius: 20px; border: 1px solid #222; overflow: hidden; }
+        .progress-track { height: 12px; background: #111; border-radius: 20px; border: 1px solid #222; overflow: hidden; margin-top: 8px; }
         .progress-fill { height: 100%; background: var(--gold-lux); width: 100%; transition: width 0.3s; }
 
-        /* Task Components */
-        .task-card {
-            background: var(--card-bg);
-            border: 1px solid #222;
-            border-radius: 20px;
-            padding: 18px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .task-card { background: var(--card-bg); border: 1px solid #222; border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-action { background: var(--gold-lux); color: #000; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; width: 100%; }
 
-        .btn-action {
-            background: var(--gold-lux);
-            color: #000;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 13px;
-        }
-
-        /* Bottom Menu */
-        .tab-bar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            max-width: 420px;
-            background: rgba(8,8,8,0.95);
-            backdrop-filter: blur(20px);
-            display: flex;
-            padding: 15px 10px;
-            border-top: 1px solid #1a1a1a;
-        }
-
-        .tab-link { flex: 1; text-align: center; color: #444; font-size: 10px; font-weight: 700; }
+        .tab-bar { position: fixed; bottom: 0; width: 100%; max-width: 420px; background: rgba(8,8,8,0.95); backdrop-filter: blur(20px); display: flex; padding: 15px 10px; border-top: 1px solid #1a1a1a; z-index: 1000; }
+        .tab-link { flex: 1; text-align: center; color: #444; font-size: 10px; font-weight: 700; cursor: pointer; }
         .tab-link.active { color: var(--gold); }
         .tab-link i { font-size: 22px; display: block; margin-bottom: 5px; }
 
-        .floating-reward { position: absolute; color: var(--gold); font-weight: 900; font-size: 36px; animation: floatUp 0.8s forwards; pointer-events: none; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-150px); } }
+        .floating-reward { position: absolute; color: var(--gold); font-weight: 900; font-size: 36px; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 2000; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
+        
+        input { width: 100%; background: #111; border: 1px solid #333; padding: 15px; border-radius: 12px; color: white; margin-bottom: 20px; outline: none; }
     </style>
 </head>
 <body>
 
     <div class="app-shell">
         <header class="header-engine">
-            <div class="brand-meta">OMLLA CAPITAL • GLOBAL</div>
+            <div class="brand-meta">OMLLA CAPITAL • PRESTIGE</div>
             <div class="balance-master">
                 <div class="val-display" id="total-balance">0</div>
-                <div style="font-size: 11px; color: var(--gold-soft); letter-spacing: 2px;">GOLD RESERVES</div>
+                <div style="font-size: 10px; color: var(--gold-soft); letter-spacing: 2px;">GOLD RESERVES</div>
             </div>
         </header>
 
         <div id="mine-page" class="page active">
-            <div class="coin-portal">
-                <div class="engine-core" id="tap-engine">
-                    <div class="core-text">O$</div>
-                </div>
-            </div>
-
+            <div class="coin-portal"><div class="engine-core" id="tap-engine"><div class="core-text">O$</div></div></div>
             <div class="energy-wrapper">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px;">
-                    <span style="color:#666">POWER SUPPLY</span>
-                    <span id="energy-val" style="color:var(--gold)">1000/1000</span>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill" id="energy-fill"></div>
-                </div>
+                <div style="display:flex; justify-content:space-between; font-size:12px;"><span style="color:#666">POWER SUPPLY</span><span id="energy-val" style="color:var(--gold)">1000/1000</span></div>
+                <div class="progress-track"><div class="progress-fill" id="energy-fill"></div></div>
             </div>
         </div>
 
         <div id="tasks-page" class="page">
             <h3 style="color:var(--gold); margin-bottom:20px; text-align:center;">CAPITAL MISSIONS</h3>
             <div class="task-card">
-                <div>
-                    <div style="font-weight:800;">Official Channel</div>
-                    <div style="color:var(--gold); font-size:12px;">+1,000 O$</div>
-                </div>
-                <button class="btn-action" onclick="runTask('https://t.me/OmllaChannel', 1000)">JOIN</button>
+                <div><div style="font-weight:800;">Official Channel</div><div style="color:var(--gold); font-size:12px;">+1,000 O$</div></div>
+                <button class="btn-action" style="width:auto;" onclick="runTask('https://t.me/OmllaChannel', 1000)">JOIN</button>
             </div>
+        </div>
+
+        <div id="friends-page" class="page">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">VIRAL GROWTH</h3>
+            <div class="task-card" style="flex-direction:column; text-align:center; gap:10px;">
+                <div style="font-size:10px; color:var(--gold-soft);">TOTAL FRIENDS</div>
+                <div id="ref-count" style="font-size:32px; font-weight:900; color:var(--gold);">0</div>
+            </div>
+            <button class="btn-action" style="height:55px; margin-bottom:10px;" onclick="shareReferral()"><i class="fas fa-paper-plane"></i> INVITE A FRIEND</button>
+            <button class="btn-action" style="background:transparent; border:1px solid var(--gold); color:var(--gold);" onclick="copyReferral()">COPY LINK</button>
+        </div>
+
+        <div id="wallet-page" class="page">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">DIGITAL ASSETS</h3>
+            <input type="text" id="wallet-addr" placeholder="Enter TON or SOL Address">
+            <button class="btn-action" onclick="linkWallet()">CONNECT WALLET</button>
+            <p style="text-align:center; font-size:11px; color:#555; margin-top:20px;">Withdrawal opens at 100% supply distribution.</p>
         </div>
 
         <nav class="tab-bar">
             <div class="tab-link active" onclick="switchPage('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
-            <div class="tab-link" onclick="switchPage('tasks', this)"><i class="fas fa-list-check"></i>TASKS</div>
-            <div class="tab-link" onclick="tg.showAlert('Global Exchange Listing Soon')"><i class="fas fa-wallet"></i>WALLET</div>
+            <div class="tab-link" onclick="switchPage('tasks', this)"><i class="fas fa-tasks"></i>TASKS</div>
+            <div class="tab-link" onclick="switchPage('friends', this)"><i class="fas fa-users"></i>FRIENDS</div>
+            <div class="tab-link" onclick="switchPage('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
         </nav>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // System Configuration
-        const RENDER_URL = "https://omlla-payments-backend.onrender.com";
-        const firebaseConfig = { databaseURL: "https://omlla-game-default-rtdb.firebaseio.com" };
+        const tg = window.Telegram.WebApp; tg.expand();
+        const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
         const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Investor' };
         const userRef = db.ref('players/' + user.id);
 
-        let state = { points: 0, energy: 1000 };
+        let state = { points: 0, energy: 1000, referrals: 0 };
 
         function refreshUI() {
             document.getElementById('total-balance').innerText = Math.floor(state.points).toLocaleString();
             document.getElementById('energy-val').innerText = `${state.energy}/1000`;
             document.getElementById('energy-fill').style.width = (state.energy / 10) + "%";
+            if(document.getElementById('ref-count')) document.getElementById('ref-count').innerText = state.referrals || 0;
         }
 
         userRef.on('value', (snap) => {
             const data = snap.val();
             if(data) { state = { ...state, ...data }; refreshUI(); }
-            else { userRef.set({ points: 0, energy: 1000, name: user.first_name }); }
+            else { userRef.set({ points: 0, energy: 1000, name: user.first_name, referrals: 0 }); }
         });
 
-        // Tap Logic
         document.getElementById('tap-engine').addEventListener('touchstart', (e) => {
             e.preventDefault();
             if(state.energy >= 1) {
-                state.points += 1;
-                state.energy -= 1;
-                refreshUI();
-
-                // Logic sync
-                userRef.update({ points: state.points, energy: state.energy, name: user.first_name });
-                
-                // Visual feedback
-                const t = e.touches[0];
-                const f = document.createElement('div');
+                state.points += 1; state.energy -= 1; refreshUI();
+                userRef.update({ points: state.points, energy: state.energy });
+                const t = e.touches[0]; const f = document.createElement('div');
                 f.className = 'floating-reward'; f.innerText = '+1';
                 f.style.left = t.clientX + 'px'; f.style.top = t.clientY + 'px';
-                document.body.appendChild(f);
-                setTimeout(() => f.remove(), 800);
-
+                document.body.appendChild(f); setTimeout(() => f.remove(), 800);
                 if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             }
         });
 
-        // Navigation Logic
         window.switchPage = (id, el) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id + '-page').classList.add('active');
@@ -422,31 +151,32 @@
             el.classList.add('active');
         };
 
-        // Task Engine Logic
         window.runTask = (url, reward) => {
             tg.openLink(url);
             setTimeout(() => {
-                tg.showConfirm("Mission Completed?", (confirmed) => {
-                    if(confirmed) {
-                        state.points += reward;
-                        refreshUI();
-                        userRef.update({ points: state.points, name: user.first_name });
-                        tg.showAlert("Elite Status: Reward Claimed!");
-                    }
+                tg.showConfirm("Task Done?", (ok) => {
+                    if(ok) { state.points += reward; refreshUI(); userRef.update({ points: state.points }); tg.showAlert("Reward Claimed!"); }
                 });
             }, 3000);
         };
 
-        // Regen Engine
-        setInterval(() => {
-            if(state.energy < 1000) { 
-                state.energy += 1; 
-                refreshUI(); 
-                userRef.child('energy').set(state.energy);
-            }
-        }, 3000);
+        window.shareReferral = () => {
+            const link = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
+            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Join Omlla Capital!`);
+        };
+
+        window.copyReferral = () => {
+            const link = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
+            navigator.clipboard.writeText(link); tg.showAlert("Link Copied!");
+        };
+
+        window.linkWallet = () => {
+            const addr = document.getElementById('wallet-addr').value;
+            if(addr.length < 10) return tg.showAlert("Invalid Address");
+            userRef.update({ wallet: addr }); tg.showAlert("Wallet Linked!");
+        };
+
+        setInterval(() => { if(state.energy < 1000) { state.energy += 1; refreshUI(); userRef.child('energy').set(state.energy); } }, 3000);
     </script>
 </body>
 </html>
-
-
