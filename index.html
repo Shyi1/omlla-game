@@ -16,7 +16,7 @@
         :root {
             --gold: #FFD700; --gold-soft: #bf953f; --gold-dark: #b8860b; --emerald: #14F195;
             --bg: #050505; --card-bg: #0f0f0f; --glass: rgba(255, 215, 0, 0.05); --border: rgba(255, 215, 0, 0.15);
-            --premium: #8A2BE2; --legendary: #FF4500;
+            --premium: #8A2BE2; --legendary: #FF4500; --mythic: #FF00FF; --cosmic: #00FFFF;
         }
 
         body {
@@ -107,6 +107,12 @@
         .legendary-card {
             border: 2px solid var(--legendary); background: rgba(255, 69, 0, 0.1);
         }
+        .mythic-card {
+            border: 2px solid var(--mythic); background: rgba(255, 0, 255, 0.1);
+        }
+        .cosmic-card {
+            border: 2px solid var(--cosmic); background: rgba(0, 255, 255, 0.1);
+        }
 
         .btn-action {
             background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #000;
@@ -117,6 +123,8 @@
         .btn-action:disabled { background: #333 !important; color: #888 !important; cursor: not-allowed; transform: none; }
         .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; cursor: pointer; }
         .btn-premium { background: linear-gradient(135deg, var(--premium), #4B0082); color: white; }
+        .btn-mythic { background: linear-gradient(135deg, var(--mythic), #8B008B); color: white; }
+        .btn-cosmic { background: linear-gradient(135deg, var(--cosmic), #008B8B); color: black; }
 
         .tab-bar {
             position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
@@ -290,18 +298,28 @@
                     <span style="font-weight:bold;">👑 GOLD PACK</span>
                     <span style="color:var(--gold);">0.5 SOL</span>
                 </div>
-                <div style="font-size:11px; color:#888;">Get 5,000,000 O$ Tokens + Silver Badge</div>
+                <div style="font-size:11px; color:#888;">Get 5,000,000 O$ + Silver Badge</div>
                 <button class="btn-action btn-premium" style="width:100%;" onclick="initiatePurchase(5000000, 'Gold', 0.5)">BUY NOW</button>
             </div>
             
-            <!-- Whale Pack - UPDATED to 1,999,999,999 O$ -->
+            <!-- Whale Pack -->
             <div class="task-card legendary-card" style="flex-direction:column; align-items:flex-start; gap:10px; border-color: var(--legendary); background: rgba(255, 69, 0, 0.15);">
                 <div style="width:100%; display:flex; justify-content:space-between;">
                     <span style="font-weight:bold;">🐋 WHALE PACK</span>
                     <span style="color:var(--gold);">1 SOL</span>
                 </div>
-                <div style="font-size:11px; color:#ffaa00;">Get 1,999,999,999 O$ Tokens + Gold Badge + Auto Tapper</div>
+                <div style="font-size:11px; color:#ffaa00;">Get 1,999,999,999 O$ + Gold Badge + Auto Tapper</div>
                 <button class="btn-action" style="width:100%; background: linear-gradient(135deg, #FF4500, #8B0000); color: white;" onclick="initiatePurchase(1999999999, 'Whale', 1)">BUY NOW</button>
+            </div>
+
+            <!-- NEW: Max Level Pack (3 SOL) -->
+            <div class="task-card cosmic-card" style="flex-direction:column; align-items:flex-start; gap:10px; border-color: var(--cosmic); background: rgba(0, 255, 255, 0.15);">
+                <div style="width:100%; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold;">🌌 MAX LEVEL PACK</span>
+                    <span style="color:var(--cosmic);">3 SOL</span>
+                </div>
+                <div style="font-size:11px; color:#00ffff;">Get 9,999,999,999 O$ + Cosmic Badge + Max Level + Auto Tapper + All Boosts</div>
+                <button class="btn-action btn-cosmic" style="width:100%; background: linear-gradient(135deg, #00FFFF, #008B8B); color: black;" onclick="initiatePurchase(9999999999, 'Max Level', 3)">BUY NOW</button>
             </div>
         </div>
 
@@ -325,7 +343,7 @@
             </div>
             <div class="task-card" style="margin-top:15px;">
                 <div><span style="font-weight:bold;">Total Badges</span></div>
-                <div><span id="badge-count">0</span>/6</div>
+                <div><span id="badge-count">0</span>/8</div>
             </div>
         </div>
 
@@ -400,7 +418,7 @@
                 points: 0, energy: 1000, totalTaps: 0, referrals: 0, 
                 tapMultiplier: 1, lastDaily: 0, tasks: {},
                 level: 1, xp: 0, streak: 0, lastStreak: 0,
-                badges: {}, premium: false, autoTap: false
+                badges: {}, premium: false, autoTap: false, maxLevel: false
             };
             
             let boostActive = false; let premiumBoostActive = false;
@@ -425,8 +443,8 @@
 
             if (elements.walletDisplay) elements.walletDisplay.innerText = WALLET_ADDRESS;
 
-            // LEVEL SYSTEM
-            const xpPerLevel = [0, 1000, 2500, 5000, 10000, 20000, 40000, 80000, 160000, 320000];
+            // LEVEL SYSTEM - Extended for max level
+            const xpPerLevel = [0, 1000, 2500, 5000, 10000, 20000, 40000, 80000, 160000, 320000, 640000, 1280000, 2560000, 5120000, 10240000, 20480000, 40960000, 81920000, 163840000, 327680000, 655360000];
             
             function calculateLevel(xp) {
                 for (let i = xpPerLevel.length - 1; i >= 0; i--) {
@@ -439,15 +457,16 @@
                 return xpPerLevel[level] || xpPerLevel[xpPerLevel.length - 1] * 2;
             }
 
-            // ACHIEVEMENT BADGES - Updated with Billionaire badge
+            // ACHIEVEMENT BADGES - Added Cosmic badge
             const badges = [
                 { id: 'taps100', name: '100 TAPS', icon: '👆', condition: (s) => s.totalTaps >= 100 },
                 { id: 'taps1000', name: '1K TAPS', icon: '⚡', condition: (s) => s.totalTaps >= 1000 },
                 { id: 'ref5', name: 'INFLUENCER', icon: '👥', condition: (s) => s.referrals >= 5 },
                 { id: 'points1M', name: 'MILLIONAIRE', icon: '💰', condition: (s) => s.points >= 1000000 },
                 { id: 'points1B', name: 'BILLIONAIRE', icon: '💎', condition: (s) => s.points >= 1000000000 },
+                { id: 'points10B', name: 'COSMIC', icon: '🌌', condition: (s) => s.points >= 10000000000 },
                 { id: 'streak7', name: 'ON FIRE', icon: '🔥', condition: (s) => s.streak >= 7 },
-                { id: 'premium', name: 'ELITE', icon: '👑', condition: (s) => s.premium }
+                { id: 'maxLevel', name: 'MAX LEVEL', icon: '👾', condition: (s) => s.maxLevel }
             ];
 
             function updateBadges() {
@@ -537,6 +556,7 @@
                     state.lastStreak = Number(data.lastStreak) || 0;
                     state.premium = data.premium || false;
                     state.autoTap = data.autoTap || false;
+                    state.maxLevel = data.maxLevel || false;
                     
                     // Start auto tap if enabled
                     if (state.autoTap && !autoTapInterval) {
@@ -546,7 +566,7 @@
                     userRef.set({ 
                         points: 0, energy: 1000, name: user.first_name, 
                         totalTaps: 0, referrals: 0, tapMultiplier: 1, 
-                        tasks: {}, level: 1, xp: 0, streak: 0, premium: false, autoTap: false 
+                        tasks: {}, level: 1, xp: 0, streak: 0, premium: false, autoTap: false, maxLevel: false 
                     });
                 }
                 updateUI();
@@ -748,7 +768,7 @@
                 }, 3000);
             };
 
-            // PURCHASE FUNCTION - Updated with correct token amounts
+            // PURCHASE FUNCTION - Updated with Max Level Pack
             window.initiatePurchase = async (tokenAmount, packName, solPrice) => {
                 // Format token amount for display
                 const formattedAmount = tokenAmount.toLocaleString();
@@ -809,7 +829,13 @@
                         userRef.child('points').transaction(p => (p || 0) + currentPayment.amount);
                         
                         // Special rewards based on pack
-                        if (currentPayment.amount >= 1999999999) {
+                        if (currentPayment.amount >= 9999999999) {
+                            userRef.child('premium').set(true);
+                            userRef.child('autoTap').set(true);
+                            userRef.child('maxLevel').set(true);
+                            userRef.child('xp').set(999999999); // Set XP to near max level
+                            showToast('🌌 MAX LEVEL PACK: Cosmic Badge + All Perks!');
+                        } else if (currentPayment.amount >= 1999999999) {
                             userRef.child('premium').set(true);
                             userRef.child('autoTap').set(true);
                             showToast('🐋 WHALE PACK BONUS: Gold Badge + Auto Tapper!');
