@@ -173,6 +173,14 @@
             display: inline-block; animation: flicker 1s infinite;
         }
         @keyframes flicker { 0%,100% { opacity: 1; } 50% { opacity: 0.8; } }
+
+        /* Auto Tap Indicator */
+        .auto-tap-indicator {
+            position: absolute; bottom: 10px; right: 10px;
+            background: rgba(0,0,0,0.7); border: 1px solid var(--gold);
+            border-radius: 20px; padding: 5px 10px; font-size: 10px;
+            color: var(--gold); display: none;
+        }
     </style>
 </head>
 <body>
@@ -193,7 +201,14 @@
         </header>
 
         <div id="mine-page" class="page active">
-            <div class="coin-portal"><div class="engine-core" id="tap-engine"><div class="core-text">O$</div></div></div>
+            <div class="coin-portal">
+                <div class="engine-core" id="tap-engine">
+                    <div class="core-text">O$</div>
+                </div>
+                <div class="auto-tap-indicator" id="auto-tap-indicator">
+                    <i class="fas fa-robot"></i> AUTO TAP
+                </div>
+            </div>
             
             <!-- XP Progress Bar -->
             <div class="xp-bar">
@@ -252,17 +267,37 @@
                 <div><div style="font-weight:bold;">Premium Boost (X3)</div><div style="font-size:11px; color:#888;">Triple points for 1 min</div></div>
                 <button class="btn-gold btn-premium" id="premium-boost-btn">2,000 O$</button>
             </div>
-
-            <div class="section-title" style="margin:25px 0 15px;">BUY OMLLA TOKEN</div>
-            <div class="task-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
-                <div style="width:100%; display:flex; justify-content:space-between;"><span style="font-weight:bold;">Starter Pack</span><span style="color:var(--gold);">0.1 SOL</span></div>
-                <div style="font-size:11px; color:#888;">Get 1,000 O$ Tokens</div>
-                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(1000, 'Starter', 0.1)">BUY NOW</button>
+            <div class="task-card legendary-card">
+                <div><div style="font-weight:bold;">AUTO TAPPER</div><div style="font-size:11px; color:#888;">Auto tap every 1 second</div></div>
+                <button class="btn-gold" style="background: linear-gradient(135deg, var(--legendary), #8B0000);" id="auto-tap-btn">10,000 O$</button>
             </div>
+
+            <div class="section-title" style="margin:25px 0 15px;">BUY OMLLA TOKENS</div>
+            <div class="task-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
+                <div style="width:100%; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold;">Starter Pack</span>
+                    <span style="color:var(--gold);">0.1 SOL</span>
+                </div>
+                <div style="font-size:11px; color:#888;">Get 1,000,000 O$ Tokens</div>
+                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(1000000, 'Starter', 0.1)">BUY NOW</button>
+            </div>
+            
             <div class="task-card premium-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
-                <div style="width:100%; display:flex; justify-content:space-between;"><span style="font-weight:bold;">Premium Pack</span><span style="color:var(--premium);">1 SOL</span></div>
-                <div style="font-size:11px; color:#888;">Get 15,000 O$ + Premium Badge</div>
-                <button class="btn-action btn-premium" style="width:100%;" onclick="initiatePurchase(15000, 'Premium', 1)">BUY NOW</button>
+                <div style="width:100%; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold;">Gold Pack</span>
+                    <span style="color:var(--gold);">0.5 SOL</span>
+                </div>
+                <div style="font-size:11px; color:#888;">Get 5,000,000 O$ Tokens + Silver Badge</div>
+                <button class="btn-action" style="width:100%;" onclick="initiatePurchase(5000000, 'Gold', 0.5)">BUY NOW</button>
+            </div>
+            
+            <div class="task-card legendary-card" style="flex-direction:column; align-items:flex-start; gap:10px;">
+                <div style="width:100%; display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold;">Whale Pack</span>
+                    <span style="color:var(--gold);">1 SOL</span>
+                </div>
+                <div style="font-size:11px; color:#888;">Get 10,000,000 O$ + Gold Badge + Auto Tapper</div>
+                <button class="btn-action" style="width:100%; background: linear-gradient(135deg, var(--legendary), #8B0000);" onclick="initiatePurchase(10000000, 'Whale', 1)">BUY NOW</button>
             </div>
         </div>
 
@@ -361,12 +396,13 @@
                 points: 0, energy: 1000, totalTaps: 0, referrals: 0, 
                 tapMultiplier: 1, lastDaily: 0, tasks: {},
                 level: 1, xp: 0, streak: 0, lastStreak: 0,
-                badges: {}, premium: false
+                badges: {}, premium: false, autoTap: false
             };
             
             let boostActive = false; let premiumBoostActive = false;
             let boostEndTime = 0; let premiumBoostEndTime = 0;
             let lastTap = 0; const TAP_DELAY = 100; let currentPayment = null;
+            let autoTapInterval = null;
 
             const elements = {
                 balance: document.getElementById('total-balance'), usdValue: document.getElementById('usd-value'),
@@ -379,7 +415,8 @@
                 levelDisplay: document.getElementById('levelDisplay'), levelCurrent: document.getElementById('level-current'),
                 xpFill: document.getElementById('xp-fill'), xpProgressText: document.getElementById('xp-progress-text'),
                 streakCount: document.getElementById('streak-count'), streakBonus: document.getElementById('streak-bonus'),
-                badgeGrid: document.getElementById('badge-grid'), badgeCount: document.getElementById('badge-count')
+                badgeGrid: document.getElementById('badge-grid'), badgeCount: document.getElementById('badge-count'),
+                autoTapBtn: document.getElementById('auto-tap-btn'), autoTapIndicator: document.getElementById('auto-tap-indicator')
             };
 
             if (elements.walletDisplay) elements.walletDisplay.innerText = WALLET_ADDRESS;
@@ -403,7 +440,7 @@
                 { id: 'taps100', name: '100 TAPS', icon: '👆', condition: (s) => s.totalTaps >= 100 },
                 { id: 'taps1000', name: '1K TAPS', icon: '⚡', condition: (s) => s.totalTaps >= 1000 },
                 { id: 'ref5', name: 'INFLUENCER', icon: '👥', condition: (s) => s.referrals >= 5 },
-                { id: 'points10k', name: 'WHALE', icon: '🐋', condition: (s) => s.points >= 10000 },
+                { id: 'points1M', name: 'MILLIONAIRE', icon: '💰', condition: (s) => s.points >= 1000000 },
                 { id: 'streak7', name: 'ON FIRE', icon: '🔥', condition: (s) => s.streak >= 7 },
                 { id: 'premium', name: 'ELITE', icon: '👑', condition: (s) => s.premium }
             ];
@@ -471,6 +508,11 @@
                     });
                 }
                 
+                // Auto Tap Indicator
+                if (elements.autoTapIndicator) {
+                    elements.autoTapIndicator.style.display = state.autoTap ? 'block' : 'none';
+                }
+                
                 updateBadges();
             }
 
@@ -489,11 +531,17 @@
                     state.streak = Number(data.streak) || 0;
                     state.lastStreak = Number(data.lastStreak) || 0;
                     state.premium = data.premium || false;
+                    state.autoTap = data.autoTap || false;
+                    
+                    // Start auto tap if enabled
+                    if (state.autoTap && !autoTapInterval) {
+                        startAutoTap();
+                    }
                 } else {
                     userRef.set({ 
                         points: 0, energy: 1000, name: user.first_name, 
                         totalTaps: 0, referrals: 0, tapMultiplier: 1, 
-                        tasks: {}, level: 1, xp: 0, streak: 0, premium: false 
+                        tasks: {}, level: 1, xp: 0, streak: 0, premium: false, autoTap: false 
                     });
                 }
                 updateUI();
@@ -549,6 +597,10 @@
                 const gain = Math.floor(multiplier);
                 const xpGain = 1;
                 
+                performTap(gain, xpGain);
+            }
+
+            function performTap(gain, xpGain) {
                 userRef.transaction((data) => {
                     if (data) {
                         data.points = (data.points || 0) + gain;
@@ -565,12 +617,32 @@
                         updateUI();
                         
                         const rect = elements.tapEngine.getBoundingClientRect();
-                        const x = e.clientX || (rect.left + rect.width / 2);
-                        const y = e.clientY || (rect.top + rect.height / 2);
+                        const x = rect.left + rect.width / 2;
+                        const y = rect.top + rect.height / 2;
                         createFloatingText(x, y, '+' + gain);
                         tg.HapticFeedback?.impactOccurred('medium');
                     }
                 });
+            }
+
+            // AUTO TAP FUNCTION
+            function startAutoTap() {
+                if (autoTapInterval) clearInterval(autoTapInterval);
+                autoTapInterval = setInterval(() => {
+                    if (state.energy >= 1 && state.autoTap) {
+                        let multiplier = 1;
+                        if (premiumBoostActive) multiplier = 3;
+                        else if (boostActive) multiplier = 2;
+                        
+                        const streakBonus = Math.min(state.streak || 0, 30) * 0.005;
+                        multiplier = multiplier * (1 + streakBonus);
+                        
+                        const gain = Math.floor(multiplier);
+                        const xpGain = 1;
+                        
+                        performTap(gain, xpGain);
+                    }
+                }, 1000);
             }
 
             function createFloatingText(x, y, text) {
@@ -603,6 +675,21 @@
                 showToast('💎 3x PREMIUM BOOST for 60s!'); updateUI();
                 setTimeout(() => { premiumBoostActive = false; showToast('⏰ Premium Boost ended'); updateUI(); }, 60000);
             });
+
+            // AUTO TAP BUTTON
+            if (elements.autoTapBtn) {
+                elements.autoTapBtn.addEventListener('click', () => {
+                    if (state.points < 10000) { showToast('❌ Need 10,000 O$'); return; }
+                    if (state.autoTap) { showToast('✅ Auto Tap already active!'); return; }
+                    
+                    userRef.child('points').transaction(p => (p || 0) - 10000);
+                    userRef.child('autoTap').set(true);
+                    state.autoTap = true;
+                    startAutoTap();
+                    showToast('🤖 AUTO TAP ACTIVATED! Tapping every second');
+                    updateUI();
+                });
+            }
 
             // DAILY BONUS WITH STREAK
             window.claimDaily = function() {
@@ -658,7 +745,7 @@
 
             // PURCHASE FUNCTION
             window.initiatePurchase = async (tokenAmount, packName, solPrice) => {
-                tg.showConfirm(`Confirm purchase: ${packName} for ${solPrice} SOL?`, async (ok) => {
+                tg.showConfirm(`Confirm purchase: ${packName} for ${solPrice} SOL?\nYou will receive ${tokenAmount.toLocaleString()} O$ tokens!`, async (ok) => {
                     if (ok) {
                         try {
                             const response = await fetch(`${RENDER_URL}/api/create-payment`, {
@@ -712,7 +799,10 @@
                     const data = await response.json();
                     if (data.success) {
                         userRef.child('points').transaction(p => (p || 0) + currentPayment.amount);
-                        if (currentPayment.amount >= 10000) {
+                        if (currentPayment.amount >= 10000000) {
+                            userRef.child('premium').set(true);
+                            userRef.child('autoTap').set(true);
+                        } else if (currentPayment.amount >= 5000000) {
                             userRef.child('premium').set(true);
                         }
                         userRef.child('xp').transaction(x => (x || 0) + 500);
@@ -729,7 +819,7 @@
             // SOCIAL FUNCTIONS
             window.shareReferral = () => {
                 const link = `https://t.me/${BOT_USERNAME}?start=ref${userId}`;
-                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🐢 Join OMLLA Capital and earn gold!')}`);
+                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🐢 Join OMLLA Capital and earn millions of O$ tokens!')}`);
             };
             window.copyReferral = () => { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=ref${userId}`); showToast('✅ Link copied!'); };
             window.copyWallet = () => { navigator.clipboard.writeText(WALLET_ADDRESS); showToast('✅ Wallet copied!'); };
@@ -748,7 +838,7 @@
             // ENERGY REGEN
             setInterval(() => {
                 if (state.energy < 1000) { 
-                    state.energy = Math.min(state.energy + 1, 90000000000); 
+                    state.energy = Math.min(state.energy + 1, 1000); 
                     updateUI(); 
                     userRef.child('energy').set(state.energy); 
                 }
@@ -766,4 +856,3 @@
     </script>
 </body>
 </html>
-
