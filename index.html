@@ -1,540 +1,262 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>OMLLA CAPITAL</title>
+    <title>OMLLA CAPITAL | القمة</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* =========================================
-           1. CORE RESET & VARIABLES
-           ========================================= */
+        :root {
+            --gold: #FFD700;
+            --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --bg: #050505;
+            --card: #0f0f0f;
+            --neon-green: #14F195;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         
-        :root {
-            --brand-gold: #F3BA2F;
-            --brand-dark: #b38515;
-            --brand-sol: #14F195;
-            --bg-color: #000000;
-            --surface-color: #111111;
-            --surface-glass: rgba(25, 25, 25, 0.7);
-        }
-
         body {
-            background-color: var(--bg-color);
-            background-image: radial-gradient(circle at 50% 30%, #1a1500 0%, #000000 70%);
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            overflow: hidden; 
-            touch-action: none;
+            background: var(--bg);
+            background: radial-gradient(circle at 50% 20%, #1a1a05 0%, #050505 100%);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
             height: 100vh;
-            height: var(--tg-viewport-height, 100vh);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
         }
 
-        .app-wrapper {
-            height: 100%; width: 100%;
-            display: flex; flex-direction: column;
-            padding-bottom: calc(85px + env(safe-area-inset-bottom));
+        .app-shell {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
 
-        /* =========================================
-           2. HEADER & BALANCE (NOTCOIN STYLE)
-           ========================================= */
-        .top-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 20px 10px;
+        /* Header Engine */
+        .header {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,215,0,0.1);
         }
-        .user-tag {
-            display: flex; align-items: center; gap: 8px;
-            background: #1a1a1a; padding: 6px 12px; border-radius: 20px;
-            font-size: 12px; font-weight: 600; border: 1px solid #333;
-        }
+
+        .brand-title { font-family: 'Orbitron', sans-serif; font-size: 12px; letter-spacing: 5px; color: var(--gold); margin-bottom: 10px; }
         
-        .balance-container { text-align: center; margin-top: 10px; flex-shrink: 0; }
-        .balance-amount {
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            font-family: 'Montserrat', sans-serif; font-size: 52px; font-weight: 900;
-            line-height: 1; text-shadow: 0 0 30px rgba(243, 186, 47, 0.2);
-        }
-        .balance-icon { width: 40px; height: 40px; }
-        .balance-usd { font-size: 14px; color: #888; margin-top: 8px; font-weight: 500; }
-
-        /* =========================================
-           3. THE COIN & MINING AREA
-           ========================================= */
-        .mining-area {
-            flex-grow: 1; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; position: relative;
-        }
-        
-        .coin-glow {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 280px; height: 280px; background: rgba(243, 186, 47, 0.15);
-            border-radius: 50%; filter: blur(50px); pointer-events: none;
+        .balance-master {
+            background: rgba(255, 215, 0, 0.03);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 30px;
+            padding: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
+        .balance-val { font-size: 45px; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+
+        /* Navigation Pages */
+        .page { display: none; padding: 20px; overflow-y: auto; flex: 1; padding-bottom: 100px; }
+        .page.active { display: block; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tap Engine */
+        .coin-portal { display: flex; justify-content: center; margin: 30px 0; }
         .main-coin {
-            width: min(70vw, 280px); height: min(70vw, 280px);
-            border-radius: 50%; position: relative; z-index: 10;
-            background: radial-gradient(circle at 30% 30%, #ffd700, #f3ba2f, #997415);
-            box-shadow: 
-                inset 0 0 20px rgba(255,255,255,0.5),
-                inset 0 -10px 20px rgba(0,0,0,0.5),
-                0 10px 20px rgba(0,0,0,0.5),
-                0 0 40px rgba(243, 186, 47, 0.3);
+            width: 230px; height: 230px;
+            background: var(--gold-gradient);
+            border-radius: 50%;
+            border: 8px solid #1a1a1a;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.05s ease;
+            cursor: pointer; transition: transform 0.05s;
+            box-shadow: 0 0 50px rgba(243, 186, 47, 0.15);
+            animation: float 4s infinite ease-in-out;
         }
-        .main-coin::before {
-            content: 'O$'; font-family: 'Montserrat', sans-serif;
-            font-size: min(18vw, 80px); font-weight: 900; color: #fff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        .main-coin:active { transform: scale(0.96); box-shadow: 0 5px 10px rgba(0,0,0,0.5), 0 0 20px rgba(243, 186, 47, 0.2); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .main-coin:active { transform: scale(0.92); }
+        .coin-logo { font-family: 'Orbitron', sans-serif; font-size: 44px; color: #3d2b07; font-weight: 900; }
+
+        /* Stats & Cards */
+        .stat-card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-gold { background: var(--gold-gradient); color: #000; border: none; padding: 15px; border-radius: 15px; font-weight: 900; cursor: pointer; width: 100%; font-family: 'Cairo'; }
 
         /* Energy System */
-        .energy-hud {
-            width: 85%; max-width: 350px; margin: 20px auto 0;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .energy-info { display: flex; align-items: center; gap: 5px; font-weight: 700; font-size: 15px; color: #fff; }
-        .energy-info i { color: var(--brand-gold); font-size: 18px; }
-        
-        .progress-wrapper {
-            position: absolute; bottom: calc(90px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; height: 12px;
-            background: #222; border-radius: 10px; overflow: hidden;
-            border: 1px solid #333;
-        }
-        .progress-fill {
-            height: 100%; background: linear-gradient(90deg, #f3ba2f, #ffd700);
-            width: 100%; transition: width 0.1s linear; border-radius: 10px;
-        }
+        .energy-track { height: 10px; background: #111; border-radius: 10px; overflow: hidden; margin: 15px 0; border: 1px solid #222; }
+        .energy-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--neon-green)); width: 100%; transition: width 0.3s; }
 
-        /* =========================================
-           4. PAGES (SHOP, TASKS)
-           ========================================= */
-        .page { display: none; padding: 20px; height: 100%; overflow-y: auto; animation: fade 0.2s ease-out; }
-        .page.active { display: block; }
-        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        /* Bottom Nav */
+        .tab-bar { position: fixed; bottom: 0; width: 100%; max-width: 420px; background: rgba(5,5,5,0.95); backdrop-filter: blur(20px); display: flex; padding: 15px 5px; border-top: 1px solid #1a1a1a; }
+        .tab-item { flex: 1; text-align: center; color: #444; font-size: 10px; font-weight: 700; cursor: pointer; }
+        .tab-item.active { color: var(--gold); }
+        .tab-item i { font-size: 22px; display: block; margin-bottom: 5px; }
 
-        .page-title { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 900; text-align: center; margin-bottom: 25px; color: #fff; }
-
-        .list-card {
-            background: var(--surface-color); border: 1px solid #222; border-radius: 20px;
-            padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .list-card-content { display: flex; align-items: center; gap: 15px; }
-        .list-icon {
-            width: 45px; height: 45px; border-radius: 12px; background: rgba(243, 186, 47, 0.1);
-            display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--brand-gold);
-        }
-        .list-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
-        .list-subtitle { font-size: 13px; color: #888; display: flex; align-items: center; gap: 4px; }
-
-        .btn-buy {
-            background: #fff; color: #000; border: none; padding: 10px 18px;
-            border-radius: 30px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s;
-        }
-        .btn-buy:active { transform: scale(0.95); }
-        .btn-special { background: var(--brand-sol); color: #000; }
-
-        /* =========================================
-           5. IOS-STYLE BOTTOM NAV
-           ========================================= */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: var(--surface-glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            display: flex; justify-content: space-around; align-items: center;
-            padding: 12px 10px calc(12px + env(safe-area-inset-bottom)); z-index: 1000;
-        }
-        .nav-btn {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: #666; font-size: 11px; font-weight: 600; width: 25%;
-            background: transparent; border: none; cursor: pointer; transition: 0.2s;
-        }
-        .nav-btn i { font-size: 24px; margin-bottom: 6px; }
-        .nav-btn.active { color: #fff; }
-        .nav-btn.active i { color: var(--brand-gold); }
-
-        /* =========================================
-           6. SECURE BOTTOM SHEET MODAL
-           ========================================= */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: flex-end; }
-        .modal-overlay.active { display: flex; animation: fadeInModal 0.2s; }
-        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
-
-        .bottom-sheet {
-            background: #111; width: 100%; border-top-left-radius: 30px; border-top-right-radius: 30px;
-            padding: 25px 20px calc(30px + env(safe-area-inset-bottom)); text-align: center;
-            border-top: 1px solid #333; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-        .pull-bar { width: 40px; height: 5px; background: #333; border-radius: 5px; margin: 0 auto 25px; }
-        .sheet-title { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
-        .sheet-price { font-family: 'Montserrat'; font-size: 38px; color: var(--brand-gold); font-weight: 900; margin-bottom: 20px; }
-        
-        .input-box {
-            width: 100%; background: #000; border: 1px solid #333; padding: 18px; border-radius: 16px;
-            color: #fff; text-align: center; font-size: 14px; outline: none; margin-bottom: 20px; font-family: monospace;
-        }
-        .input-box:focus { border-color: var(--brand-gold); }
-
-        .btn-large {
-            width: 100%; background: #fff; color: #000; padding: 18px; border-radius: 18px;
-            font-size: 16px; font-weight: 800; border: none; cursor: pointer;
-        }
-        .btn-large:disabled { background: #333; color: #888; }
-        .btn-cancel { background: transparent; color: #888; margin-top: 15px; font-size: 14px; }
-
-        /* =========================================
-           7. EFFECTS
-           ========================================= */
-        .fly-text { position: fixed; font-family: 'Montserrat'; color: #fff; font-weight: 900; font-size: 38px; pointer-events: none; z-index: 50; animation: flyUp 0.8s ease-out forwards; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        @keyframes flyUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-150px) scale(1.2); } }
+        /* Toast & Effects */
+        .float-reward { position: absolute; color: var(--gold); font-weight: 900; font-size: 32px; animation: floatUp 0.8s forwards; pointer-events: none; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; padding: 10px 20px; border-radius: 20px; font-weight: 900; z-index: 2000; }
     </style>
 </head>
 <body>
 
-    <div class="app-wrapper">
-        
-        <div id="view-mine" class="page active" style="padding:0; overflow:hidden;">
-            <div class="top-header">
-                <div class="user-tag"><i class="fas fa-user-circle"></i> <span id="username">Player</span></div>
-                <div class="user-tag" style="border-color: var(--brand-gold); color: var(--brand-gold);"><i class="fas fa-gem"></i> PRESALE</div>
+    <div class="app-shell">
+        <header class="header">
+            <div class="brand-title">OMLLA CAPITAL GLOBAL</div>
+            <div class="balance-master">
+                <div class="balance-val" id="total-bal">0</div>
+                <div style="font-size: 10px; color: #555; letter-spacing: 2px; font-weight: 900;">إجمالي الاحتياطي الذهبي</div>
             </div>
+        </header>
 
-            <div class="balance-container">
-                <div class="balance-amount">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5738/5738096.png" class="balance-icon" style="filter: brightness(0) saturate(100%) invert(80%) sepia(50%) saturate(1000%) hue-rotate(350deg);" alt="coin">
-                    <span id="score">0</span>
-                </div>
-                <div class="balance-usd">EST. VALUE: $<span id="score-usd">0.00</span></div>
-            </div>
-
-            <div class="mining-area">
-                <div class="coin-glow"></div>
-                <div class="main-coin" id="coin-btn"></div>
-                
-                <div class="energy-hud">
-                    <div class="energy-info">
-                        <i class="fas fa-bolt"></i> <span id="energy">1000</span> / 1000
-                    </div>
+        <div id="mine-page" class="page active">
+            <div class="coin-portal">
+                <div class="main-coin" id="coin-trigger">
+                    <div class="coin-logo">O$</div>
                 </div>
             </div>
-
-            <div class="progress-wrapper">
-                <div class="progress-fill" id="energy-bar"></div>
+            <div style="margin-top: 20px;">
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:#666; margin-bottom:8px;">
+                    <span>الطاقة المتاحة</span>
+                    <span id="eng-text" style="color:var(--gold)">1000/1000</span>
+                </div>
+                <div class="energy-track"><div class="energy-fill" id="eng-bar"></div></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+                <div class="stat-card" style="margin-bottom:0; flex-direction:column;"><small style="color:#555">المستوى</small><b id="lvl-text" style="color:var(--gold)">1</b></div>
+                <div class="stat-card" style="margin-bottom:0; flex-direction:column;"><small style="color:#555">الترتيب</small><b id="rank-text" style="color:var(--neon-green)">--</b></div>
             </div>
         </div>
 
-        <div id="view-earn" class="page">
-            <h2 class="page-title">Earn More</h2>
-            
-            <div class="list-card">
-                <div class="list-card-content">
-                    <div class="list-icon"><i class="fab fa-telegram-plane"></i></div>
-                    <div>
-                        <div class="list-title">Join Community</div>
-                        <div class="list-subtitle"><i class="fas fa-coins" style="color:var(--brand-gold)"></i> +2,000</div>
-                    </div>
-                </div>
-                <button class="btn-buy" onclick="tg.openLink('https://t.me/OmllaChannel')">Go</button>
+        <div id="tasks-page" class="page">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">المهام والنمو</h3>
+            <div class="stat-card">
+                <div style="text-align:right;"><b>القناة الرسمية</b><br><small style="color:var(--gold);">+5,000 O$</small></div>
+                <button class="btn-gold" style="width:auto; padding:8px 15px;" onclick="doTask('https://t.me/YourChannel', 5000)">انضم</button>
             </div>
-
-            <div class="list-card">
-                <div class="list-card-content">
-                    <div class="list-icon"><i class="fas fa-calendar-check"></i></div>
-                    <div>
-                        <div class="list-title">Daily Check-in</div>
-                        <div class="list-subtitle"><i class="fas fa-coins" style="color:var(--brand-gold)"></i> +500</div>
-                    </div>
-                </div>
-                <button class="btn-buy" onclick="claimDaily()">Claim</button>
+            <div class="stat-card">
+                <div style="text-align:right;"><b>دعوة الأصدقاء</b><br><small style="color:var(--neon-green);">+2,500 لكل صديق</small></div>
+                <button class="btn-gold" style="width:auto; padding:8px 15px;" onclick="shareRef()">دعوة</button>
             </div>
         </div>
 
-        <div id="view-shop" class="page">
-            <h2 class="page-title">Pre-Sale Hub</h2>
-            
-            <div class="list-card">
-                <div class="list-card-content">
-                    <div class="list-icon" style="background: rgba(255,255,255,0.1); color:#fff;"><i class="fas fa-seedling"></i></div>
-                    <div>
-                        <div class="list-title">Investor Tier</div>
-                        <div class="list-subtitle"><i class="fas fa-coins" style="color:var(--brand-gold)"></i> 10,000 Allocation</div>
-                    </div>
-                </div>
-                <button class="btn-buy" onclick="startPurchase(10000, 'Investor', 0.1)">0.1 SOL</button>
-            </div>
-
-            <div class="list-card" style="border-color: var(--brand-sol);">
-                <div class="list-card-content">
-                    <div class="list-icon" style="background: rgba(20, 241, 149, 0.1); color:var(--brand-sol);"><i class="fas fa-rocket"></i></div>
-                    <div>
-                        <div class="list-title" style="color:var(--brand-sol);">Venture Tier</div>
-                        <div class="list-subtitle"><i class="fas fa-coins" style="color:var(--brand-gold)"></i> 50,000 Allocation</div>
-                    </div>
-                </div>
-                <button class="btn-buy btn-special" onclick="startPurchase(50000, 'Venture', 0.5)">0.5 SOL</button>
-            </div>
+        <div id="top-page" class="page">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">كبار المستثمرين</h3>
+            <div id="leader-list"></div>
         </div>
 
-        <div id="view-wallet" class="page">
-            <h2 class="page-title">Airdrop Wallet</h2>
-            
-            <div style="background:#111; padding:30px 20px; border-radius:24px; text-align:center; border:1px solid #333;">
-                <i class="fab fa-solana" style="font-size:50px; color:var(--brand-sol); margin-bottom:15px;"></i>
-                <h3 style="margin-bottom:5px;">Connect Solana Wallet</h3>
-                <p style="font-size:13px; color:#888; margin-bottom:20px;">Connect your Phantom or Solflare wallet to receive the OMLLA token airdrop at TGE.</p>
-                
-                <button class="btn-large" style="background:var(--brand-sol); color:#000;" onclick="tg.showAlert('Wallet connection opens near TGE!')">Connect Wallet</button>
+        <div id="wall-page" class="page">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:20px;">المحفظة الرقمية</h3>
+            <div class="stat-card" style="background:linear-gradient(45deg, #0f0f0f, #1a1a1a);">
+                <div style="text-align:right;"><b>رصيد المحفظة</b><br><span id="wall-bal" style="color:var(--gold); font-size:20px;">0.00 O$</span></div>
+                <i class="fas fa-wallet" style="font-size:30px; color:var(--gold)"></i>
             </div>
+            <input type="text" id="wall-addr" placeholder="أدخل عنوان SOL أو TON" style="width:100%; padding:15px; border-radius:15px; background:#111; border:1px solid #333; color:white; margin:15px 0;">
+            <button class="btn-gold" onclick="linkWall()">ربط المحفظة</button>
         </div>
 
-    </div>
-
-    <nav class="bottom-nav">
-        <button class="nav-btn active" onclick="navTo('mine', this)">
-            <i class="fas fa-coins"></i> Mine
-        </button>
-        <button class="nav-btn" onclick="navTo('earn', this)">
-            <i class="fas fa-tasks"></i> Earn
-        </button>
-        <button class="nav-btn" onclick="navTo('shop', this)">
-            <i class="fas fa-shopping-bag"></i> Pre-Sale
-        </button>
-        <button class="nav-btn" onclick="navTo('wallet', this)">
-            <i class="fas fa-wallet"></i> Airdrop
-        </button>
-    </nav>
-
-    <div class="modal-overlay" id="payModal">
-        <div class="bottom-sheet">
-            <div class="pull-bar"></div>
-            <div class="sheet-title" id="sheet-pack">Investor Tier</div>
-            <div class="sheet-price" id="sheet-price">0.1 SOL</div>
-            
-            <p style="font-size:13px; color:#888; margin-bottom:15px; padding:0 10px;">
-                Your wallet will open automatically. Once the transaction is complete, paste your <b>Transaction Signature</b> below to claim your tokens.
-            </p>
-            
-            <input type="text" id="tx-input" class="input-box" placeholder="Paste Solana TX ID here">
-            
-            <button class="btn-large" id="btn-verify" onclick="verifyTx()">VERIFY PAYMENT</button>
-            <button class="btn-large btn-cancel" onclick="closePayModal()">Cancel</button>
-        </div>
+        <nav class="tab-bar">
+            <div class="tab-item active" onclick="goTab('mine', this)"><i class="fas fa-bolt"></i><span>تعدين</span></div>
+            <div class="tab-item" onclick="goTab('tasks', this)"><i class="fas fa-tasks"></i><span>مهام</span></div>
+            <div class="tab-item" onclick="goTab('top', this)"><i class="fas fa-trophy"></i><span>الأوائل</span></div>
+            <div class="tab-item" onclick="goTab('wall', this)"><i class="fas fa-wallet"></i><span>المحفظة</span></div>
+        </nav>
     </div>
 
     <script>
-        // --- 1. SYSTEM CONSTANTS ---
-        const RENDER_URL = "https://omlla-payments-backend.onrender.com";
-        const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
-        const WALLET_ADDRESS = "9eEeSQAAoKtm4Tc8njVeKLoZc4cwMhB9yr1gVsENmQEx";
-
-        // --- 2. TELEGRAM WEB APP INIT ---
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.disableVerticalSwipes(); // Crucial for Native App feel
-        tg.setHeaderColor('#000000');
-        tg.setBackgroundColor('#000000');
-        tg.ready();
 
-        // --- 3. FIREBASE SETUP ---
-        firebase.initializeApp({ databaseURL: FIREBASE_URL });
+        // التكوين الرئيسي
+        const BACKEND_URL = "https://omlla-payments-backend.onrender.com";
+        const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const user = tg.initDataUnsafe?.user || { id: 'TEST', first_name: 'Player' };
+
+        const user = tg.initDataUnsafe?.user || { id: 'dev_user', first_name: 'Investor' };
         const userRef = db.ref('players/' + user.id);
 
-        document.getElementById('username').innerText = user.first_name;
+        let state = { points: 0, energy: 1000, level: 1, referrals: 0 };
 
-        // --- 4. GAME STATE ---
-        let state = { points: 0, energy: 1000 };
-        let activeOrder = null;
-        const MAX_ENERGY = 1000;
-
-        // Sync Data Real-time
-        userRef.on('value', snap => {
-            const data = snap.val();
-            if (data) {
-                state.points = data.points || 0;
-                state.energy = data.energy !== undefined ? data.energy : MAX_ENERGY;
-                updateDOM();
-            } else {
-                userRef.set({ points: 0, energy: MAX_ENERGY, name: user.first_name });
-            }
-        });
-
-        function updateDOM() {
-            document.getElementById('score').innerText = state.points.toLocaleString();
-            document.getElementById('score-usd').innerText = (state.points / 10000).toFixed(2);
-            document.getElementById('energy').innerText = state.energy;
-            document.getElementById('energy-bar').style.width = (state.energy / MAX_ENERGY * 100) + '%';
+        function updateUI() {
+            document.getElementById('total-bal').innerText = Math.floor(state.points).toLocaleString();
+            document.getElementById('wall-bal').innerText = Math.floor(state.points).toLocaleString() + " O$";
+            document.getElementById('eng-text').innerText = `${state.energy}/1000`;
+            document.getElementById('eng-bar').style.width = (state.energy / 10) + "%";
+            document.getElementById('lvl-text').innerText = state.level;
         }
 
-        // --- 5. MINING ENGINE (High Performance) ---
-        const coinBtn = document.getElementById('coin-btn');
-        
-        coinBtn.addEventListener('pointerdown', (e) => {
-            if (state.energy <= 0) {
-                tg.HapticFeedback?.notificationOccurred('error');
-                return;
-            }
-
-            // Game Math
-            state.points += 1;
-            state.energy -= 1;
-            
-            // Instant UI Update
-            updateDOM();
-            
-            // Background DB Update
-            userRef.update({ points: state.points, energy: state.energy });
-            
-            // Native Haptics
-            tg.HapticFeedback?.impactOccurred('heavy');
-
-            // Floating Text Animation Logic
-            // Handle both touch and mouse coordinates
-            let x, y;
-            if (e.touches && e.touches.length > 0) {
-                x = e.touches[0].clientX;
-                y = e.touches[0].clientY;
-            } else {
-                x = e.clientX;
-                y = e.clientY;
-            }
-
-            // Fallback if coordinates are weird
-            if (!x || !y) {
-                const rect = coinBtn.getBoundingClientRect();
-                x = rect.left + rect.width / 2;
-                y = rect.top + rect.height / 2;
-            }
-
-            const floatEl = document.createElement('div');
-            floatEl.className = 'fly-text';
-            floatEl.innerText = '+1';
-            // Offset to center text on finger
-            floatEl.style.left = (x - 20) + 'px';
-            floatEl.style.top = (y - 40) + 'px';
-            
-            document.body.appendChild(floatEl);
-            setTimeout(() => floatEl.remove(), 800);
+        userRef.on('value', (snap) => {
+            const data = snap.val();
+            if(data) { state = { ...state, ...data }; updateUI(); }
+            else { userRef.set({ points: 0, energy: 1000, level: 1, name: user.first_name }); }
         });
 
-        // Energy Regen Loop
-        setInterval(() => {
-            if (state.energy < MAX_ENERGY) {
-                state.energy = Math.min(state.energy + 1, MAX_ENERGY);
-                userRef.child('energy').set(state.energy);
+        // نظام التعدين (Tapping)
+        document.getElementById('coin-trigger').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if(state.energy >= 1) {
+                state.points += 1; state.energy -= 1;
+                updateUI();
+                userRef.update({ points: state.points, energy: state.energy });
+                
+                const t = e.touches[0];
+                const f = document.createElement('div');
+                f.className = 'float-reward'; f.innerText = '+1';
+                f.style.left = t.clientX + 'px'; f.style.top = t.clientY + 'px';
+                document.body.appendChild(f);
+                setTimeout(() => f.remove(), 800);
+                if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             }
-        }, 2000);
+        });
 
-        // --- 6. NAVIGATION ---
-        window.navTo = function(pageId, btnElement) {
-            // Hide all pages
+        // نظام التنقل
+        window.goTab = (id, el) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // Remove active state from nav buttons
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            // Show selected
-            document.getElementById('view-' + pageId).classList.add('active');
-            btnElement.classList.add('active');
-            
-            tg.HapticFeedback?.selectionChanged();
+            document.getElementById(id + '-page').classList.add('active');
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            if(id === 'top') loadLeaders();
         };
 
-        window.claimDaily = function() {
-            state.points += 500;
-            userRef.update({ points: state.points });
-            tg.HapticFeedback?.notificationOccurred('success');
-            tg.showAlert("✅ 500 O$ Daily Bonus Claimed!");
-        };
-
-        // --- 7. HIGH SECURITY SALES FUNNEL ---
-        window.startPurchase = async function(tokens, pack, sol) {
-            tg.HapticFeedback?.impactOccurred('medium');
-            
-            tg.showConfirm(`Initiate Secure Protocol: Buy ${pack} for ${sol} SOL?`, async (ok) => {
-                if (!ok) return;
-                
-                try {
-                    const res = await fetch(`${RENDER_URL}/api/create-payment`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: user.id.toString(), amount: sol, pack, tokens })
-                    });
-                    const data = await res.json();
-                    
-                    if (data.success) {
-                        activeOrder = { id: data.paymentId };
-                        
-                        // Update Modal UI
-                        document.getElementById('sheet-pack').innerText = pack;
-                        document.getElementById('sheet-price').innerText = sol + " SOL";
-                        document.getElementById('payModal').classList.add('active');
-                        
-                        // Open Wallet via Deep Link
-                        tg.openLink(`solana:${WALLET_ADDRESS}?amount=${sol}`);
-                    } else {
-                        tg.showAlert("Server busy. Please try again.");
-                    }
-                } catch (e) {
-                    tg.showAlert("Connection Error. Ensure Render Server is Live.");
-                }
-            });
-        };
-
-        window.verifyTx = async function() {
-            const sig = document.getElementById('tx-input').value.trim();
-            if (!sig) return tg.showAlert("Please paste your TX ID.");
-            
-            tg.HapticFeedback?.impactOccurred('light');
-            const btn = document.getElementById('btn-verify');
-            btn.innerText = "VERIFYING NODE...";
-            btn.disabled = true;
-
-            try {
-                const res = await fetch(`${RENDER_URL}/api/verify-payment`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ paymentId: activeOrder.id, transactionSignature: sig })
+        function loadLeaders() {
+            db.ref('players').orderByChild('points').limitToLast(10).once('value', (snap) => {
+                let h = ''; const arr = []; snap.forEach(x => { arr.push(x.val()); });
+                arr.reverse().forEach((p, i) => {
+                    h += `<div class="stat-card"><span>#${i+1} ${p.name || 'Investor'}</span><b style="color:var(--gold)">${Math.floor(p.points).toLocaleString()}</b></div>`;
                 });
-                
-                const data = await res.json();
-                
-                if (data.success) {
-                    tg.HapticFeedback?.notificationOccurred('success');
-                    tg.showAlert("✅ SUCCESS! Blockchain confirmed. Tokens securely added.");
-                    closePayModal();
-                    // State will auto-update via Firebase listener
-                } else {
-                    tg.HapticFeedback?.notificationOccurred('error');
-                    tg.showAlert("❌ FAILED: " + (data.error || "Invalid TX."));
-                }
-            } catch (e) { 
-                tg.showAlert("Network Timeout. Try verifying again."); 
-            } finally {
-                btn.innerText = "VERIFY PAYMENT";
-                btn.disabled = false;
+                document.getElementById('leader-list').innerHTML = h;
+            });
+        }
+
+        window.shareRef = () => {
+            const link = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
+            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=انضم إلي في تعدين عملة OMLLA واستلم مكافأة فورية!`);
+        };
+
+        window.linkWall = () => {
+            const addr = document.getElementById('wall-addr').value;
+            if(addr.length < 10) return tg.showAlert("العنوان غير صحيح");
+            userRef.update({ wallet: addr });
+            tg.showAlert("تم ربط المحفظة بنجاح!");
+        };
+
+        // تجديد الطاقة
+        setInterval(() => {
+            if(state.energy < 1000) { 
+                state.energy += 1; 
+                updateUI(); 
+                userRef.child('energy').set(state.energy); 
             }
-        };
+        }, 3000);
 
-        window.closePayModal = function() {
-            document.getElementById('payModal').classList.remove('active');
-            document.getElementById('tx-input').value = '';
-        };
-
+        function showToast(msg) {
+            const t = document.createElement('div'); t.className = 'toast'; t.innerText = msg;
+            document.body.appendChild(t); setTimeout(() => t.remove(), 2000);
+        }
     </script>
 </body>
 </html>
