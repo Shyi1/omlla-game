@@ -3,225 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA | SUPREME EXECUTIVE GOLD</title>
+    <title>OMLLA | SUPREME EXECUTIVE • MISSIONS UPGRADE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;900&display=swap');
-        
         body { background: #000; color: #fff; font-family: 'Inter', sans-serif; touch-action: manipulation; overflow: hidden; }
         
-        /* تصميم العملة الذهبية الواقعية المطورة */
+        /* 3D GOLD COIN DESIGN */
         .gold-master-coin {
-            width: 280px; height: 280px; border-radius: 50%;
+            width: 260px; height: 260px; border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, #fff9c4 0%, #ffeb3b 10%, #fbc02d 30%, #f9a825 60%, #e65100 100%);
-            box-shadow: 
-                0 0 0 10px #1a1a1a,
-                0 30px 60px rgba(0,0,0,1),
-                inset 0 10px 20px rgba(255,255,255,0.8),
-                inset 0 -10px 20px rgba(0,0,0,0.6);
+            box-shadow: 0 0 0 8px #1a1a1a, 0 25px 50px rgba(0,0,0,1), inset 0 8px 15px rgba(255,255,255,0.8);
             display: flex; align-items: center; justify-content: center; position: relative;
             cursor: pointer; transition: transform 0.05s ease; border: 2px solid #ff9100;
         }
         .gold-master-coin:active { transform: scale(0.94); }
-        
         .coin-emboss {
-            width: 85%; height: 85%; border-radius: 50%;
-            border: 4px solid #f9a825;
+            width: 85%; height: 85%; border-radius: 50%; border: 3px solid #f9a825;
             background: radial-gradient(circle, #fbc02d 0%, #f57f17 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.4);
         }
-
-        .turtle-logo-3d {
-            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.6));
-            color: #4e342e; /* لون النقش العميق */
-        }
-
-        .omlla-text-3d {
-            font-family: 'Cinzel', serif;
-            font-weight: 900; color: #4e342e;
-            letter-spacing: 0.3em; margin-top: 10px;
-            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
-        }
-
-        /* تأثير اللمعان المتحرك */
         .shine-layer {
-            position: absolute; width: 100%; height: 100%;
-            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%);
-            border-radius: 50%; animation: sweep 4s infinite linear;
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+            animation: sweep 4s infinite linear; pointer-events: none;
         }
         @keyframes sweep { 0% { transform: translateX(-100%) translateY(-100%); } 100% { transform: translateX(100%) translateY(100%); } }
 
-        .nav-tab-active { color: #fbc02d; filter: drop-shadow(0 0 10px rgba(251,192,45,0.5)); border-top: 2px solid #fbc02d; }
-        .executive-gradient { background: linear-gradient(145deg, #1a1a1a, #000); border: 1px solid rgba(251,192,45,0.1); }
-        .tap-number { position: absolute; color: #fff; font-weight: 900; font-size: 2rem; animation: floatUp 0.8s forwards; pointer-events: none; text-shadow: 0 0 10px #fbc02d; }
-        @keyframes floatUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-120px); } }
+        .nav-tab-active { color: #fbc02d; filter: drop-shadow(0 0 8px rgba(251,192,45,0.4)); border-top: 2px solid #fbc02d; }
+        .mission-card { background: linear-gradient(145deg, #111, #050505); border: 1px solid rgba(251,192,45,0.15); border-radius: 1.25rem; padding: 1.25rem; }
+        .tap-number { position: absolute; color: #fbc02d; font-weight: 900; font-size: 1.5rem; animation: floatUp 0.7s forwards; pointer-events: none; text-shadow: 0 0 10px #000; }
+        @keyframes floatUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100px); } }
         .hidden { display: none; }
     </style>
 </head>
 <body class="flex flex-col h-screen select-none">
 
-    <header class="p-4 flex justify-between items-center bg-black border-b border-yellow-600/20">
+    <header class="p-4 flex justify-between items-center border-b border-yellow-600/20 bg-zinc-950/50 backdrop-blur">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-700 flex items-center justify-center shadow-lg">
-                <span class="font-black text-black text-xl italic">O</span>
+            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-700 flex items-center justify-center shadow-lg shadow-yellow-600/20">
+                <span class="font-black text-black italic">O</span>
             </div>
             <div>
-                <p class="text-[10px] font-black text-white uppercase tracking-tighter italic">Omlla Supreme Network</p>
+                <p class="text-[9px] font-black text-white uppercase italic tracking-tighter">Omlla Executive Agent</p>
                 <div class="flex items-center gap-1.5 text-[8px] text-yellow-500 font-bold uppercase">
                     <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_5px_#22c55e]"></span>
-                    <span id="agentStatus">AGENT_SYNCING</span>
+                    <span id="agentStatus">MARKET_WATCH_ACTIVE</span>
                 </div>
             </div>
         </div>
         <div class="text-right">
-            <p class="text-[7px] text-gray-500 font-bold">PORTFOLIO EQUITY</p>
+            <p class="text-[7px] text-gray-500 font-bold">EST. VALUE</p>
             <p id="equityDisplay" class="text-xs font-black text-green-400 tracking-widest">$0.00</p>
         </div>
     </header>
 
     <main class="flex-1 overflow-y-auto p-5 pb-32">
         
-        <section id="page-mine" class="space-y-10 flex flex-col items-center py-4">
-            <div class="text-center">
-                <p class="text-[9px] font-black text-yellow-600 tracking-[0.5em] mb-2 uppercase">Current Ledger</p>
-                <h1 id="balance" class="text-6xl font-black italic tracking-tighter text-white drop-shadow-lg">0</h1>
-                <p class="text-xs text-gray-500 mt-2 font-bold tracking-widest uppercase">Listing Date: DEC 2026</p>
+        <section id="page-mine" class="space-y-8 flex flex-col items-center py-2">
+            <div class="text-center space-y-1">
+                <p class="text-[8px] font-black text-yellow-600 tracking-[0.5em] uppercase opacity-70">Secured Omlla Ledger</p>
+                <h1 id="balance" class="text-6xl font-black italic tracking-tighter text-white">0</h1>
+                <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Official Launch: DEC 2026</p>
             </div>
 
-            <div class="relative" id="coinContainer">
+            <div class="relative py-4" id="coinContainer">
                 <div onclick="handleTap(event)" class="gold-master-coin">
                     <div class="shine-layer"></div>
                     <div class="coin-emboss">
-                        <svg viewBox="0 0 24 24" class="w-32 h-32 turtle-logo-3d" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <svg viewBox="0 0 24 24" class="w-28 h-28 text-yellow-900/60" fill="none" stroke="currentColor" stroke-width="1.2">
                             <path d="M12 3a6 6 0 0 0-6 6c0 3.31 2.69 6 6 6s6-2.69 6-6a6 6 0 0 0-6-6Z"/>
                             <path d="M18 9h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/><path d="M6 9H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2"/>
                             <path d="M10 15v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/><path d="M14 15v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2"/>
                             <path d="M12 15v3a3 3 0 0 1-3 3H9"/>
                         </svg>
-                        <span class="omlla-text-3d text-2xl">OMLLA</span>
+                        <span style="font-family:'Cinzel',serif" class="text-xl font-black tracking-widest text-yellow-900/70 mt-2">OMLLA</span>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full max-w-xs space-y-3 bg-zinc-900/40 p-4 rounded-2xl border border-white/5">
+            <div class="w-full max-w-xs space-y-3 bg-zinc-900/30 p-4 rounded-2xl border border-white/5">
                 <div class="flex justify-between text-[10px] font-black text-yellow-600 uppercase">
-                    <span>⚡ Reserve: <span id="energy">1000</span></span>
-                    <span id="solPrice">SOL: $155.40</span>
+                    <span>⚡ Energy Core: <span id="energy">1000</span></span>
+                    <span id="solPrice">SOL: $158.20</span>
                 </div>
-                <div class="w-full bg-black h-2 rounded-full overflow-hidden border border-yellow-600/20">
+                <div class="w-full bg-black h-1.5 rounded-full overflow-hidden border border-yellow-600/20">
                     <div id="energyBar" class="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 w-full transition-all"></div>
                 </div>
             </div>
         </section>
 
-        <section id="page-earn" class="hidden space-y-4">
-            <h2 class="text-2xl font-black italic text-yellow-600 uppercase mb-6">Strategic Earnings</h2>
-            <div class="executive-gradient p-5 rounded-2xl flex justify-between items-center" onclick="claimDaily()">
-                <div><p class="font-black">Daily Executive Bonus</p><p class="text-[10px] text-green-500">+1,000 OMLLA</p></div>
-                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs uppercase">Claim</button>
-            </div>
-            <div class="executive-gradient p-5 rounded-2xl flex justify-between items-center" onclick="watchAd()">
-                <div><p class="font-black">Watch Market Brief</p><p class="text-[10px] text-green-500">+5,000 OMLLA</p></div>
-                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs uppercase">Watch</button>
+        <section id="page-missions" class="hidden space-y-6">
+            <h2 class="text-2xl font-black italic text-yellow-600 uppercase italic">Executive Missions</h2>
+            <div class="space-y-4">
+                <div class="mission-card flex justify-between items-center" onclick="claimMission('daily', 1000)">
+                    <div><p class="font-black text-sm uppercase">Daily Check-in</p><p class="text-[9px] text-green-500 font-bold">+1,000 OMLLA</p></div>
+                    <button class="bg-yellow-600 text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase">Claim</button>
+                </div>
+                <div class="mission-card flex justify-between items-center" onclick="tg.openLink('https://t.me/omlla_news'); claimMission('tg', 5000)">
+                    <div><p class="font-black text-sm uppercase">Join News Channel</p><p class="text-[9px] text-green-500 font-bold">+5,000 OMLLA</p></div>
+                    <button class="bg-yellow-600 text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase">Verify</button>
+                </div>
+                <div class="mission-card flex justify-between items-center" onclick="shareRef()">
+                    <div><p class="font-black text-sm uppercase">Invite Network</p><p class="text-[9px] text-green-500 font-bold">+10,000 OMLLA / REF</p></div>
+                    <button class="bg-yellow-600 text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase">Invite</button>
+                </div>
             </div>
         </section>
 
-        <section id="page-wallet" class="hidden flex flex-col items-center justify-center space-y-8 h-full">
-            <div class="w-32 h-32 rounded-full executive-gradient flex items-center justify-center shadow-2xl">
-                <svg width="60" height="60" fill="none" stroke="#fbc02d" viewBox="0 0 24 24"><path stroke-width="1.5" d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2h11M21 12v4a2 2 0 01-2 2h-5M21 12H9"/></svg>
+        <section id="page-wallet" class="hidden flex flex-col items-center justify-center h-full text-center space-y-8">
+            <div class="w-28 h-28 rounded-full mission-card flex items-center justify-center border-yellow-500/20 shadow-2xl">
+                <svg width="48" height="48" fill="none" stroke="#fbc02d" viewBox="0 0 24 24"><path stroke-width="1.5" d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2h11M21 12v4a2 2 0 01-2 2h-5M21 12H9"/></svg>
             </div>
-            <div class="text-center px-6">
-                <h3 class="text-2xl font-black uppercase text-white mb-2 italic">Web3 Integration</h3>
-                <p class="text-[10px] text-gray-500 uppercase tracking-widest leading-relaxed">Connect your Solana Ledger to authorize Omlla transfers for Dec 2026 Listing.</p>
+            <div class="px-6">
+                <h3 class="text-2xl font-black uppercase text-white italic">Asset Gateway</h3>
+                <p class="text-[9px] text-gray-500 uppercase tracking-widest mt-2 leading-relaxed">Connect your Ledger to authorize Omlla minting for the Dec 2026 distribution.</p>
             </div>
-            <button onclick="connect()" id="wBtn" class="bg-yellow-600 text-black w-full max-w-xs py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] shadow-xl">Link Ledger</button>
+            <button onclick="connectWallet()" id="wBtn" class="bg-yellow-600 text-black w-full max-w-xs py-5 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-yellow-600/10">Authorize Ledger</button>
         </section>
 
     </main>
 
-    <nav class="fixed bottom-0 w-full bg-black border-t border-yellow-600/20 p-5 flex justify-around items-center">
-        <button onclick="nav('mine')" id="nav-mine" class="flex flex-col items-center gap-1 nav-tab-active pt-1">
+    <nav class="fixed bottom-0 w-full bg-black/90 border-t border-yellow-600/10 p-5 flex justify-around items-center backdrop-blur-md">
+        <button onclick="nav('mine')" id="nav-mine" class="flex flex-col items-center gap-1 nav-tab-active">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            <span class="text-[8px] font-black uppercase">Mine</span>
+            <span class="text-[8px] font-black uppercase tracking-widest">Mine</span>
         </button>
-        <button onclick="nav('earn')" id="nav-earn" class="flex flex-col items-center gap-1 text-zinc-600 pt-1">
+        <button onclick="nav('missions')" id="nav-missions" class="flex flex-col items-center gap-1 text-zinc-600">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l-5.5 9h11L12 2zM12 22l5.5-9h-11L12 22z"/></svg>
-            <span class="text-[8px] font-black uppercase">Earn</span>
+            <span class="text-[8px] font-black uppercase tracking-widest">Missions</span>
         </button>
-        <button onclick="nav('wallet')" id="nav-wallet" class="flex flex-col items-center gap-1 text-zinc-600 pt-1">
+        <button onclick="nav('wallet')" id="nav-wallet" class="flex flex-col items-center gap-1 text-zinc-600">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2h11M21 12v4a2 2 0 01-2 2h-5M21 12H9"/></svg>
-            <span class="text-[8px] font-black uppercase">Wallet</span>
+            <span class="text-[8px] font-black uppercase tracking-widest">Wallet</span>
         </button>
     </nav>
 
     <script>
-        // 1. Firebase System Fix
+        // 1. Executive Logic & Firebase
         const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const tg = window.Telegram?.WebApp;
         if (tg) { tg.expand(); tg.ready(); }
 
-        // 2. State & User Manager
         let user = {
-            id: tg?.initDataUnsafe?.user?.id?.toString() || "web_tester",
+            id: tg?.initDataUnsafe?.user?.id?.toString() || "guest_admin",
             balance: 0,
             energy: 1000,
-            lastSave: Date.now()
+            lastMission: 0
         };
 
         const userRef = db.ref('players/' + user.id);
         userRef.on('value', (snap) => {
-            if (snap.val()) { 
-                user = { ...user, ...snap.val() }; 
-                updateUI(); 
-            } else { 
-                userRef.set(user); 
-            }
+            if (snap.val()) { user = { ...user, ...snap.val() }; updateUI(); }
+            else { userRef.set(user); }
         });
 
-        // 3. Game Logic
+        // 2. Core Actions
         function handleTap(e) {
             if (user.energy <= 0) return;
             user.balance += 1;
             user.energy -= 1;
             
-            // Visual Tap Effect
             const num = document.createElement('div');
             num.innerText = "+1";
             num.className = 'tap-number';
             num.style.left = `${e.clientX}px`;
             num.style.top = `${e.clientY}px`;
             document.body.appendChild(num);
-            setTimeout(() => num.remove(), 800);
+            setTimeout(() => num.remove(), 700);
 
-            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             updateUI();
-            
-            // Auto-save every 5 taps to reduce database load
-            if (user.balance % 5 === 0) userRef.update({ balance: user.balance, energy: user.energy });
+            if (user.balance % 10 === 0) save();
         }
 
+        function claimMission(type, amt) {
+            const now = Date.now();
+            if (type === 'daily' && now - user.lastMission < 86400000) return alert("Come back tomorrow!");
+            user.balance += amt;
+            if (type === 'daily') user.lastMission = now;
+            save();
+            alert(`Strategic bonus confirmed: +${amt.toLocaleString()} OMLLA`);
+        }
+
+        function connectWallet() {
+            const b = document.getElementById('wBtn');
+            b.innerText = "AUTHENTICATING...";
+            setTimeout(() => {
+                b.innerText = "0x77...E9F2 (LINKED)";
+                b.style.color = "#fbc02d"; b.style.background = "#000"; b.style.border = "1px solid #fbc02d";
+            }, 1500);
+        }
+
+        // 3. System Utilities
         function nav(p) {
             document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
             document.getElementById(`page-${p}`).classList.remove('hidden');
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-tab-active'));
             document.getElementById(`nav-${p}`).classList.add('nav-tab-active');
-        }
-
-        function connect() {
-            const btn = document.getElementById('wBtn');
-            btn.innerText = "AUTHENTICATING...";
-            setTimeout(() => {
-                btn.innerText = "LEDGER_LINKED (0x7...E9)";
-                btn.style.background = "#000";
-                btn.style.color = "#fbc02d";
-                btn.style.border = "1px solid #fbc02d";
-            }, 2000);
         }
 
         function updateUI() {
@@ -231,16 +216,18 @@
             document.getElementById('energyBar').style.width = (user.energy / 10) + '%';
         }
 
-        // 4. Background Agent Protocols
-        setInterval(() => {
-            if (user.energy < 1000) {
-                user.energy += 2;
-                updateUI();
-            }
-            const logs = ["PROTOCOL_SCAN", "MARKET_SYNC", "YIELD_FOUND", "LEDGER_LOCKED"];
-            document.getElementById('agentStatus').innerText = logs[Math.floor(Math.random()*logs.length)];
-        }, 3000);
+        function save() { userRef.update(user); }
+        function shareRef() {
+            const link = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
+            tg ? tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Join Omlla!`) : alert(link);
+        }
 
+        // 4. Background Protocols
+        setInterval(() => {
+            if (user.energy < 1000) { user.energy += 3; updateUI(); }
+            const s = ["YIELD_SCAN", "LEDGER_LOCKED", "NODE_ACTIVE", "SYNC_COMPLETED"];
+            document.getElementById('agentStatus').innerText = s[Math.floor(Math.random()*s.length)];
+        }, 3000);
     </script>
 </body>
 </html>
