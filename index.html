@@ -3,258 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA CAPITAL • PRESTIGE V1</title>
+    <title>OMLLA CAPITAL • PRESTIGE MAX</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Orbitron:wght@800&family=Inter:wght@400;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root {
-            --gold: #FFD700; --gold-glow: rgba(255, 215, 0, 0.4);
-            --bg: #050505; --card: #0f0f0f; --emerald: #14F195;
-            --neon-blue: #00f3ff;
-        }
-
+        :root { --gold: #FFD700; --gold-glow: rgba(255, 215, 0, 0.4); --bg: #050505; --emerald: #14F195; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            background-color: var(--bg); color: white; min-height: 100vh;
-            background-image: radial-gradient(circle at 50% 10%, #1a3a1a 0%, #050505 80%);
-            overflow-x: hidden;
-        }
-
-        /* Prestige Branding */
-        .brand-header { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,215,0,0.1); }
-        .logo-glow {
-            width: 70px; height: 70px; background: linear-gradient(135deg, var(--gold), #b8860b);
-            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-            font-family: 'Syncopate', sans-serif; font-size: 28px; color: black;
-            box-shadow: 0 0 25px var(--gold-glow); border: 3px solid #332811; margin-bottom: 10px;
-        }
-
-        /* Stats Dashboard */
-        .stat-card {
-            background: rgba(20,20,20,0.8); border: 1px solid rgba(255,215,0,0.15);
-            border-radius: 30px; padding: 25px; margin: 15px; backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        body { background-color: var(--bg); color: white; min-height: 100vh; background-image: radial-gradient(circle at 50% 10%, #1a3a1a 0%, #050505 80%); overflow-x: hidden; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 420px; padding: 20px 16px 100px; position: relative; }
+        .logo-glow { width: 70px; height: 70px; background: linear-gradient(135deg, var(--gold), #b8860b); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: 'Syncopate'; font-size: 28px; color: black; box-shadow: 0 0 25px var(--gold-glow); border: 3px solid #332811; margin: 0 auto 15px; }
+        .stat-card { background: rgba(20,20,20,0.8); border: 1px solid rgba(255,215,0,0.15); border-radius: 30px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(10px); text-align: center; }
         .bal-val { font-family: 'Syncopate'; font-size: 36px; font-weight: 700; text-shadow: 0 0 15px var(--gold-glow); }
-
-        /* Pages System */
-        .page { display: none; padding: 15px; padding-bottom: 120px; animation: slideUp 0.3s ease; }
+        .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Cyber Engine */
-        .engine-container { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
-        .tap-core {
-            width: 220px; height: 220px; border-radius: 50%; background: #0c0c0c;
-            border: 8px solid #222; cursor: pointer; position: relative;
-            transition: 0.1s; display: flex; align-items: center; justify-content: center;
-        }
-        .tap-core:active { transform: scale(0.93); border-color: var(--gold); }
-        .tap-core i { font-size: 70px; color: var(--gold); text-shadow: 0 0 20px var(--gold); }
-
-        /* Mission Cards */
-        .mission-card {
-            background: #0f0f0f; border-radius: 20px; padding: 20px; margin-bottom: 12px;
-            display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .mission-info b { display: block; font-size: 15px; margin-bottom: 4px; }
-        .mission-info small { color: var(--emerald); font-weight: 700; }
-
-        .btn-action {
-            background: linear-gradient(90deg, var(--gold), #b8860b);
-            color: black; border: none; padding: 12px 20px; border-radius: 12px;
-            font-weight: 900; font-size: 11px; cursor: pointer; text-transform: uppercase;
-        }
-
-        /* Bottom Menu */
-        .nav-menu {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; background: rgba(10,10,10,0.95);
-            border: 1px solid rgba(255,215,0,0.1); border-radius: 25px; padding: 12px;
-            display: flex; justify-content: space-around; backdrop-filter: blur(15px); z-index: 1000;
-        }
-        .nav-link { color: #555; font-size: 10px; font-weight: 800; cursor: pointer; text-align: center; text-decoration: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tap-core { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #222, #000); border: 8px solid #332811; cursor: pointer; margin: 20px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: 0.1s; }
+        .tap-core:active { transform: scale(0.92); }
+        .tap-core i { font-size: 60px; color: var(--gold); }
+        .mission-card { background: #0f0f0f; border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+        .btn-action { background: linear-gradient(90deg, var(--gold), #b8860b); color: black; border: none; padding: 12px 18px; border-radius: 12px; font-weight: 900; font-size: 11px; cursor: pointer; }
+        .nav-menu { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(10,10,10,0.95); border: 1px solid rgba(255,215,0,0.15); border-radius: 25px; padding: 12px; display: flex; justify-content: space-around; backdrop-filter: blur(15px); z-index: 1000; }
+        .nav-link { color: #555; font-size: 10px; font-weight: 800; cursor: pointer; text-align: center; }
         .nav-link.active { color: var(--gold); }
         .nav-link i { font-size: 20px; display: block; margin-bottom: 4px; }
-
-        /* Utilities */
-        .p-track { width: 100%; height: 6px; background: #111; border-radius: 10px; margin-top: 15px; overflow: hidden; }
-        .p-fill { height: 100%; background: var(--gold); width: 100%; transition: 0.3s; }
-        input { width: 100%; padding: 15px; border-radius: 15px; background: #000; border: 1px solid #222; color: white; margin-bottom: 15px; outline: none; }
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:2000; align-items:center; justify-content:center; padding:20px; }
+        .modal.active { display: flex; }
+        .modal-content { background:#0a0a0a; border:2px solid var(--gold); border-radius:30px; padding:25px; width:100%; max-width:360px; text-align:center; }
+        input { width: 100%; padding: 15px; border-radius: 12px; background: #000; border: 1px solid #222; color: white; margin-bottom: 15px; outline: none; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div class="brand-header">
-        <div class="logo-glow">O</div>
-        <div style="font-family:'Syncopate'; font-size:10px; letter-spacing:4px; color:var(--gold)">OMLLA DIGITAL CAPITAL</div>
-    </div>
-
+<div class="app-container">
+    <div style="text-align:center;"><div class="logo-glow">O</div></div>
+    
     <div class="stat-card">
-        <p style="font-size:10px; color:#888; letter-spacing:2px; margin-bottom:5px;">TOTAL OMLLA PORTFOLIO</p>
-        <div class="bal-val" id="balance-display">0</div>
-        <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:11px; color:var(--emerald); font-weight:700;">
-            <span><i class="fas fa-chart-line"></i> LIVE PROFIT: +2.5k O$</span>
-            <span id="sol-price">SOL: LOADING...</span>
+        <p style="font-size:10px; color:#888; letter-spacing:2px; margin-bottom:5px;">OMLLA PORTFOLIO</p>
+        <div class="bal-val" id="bal-txt">0</div>
+        <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:10px; color:var(--emerald);">
+            <span>PROFIT/HR: +5.5K</span>
+            <span id="live-sol">SOL: $145.20</span>
         </div>
     </div>
 
-    <div class="app-body">
-        <div id="mine" class="page active">
-            <div class="engine-container">
-                <div class="tap-core" id="tap-target"><i class="fas fa-bolt"></i></div>
-                <div style="width: 220px; margin-top: 25px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800;">
-                        <span style="color:#666">ENERGY RESERVE</span><span id="energy-val">1000/1000</span>
-                    </div>
-                    <div class="p-track"><div class="p-fill" id="energy-bar"></div></div>
-                </div>
+    <div id="page-mine" class="page active">
+        <div class="tap-core" id="tap-trigger"><i class="fas fa-bolt"></i></div>
+        <div style="text-align:center; margin-top:20px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;">
+                <span>ENERGY SUPPLY</span><span id="energy-txt">1000/1000</span>
+            </div>
+            <div style="width:100%; height:8px; background:#111; border-radius:10px; overflow:hidden;">
+                <div id="energy-bar" style="width:100%; height:100%; background:var(--gold); transition:0.3s;"></div>
             </div>
         </div>
+    </div>
 
-        <div id="earn" class="page">
-            <h3 style="margin-bottom:20px; color:var(--gold); font-family:'Syncopate'; font-size:12px;">GLOBAL REVENUE STREAMS</h3>
-            
-            <div class="mission-card">
-                <div class="mission-info"><b>Video Ad Stream</b><small>+1,500 O$ • INSTANT</small></div>
-                <button class="btn-action" onclick="runAdsterra()">WATCH</button>
-            </div>
-
-            <div class="mission-card">
-                <div class="mission-info"><b>Cyber Offerwall</b><small>+100,000 O$ • HIGH REWARD</small></div>
-                <button class="btn-action" onclick="runMonlix()">OPEN</button>
-            </div>
-
-            <div class="mission-card">
-                <div class="mission-info"><b>Elite Referral</b><small>+5,000 O$ • PER PARTNER</small></div>
-                <button class="btn-action" onclick="shareRef()">INVITE</button>
-            </div>
+    <div id="page-earn" class="page">
+        <h3 style="color:var(--gold); margin-bottom:15px; font-family:'Syncopate'; font-size:12px;">MONEY MAKER</h3>
+        <div class="mission-card">
+            <div><b>Adsterra Stream</b><br><small>+2,500 O$ • Watch Ad</small></div>
+            <button class="btn-action" onclick="earnAd()">WATCH</button>
         </div>
+        <div class="mission-card">
+            <div><b>Monlix Offerwall</b><br><small>+500,000 O$ • High Pay</small></div>
+            <button class="btn-action" onclick="earnMonlix()">OPEN</button>
+        </div>
+        <div class="mission-card">
+            <div><b>Daily Reward</b><br><small>+1,000 O$ • Every 24h</small></div>
+            <button class="btn-action" onclick="dailyBonus()">CLAIM</button>
+        </div>
+    </div>
 
-        <div id="withdraw" class="page">
-            <h3 style="margin-bottom:20px; color:var(--gold); font-family:'Syncopate'; font-size:12px;">ASSET LIQUIDATION</h3>
-            <div style="background:#0c0c0c; padding:25px; border-radius:25px; border:1px dashed #333;">
-                <p style="font-size:11px; color:#666; margin-bottom:15px;">Transfer O$ to your Solana Wallet</p>
-                <input type="text" id="wallet-addr" placeholder="Enter Solana Address">
-                <button class="btn-action" style="width:100%; padding:18px;" onclick="claimWithdraw()">CONFIRM WITHDRAWAL</button>
-                <p style="font-size:9px; color:#444; margin-top:15px; text-align:center;">Minimum Withdrawal: 500,000 O$ • Audit time: 24h</p>
-            </div>
+    <div id="page-wallet" class="page">
+        <h3 style="color:var(--gold); margin-bottom:15px; font-family:'Syncopate'; font-size:12px;">WITHDRAWAL</h3>
+        <div style="background:#0c0c0c; padding:20px; border-radius:20px; border:1px dashed #333;">
+            <input type="text" id="w-addr" placeholder="Solana Address">
+            <input type="number" id="w-amt" placeholder="Amount (Min 500k)">
+            <button class="btn-action" style="width:100%; padding:15px;" onclick="requestPayout()">CONFIRM PAYOUT</button>
         </div>
     </div>
 
     <nav class="nav-menu">
         <div class="nav-link active" onclick="nav('mine', this)"><i class="fas fa-hammer"></i>MINE</div>
         <div class="nav-link" onclick="nav('earn', this)"><i class="fas fa-play-circle"></i>EARN</div>
-        <div class="nav-link" onclick="nav('withdraw', this)"><i class="fas fa-wallet"></i>WALLET</div>
+        <div class="nav-link" onclick="nav('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
     </nav>
+</div>
 
-    <script>
-        const RENDER_URL = "https://omlla-payments-backend.onrender.com";
-        const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
-        
-        // Configuration - Replace with your real links
-        const ADSTERRA_LINK = "ضع_رابط_ادستيرا_هنا";
-        const MONLIX_LINK = "ضع_رابط_مونليكس_أو_سي_بي_أيه_هنا";
+<script>
+    const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
+    const ADSTERRA_LINK = "ضع_رابط_ادستيرا_هنا";
+    const MONLIX_LINK = "ضع_رابط_مونليكس_هنا";
 
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    firebase.initializeApp({ databaseURL: FIREBASE_URL });
+    const db = firebase.database();
+    const user = tg.initDataUnsafe?.user || { id: "DEV_MODE" };
+    const userRef = db.ref('players/' + user.id);
 
-        firebase.initializeApp({ databaseURL: FIREBASE_URL });
-        const db = firebase.database();
-        const user = tg.initDataUnsafe?.user || { id: "PLAYER_" + Math.floor(Math.random()*9999), first_name: "Elite Player" };
-        const userRef = db.ref('players/' + user.id);
+    let state = { points: 0, energy: 1000, lastDaily: 0 };
 
-        let state = { points: 0, energy: 1000 };
-
-        // Data Sync
-        userRef.on('value', snap => {
-            const data = snap.val();
-            if (data) {
-                state.points = data.points || 0;
-                state.energy = data.energy !== undefined ? data.energy : 1000;
-                updateUI();
-            } else { userRef.set({ points: 0, energy: 1000, name: user.first_name }); }
-        });
-
-        function updateUI() {
-            document.getElementById('balance-display').innerText = Math.floor(state.points).toLocaleString();
-            document.getElementById('energy-val').innerText = `${state.energy}/1000`;
+    userRef.on('value', snap => {
+        const data = snap.val();
+        if (data) {
+            state = {...state, ...data};
+            document.getElementById('bal-txt').innerText = Math.floor(state.points).toLocaleString();
+            document.getElementById('energy-txt').innerText = `${state.energy}/1000`;
             document.getElementById('energy-bar').style.width = (state.energy/10) + '%';
+        } else { userRef.set({ points: 0, energy: 1000, lastDaily: 0 }); }
+    });
+
+    document.getElementById('tap-trigger').onclick = () => {
+        if (state.energy > 0) {
+            state.points += 2; state.energy--;
+            userRef.update({ points: state.points, energy: state.energy });
+            tg.HapticFeedback.impactOccurred('medium');
         }
+    };
 
-        // Mining Action
-        document.getElementById('tap-target').onclick = (e) => {
-            if (state.energy > 0) {
-                state.points += 2;
-                state.energy--;
-                userRef.update({ points: state.points, energy: state.energy });
-                tg.HapticFeedback.impactOccurred('medium');
-            } else {
-                tg.showAlert("Energy depleted! Watch an ad to refill.");
-            }
-        };
+    function nav(id, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + id).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        el.classList.add('active');
+    }
 
-        // Navigation
-        function nav(page, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(page).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            el.classList.add('active');
-            tg.HapticFeedback.impactOccurred('light');
-        }
+    function earnAd() {
+        tg.openLink(ADSTERRA_LINK);
+        tg.showConfirm("Finished watching? Get 2,500 O$", (ok) => {
+            if(ok) { userRef.child('points').transaction(p => (p || 0) + 2500); }
+        });
+    }
 
-        // --- REVENUE GENERATION LOGIC ---
+    function earnMonlix() {
+        // تمرير الـ userId الخاص بك لمونليكس للتتبع
+        const finalMonlix = MONLIX_LINK + "?userId=" + user.id;
+        tg.openLink(finalMonlix);
+    }
 
-        function runAdsterra() {
-            tg.openLink(ADSTERRA_LINK);
-            tg.showConfirm("Did you finish the video to claim 1,500 O$?", (ok) => {
-                if(ok) {
-                    userRef.child('points').transaction(p => (p || 0) + 1500);
-                    tg.showAlert("✅ Portfolio Updated: +1,500 O$");
-                }
-            });
-        }
+    function dailyBonus() {
+        const now = Date.now();
+        if (now - state.lastDaily > 86400000) {
+            userRef.update({ points: state.points + 1000, lastDaily: now });
+            tg.showAlert("✅ +1,000 O$ Claimed!");
+        } else { tg.showAlert("⏳ Come back tomorrow!"); }
+    }
 
-        function runMonlix() {
-            tg.openLink(MONLIX_LINK);
-        }
+    function requestPayout() {
+        const addr = document.getElementById('w-addr').value;
+        const amt = document.getElementById('w-amt').value;
+        if (state.points < 500000 || amt < 500000) { tg.showAlert("Min 500,000 O$ required."); return; }
+        db.ref('withdrawals/pending').push({ userId: user.id, address: addr, amount: amt, status: 'pending' });
+        userRef.update({ points: state.points - amt });
+        tg.showAlert("🚀 Request Sent! Payout in 24-48h.");
+    }
 
-        function shareRef() {
-            const refLink = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
-            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("Join the OMLLA Digital Revolution! 🚀")}`;
-            tg.openTelegramLink(shareUrl);
-        }
+    setInterval(() => {
+        if (state.energy < 1000) { state.energy++; userRef.child('energy').set(state.energy); }
+    }, 4000);
 
-        function claimWithdraw() {
-            const addr = document.getElementById('wallet-addr').value;
-            if(state.points < 500000) {
-                tg.showAlert("Minimum threshold (500,000 O$) not met.");
-            } else if(addr.length < 30) {
-                tg.showAlert("Please enter a valid Solana address.");
-            } else {
-                tg.showAlert("Withdrawal Request logged. Processing takes 24h.");
-            }
-        }
-
-        // SOL Price Mockup (Can be connected to real API)
-        setInterval(() => {
-            const mockPrice = (120 + Math.random() * 5).toFixed(2);
-            document.getElementById('sol-price').innerText = `SOL: $${mockPrice}`;
-        }, 5000);
-
-        // Energy Regen
-        setInterval(() => {
-            if (state.energy < 1000) {
-                state.energy++;
-                userRef.child('energy').set(state.energy);
-            }
-        }, 4000);
-    </script>
+    setInterval(() => {
+        const price = (140 + Math.random() * 10).toFixed(2);
+        document.getElementById('live-sol').innerText = `SOL: $${price}`;
+    }, 5000);
+</script>
 </body>
 </html>
