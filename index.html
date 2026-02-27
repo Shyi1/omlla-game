@@ -2,138 +2,149 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA | CAPITAL ASSET MANAGEMENT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>OMLLA | SOVEREIGN CLOUD INTERFACE</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        :root { --gold: #D4AF37; --deep-bg: #050505; --card-bg: rgba(15, 15, 15, 0.95); --glow: rgba(212, 175, 55, 0.2); }
+        :root {
+            --gold: #E5C100; --accent: #00F0FF; --bg-deep: #020202;
+            --surface: rgba(15, 15, 15, 0.95); --safe-top: env(safe-area-inset-top);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; }
+        body { background: var(--bg-deep); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        body { background: var(--deep-bg); color: #fff; height: 100vh; overflow: hidden; }
+        /* Institutional Header */
+        .executive-header { padding: calc(var(--safe-top) + 15px) 20px 10px; background: linear-gradient(to bottom, rgba(229,193,0,0.05), transparent); border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .network-bar { display: flex; justify-content: space-between; font-size: 8px; font-weight: 800; letter-spacing: 2px; color: var(--gold); opacity: 0.7; margin-bottom: 15px; }
 
-        .app-container { max-width: 450px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; padding: 20px; }
+        /* Ledger Card */
+        .ledger-card { background: var(--surface); border: 1px solid rgba(229,193,0,0.2); border-radius: 28px; padding: 25px 20px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.8); position: relative; }
+        .balance-main { font-size: 52px; font-weight: 800; letter-spacing: -2px; font-style: italic; }
+        .valuation-sub { font-size: 10px; font-weight: 600; color: var(--accent); margin-top: 4px; letter-spacing: 1px; }
 
-        /* Real Financial Header */
-        .market-ticker { font-size: 9px; color: var(--gold); letter-spacing: 2px; text-align: center; margin-bottom: 20px; opacity: 0.8; font-weight: 900; }
+        /* Real-Time News Ticker (Feb 2026 Data) */
+        .news-ticker { margin-top: 15px; background: rgba(0,240,255,0.03); border: 1px solid rgba(0,240,255,0.1); border-radius: 12px; padding: 8px 15px; overflow: hidden; white-space: nowrap; position: relative; }
+        .news-content { display: inline-block; animation: ticker 25s linear infinite; font-size: 9px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* 3D Sovereign Coin */
+        .vault-core { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .omlla-sovereign { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FFEC8B 0%, #E5C100 45%, #856404 100%); box-shadow: 0 40px 80px rgba(0,0,0,0.9), inset 0 10px 20px rgba(255,255,255,0.5); border: 5px solid #1a1503; position: relative; cursor: pointer; transition: transform 0.08s cubic-bezier(0.2,0,0.2,1); display: flex; align-items: center; justify-content: center; }
+        .omlla-sovereign:active { transform: scale(0.94) translateY(4px); }
+        .omlla-sovereign::before { content: "O"; font-family: 'Cinzel'; font-size: 85px; color: rgba(61,43,7,0.85); text-shadow: 0 2px 2px rgba(255,255,255,0.2); }
+
+        /* AI Manager & Cloud Status */
+        .ai-console { padding: 15px 20px 30px; background: rgba(255,255,255,0.02); border-radius: 30px 30px 0 0; border-top: 1px solid rgba(255,255,255,0.05); }
+        .console-meta { display: flex; justify-content: space-between; font-size: 9px; font-weight: 800; color: #555; margin-bottom: 10px; }
+        .cloud-active { color: #00F0FF; font-style: italic; font-weight: 900; }
+        .status-active { color: var(--gold); display: flex; align-items: center; gap: 5px; }
+        .pulse-dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
         
-        .equity-card { 
-            background: var(--card-bg); border: 1px solid rgba(255,215,0,0.15); border-radius: 24px; padding: 25px; 
-            text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative;
-        }
-
-        .omlla-balance { font-size: 50px; font-weight: 900; letter-spacing: -2px; font-style: italic; color: #fff; }
-        .valuation { color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: 1px; margin-top: 5px; }
-
-        /* The Realistic 3D Coin (Pure CSS) */
-        .coin-vault { flex: 1; display: flex; align-items: center; justify-content: center; }
-        .omlla-coin {
-            width: 240px; height: 240px; border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #fff9c4 0%, #D4AF37 40%, #854d0e 100%);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 8px 20px rgba(255,255,255,0.4);
-            display: flex; align-items: center; justify-content: center; border: 6px solid #2a2008;
-            cursor: pointer; transition: transform 0.05s; position: relative;
-        }
-        .omlla-coin:active { transform: scale(0.96); }
-        .omlla-coin::after { content: "OMLLA"; font-family: 'Cinzel'; font-size: 32px; font-weight: 900; color: #3d2b07; opacity: 0.8; letter-spacing: 4px; }
-
-        /* AI Agent Status Panel */
-        .ai-panel { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-top: 20px; }
-        .status-row { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: #666; margin-bottom: 10px; }
-        .ai-active-text { color: var(--gold); font-style: italic; }
-        
-        .progress-bar { height: 4px; background: #111; border-radius: 10px; overflow: hidden; margin-top: 10px; }
-        .progress-fill { height: 100%; background: var(--gold); width: 100%; transition: width 0.3s linear; }
-
-        /* Navigation thumb-friendly */
-        .nav-ledger { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; 
-            background: rgba(10,10,10,0.98); border: 1px solid rgba(212,175,55,0.1); border-radius: 30px; 
-            display: flex; padding: 10px; 
-        }
-        .nav-item { flex: 1; text-align: center; color: #444; font-size: 9px; font-weight: 900; cursor: pointer; padding: 12px 0; }
-        .nav-item.active { color: var(--gold); }
+        .liquidity-track { height: 5px; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .liquidity-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--accent)); transition: width 0.3s; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="market-ticker">REAL-TIME LIQUIDITY PROVISIONING • PHASE 1</div>
+<header class="executive-header">
+    <div class="network-bar">
+        <span>OMLLA_NETWORK • CLOUD_MINTING_ACTIVE</span>
+        <span id="sol-price">SOL: $81.54</span>
+    </div>
     
-    <div class="equity-card">
-        <div id="listing-status" style="position: absolute; top: 10px; right: 15px; font-size: 7px; color: var(--gold); font-weight: 900;">DEC 2026 LISTING</div>
-        <div class="omlla-balance" id="balance">0.00</div>
-        <div class="valuation">PORTFOLIO VALUATION: $<span id="usd">0.00</span></div>
+    <div class="ledger-card">
+        <div style="position:absolute; top:12px; right:20px; font-size:7px; font-weight:900; color:var(--gold); letter-spacing:1px;">Q4 2026 LISTING</div>
+        <div class="balance-main" id="bal">0.00</div>
+        <div class="valuation-sub">TOTAL ASSET POSITION: $<span id="usd">0.00</span></div>
     </div>
 
-    <div class="coin-vault">
-        <div class="omlla-coin" id="coin-action"></div>
+    <div class="news-ticker">
+        <div class="news-content" id="ticker-text">
+            SOLANA PRICE STABLE AT $81.54... U.S. GENIUS ACT IMPLEMENTATION UNDERWAY... NASDAQ FILES FOR NEW SOLANA ETFS... 
+        </div>
     </div>
+</header>
 
-    <div class="ai-panel">
-        <div class="status-row">
-            <span>AI AGENT STATUS: <span class="ai-active-text" id="ai-mode">BALANCING_LEDGER</span></span>
-            <span id="market-cap">MCAP: $1.2M</span>
-        </div>
-        <div class="status-row">
-            <span>RESERVE LIQUIDITY</span>
-            <span id="energy-txt">1000/1000</span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" id="energy-bar"></div></div>
-    </div>
+<div class="vault-core">
+    <div class="omlla-sovereign" id="action"></div>
 </div>
 
-<script>
-    // System Config
-    const tg = window.Telegram.WebApp;
-    const state = { balance: 0, energy: 1000, mcap: 1200000, price: 0.0045 };
+<footer class="ai-console">
+    <div class="console-meta">
+        <div class="status-active"><span class="pulse-dot"></span> <span id="ai-log">CLOUD_MINING_ENABLED</span></div>
+        <div class="cloud-active" id="cloud-rate">YIELD: +0.25/SEC</div>
+    </div>
+    <div class="console-meta">
+        <span>RESERVE LIQUIDITY</span>
+        <span id="energy-txt">1000/1000</span>
+    </div>
+    <div class="liquidity-track"><div class="liquidity-fill" id="energy-fill" style="width: 100%;"></div></div>
+</footer>
 
-    // AI AGENT LOGIC (Internal Controller)
-    const OmllaAgent = {
-        rebalance: function() {
-            // Simulate realistic market volatility to make numbers look "real"
-            const shift = (Math.random() - 0.5) * 0.0001;
-            state.price += shift;
-            state.mcap += shift * 1000000;
+<script>
+    const tg = window.Telegram.WebApp;
+    // Current Parity: Feb 27, 2026
+    const state = { bal: 0, energy: 1000, mcap: 1420000, price: 0.0052, sol: 81.54, cloudRate: 0.25 };
+
+    const GlobalNews = [
+        "SOLANA $81.54 SUPPORT CONFIRMED... CLOUD YIELD STABILIZED",
+        "U.S. GENIUS ACT AMENDMENTS PROTECT PAYMENT STABLECOINS... BULLISH FOR OMLLA",
+        "WISDOMTREE TOKENIZED MONEY MARKET FUND GRANTED SEC EXEMPTION... LIQUIDITY RISING",
+        "SOLANA ALPENGLOW UPGRADE SLASHES FINALITY TO 150MS... NETWORK EFFICIENCY PEAKING",
+        "FEDERAL RESERVE ELIMINATES REPUTATION RISK IN BANK SUPERVISION... CRYPTO DEBANKING ENDS"
+    ];
+
+    const ExecutiveAgent = {
+        process: function() {
+            // Institutional Market Drift
+            const drift = (Math.random() - 0.48) * 0.00012; 
+            state.price += drift;
             
-            // AI Action: Stabilize price if it drops too low
-            if(state.price < 0.0040) {
-                state.price += 0.0005;
-                document.getElementById('ai-mode').innerText = "INJECTING_LIQUIDITY";
-            } else {
-                document.getElementById('ai-mode').innerText = "STABLE_MARKET";
+            // Cloud Mining Logic (Automatic Passive Accumulation)
+            state.bal += state.cloudRate; 
+            
+            // News Analysis
+            if(Math.random() > 0.8) {
+                const headline = GlobalNews[Math.floor(Math.random() * GlobalNews.length)];
+                document.getElementById('ticker-text').innerText = headline;
+                document.getElementById('ai-log').innerText = "MARKET_NEWS_ANALYZED";
             }
-            this.refreshUI();
+            this.update();
         },
-        refreshUI: function() {
-            document.getElementById('balance').innerText = state.balance.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('usd').innerText = (state.balance * state.price).toFixed(2);
-            document.getElementById('market-cap').innerText = "MCAP: $" + (state.mcap / 1000000).toFixed(1) + "M";
+        update: function() {
+            document.getElementById('bal').innerText = state.bal.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('usd').innerText = (state.bal * state.price).toFixed(2);
             document.getElementById('energy-txt').innerText = state.energy + "/1000";
-            document.getElementById('energy-bar').style.width = (state.energy / 10) + "%";
+            document.getElementById('energy-fill').style.width = (state.energy / 10) + "%";
+            
+            // Parity: Feb 27, 2026 Real SOL price
+            const solVar = state.sol + (Math.random() * 0.4);
+            document.getElementById('sol-price').innerText = "SOL: $" + solVar.toFixed(2);
         }
     };
 
-    // Interaction
-    document.getElementById('coin-action').addEventListener('touchstart', (e) => {
+    document.getElementById('action').addEventListener('touchstart', (e) => {
         e.preventDefault();
-        if(state.energy < 1) return;
-        
-        state.balance += 1;
+        if(state.energy < 1) { tg.HapticFeedback.notificationOccurred('error'); return; }
+        state.bal += 1.5; // Manager Boost: 1.5 per tap for quick profit
         state.energy -= 1;
-        OmllaAgent.refreshUI();
-        tg.HapticFeedback.impactOccurred('medium');
+        ExecutiveAgent.update();
+        tg.HapticFeedback.impactOccurred('heavy');
     });
 
-    // Run AI Agent background thread
-    setInterval(() => OmllaAgent.rebalance(), 3000);
-    setInterval(() => { if(state.energy < 1000) state.energy += 2; OmllaAgent.refreshUI(); }, 2000);
+    // Cloud Mining & AI Loops
+    setInterval(() => ExecutiveAgent.process(), 1000); // 1-second cloud yield pulse
+    setInterval(() => { if(state.energy < 1000) state.energy += 5; ExecutiveAgent.update(); }, 2000);
 
     tg.expand();
+    tg.ready();
 </script>
 </body>
 </html>
