@@ -3,122 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA CAPITAL • REAL EARN SYSTEM</title>
+    <title>OMLLA CAPITAL • PRESTIGE MAX</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         :root { --gold: #FFD700; --success: #00FFA3; --bg: #050505; --surface: #111111; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Space Grotesk', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: white; min-height: 100vh; background-image: radial-gradient(circle at 50% 0%, #1a2a1a 0%, #050505 70%); }
+        body { background: var(--bg); color: white; min-height: 100vh; background-image: radial-gradient(circle at 50% 0%, #1a2a1a 0%, #050505 70%); overflow-x: hidden; }
         .wrapper { width: 100%; max-width: 420px; margin: auto; padding: 20px 20px 100px; }
         
-        /* Portfolio Header */
-        .header { text-align: center; margin-bottom: 25px; }
-        .logo { width: 70px; height: 70px; background: var(--gold); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; color: black; font-weight: 900; margin-bottom: 10px; box-shadow: 0 0 20px rgba(255,215,0,0.3); }
-        .portfolio-card { background: var(--surface); border: 1px solid rgba(255,215,0,0.2); border-radius: 30px; padding: 25px; text-align: center; position: relative; overflow: hidden; }
-        .balance { font-family: 'Montserrat'; font-size: 40px; font-weight: 900; text-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        /* Premium UI Components */
+        .logo-box { text-align: center; margin-bottom: 20px; }
+        .logo-orb { width: 75px; height: 75px; background: var(--gold); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 35px; color: black; font-weight: 900; box-shadow: 0 0 25px rgba(255,215,0,0.3); border: 3px solid #332811; }
         
-        /* Trust Badge */
-        .trust-badge { display: inline-block; background: rgba(0,255,163,0.1); border: 1px solid var(--success); padding: 4px 12px; border-radius: 20px; font-size: 9px; color: var(--success); font-weight: 800; margin-top: 10px; }
-
+        .stat-card { background: var(--surface); border: 1px solid rgba(255,215,0,0.2); border-radius: 30px; padding: 25px; text-align: center; margin-bottom: 20px; backdrop-filter: blur(10px); }
+        .balance-val { font-family: 'Montserrat'; font-size: 42px; font-weight: 900; text-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        
         .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Mining Engine */
-        .tap-zone { display: flex; flex-direction: column; align-items: center; margin-top: 30px; }
-        .orb { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #222, #000); border: 8px solid #1a1a1a; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-        .orb:active { transform: scale(0.92); border-color: var(--gold); }
-        .orb i { font-size: 60px; color: var(--gold); }
+        .engine-zone { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+        .tap-orb { width: 210px; height: 210px; border-radius: 50%; background: radial-gradient(circle, #222, #000); border: 8px solid #1a1a1a; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; box-shadow: 0 15px 45px rgba(0,0,0,0.8); position: relative; }
+        .tap-orb:active { transform: scale(0.92); border-color: var(--gold); }
+        .tap-orb i { font-size: 70px; color: var(--gold); text-shadow: 0 0 20px var(--gold); }
 
         /* Revenue Units */
-        .unit { background: var(--surface); border-radius: 20px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .unit-info b { display: block; font-size: 15px; }
-        .unit-info small { color: var(--success); font-weight: 700; }
-        .btn-earn { background: var(--gold); color: black; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 900; font-size: 11px; cursor: pointer; box-shadow: 0 4px 15px rgba(255,215,0,0.2); }
+        .rev-unit { background: var(--surface); border-radius: 20px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+        .btn-premium { background: var(--gold); color: black; border: none; padding: 12px 22px; border-radius: 12px; font-weight: 900; font-size: 11px; cursor: pointer; box-shadow: 0 4px 15px rgba(255,215,0,0.2); }
 
         /* Navigation */
-        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; background: rgba(10,10,10,0.9); backdrop-filter: blur(15px); border-radius: 25px; padding: 12px; display: flex; justify-content: space-around; border: 1px solid rgba(255,255,255,0.1); }
-        .nav-item { color: #555; font-size: 10px; font-weight: 800; text-align: center; cursor: pointer; }
-        .nav-item.active { color: var(--gold); }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
+        .navbar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border-radius: 25px; padding: 12px; display: flex; justify-content: space-around; border: 1px solid rgba(255,215,0,0.1); z-index: 1000; }
+        .nav-link { color: #555; font-size: 11px; font-weight: 800; text-align: center; cursor: pointer; }
+        .nav-link.active { color: var(--gold); }
+        .nav-link i { font-size: 22px; display: block; margin-bottom: 4px; }
 
-        input { width: 100%; padding: 15px; border-radius: 15px; background: #000; border: 1px solid #222; color: white; margin-bottom: 12px; outline: none; text-align: center; }
+        input { width: 100%; padding: 16px; border-radius: 15px; background: #000; border: 1px solid #222; color: white; margin-bottom: 15px; outline: none; text-align: center; }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <div class="header">
-        <div class="logo">O</div>
-        <p style="font-weight:900; font-size:12px; letter-spacing:3px; color:var(--gold)">OMLLA CAPITAL</p>
-    </div>
+<script src="https://pl28803296.effectivegatecpm.com/2c/dd/09/2cdd09776aa553dca3c7d1f937532fa7.js"></script>
 
-    <div class="portfolio-card">
-        <p style="font-size:10px; color:#888; letter-spacing:2px; margin-bottom:8px;">VERIFIED PORTFOLIO BALANCE</p>
-        <div class="balance" id="ui-points">0</div>
-        <div class="trust-badge"><i class="fas fa-shield-alt"></i> SECURED BY BLOCKCHAIN LIQUIDITY</div>
-        <div style="display:flex; justify-content:space-between; margin-top:20px; font-size:10px; color:var(--success); font-weight:700;">
-            <span><i class="fas fa-sync"></i> AUTO-MINING: ON</span>
-            <span id="sol-price">SOL: $148.50</span>
+<div class="wrapper">
+    <div class="logo-box"><div class="logo-orb">O</div></div>
+    
+    <div class="stat-card">
+        <p style="font-size:10px; color:#888; letter-spacing:2px; margin-bottom:8px;">OMLLA PORTFOLIO VALUATION</p>
+        <div class="balance-val" id="ui-points">0</div>
+        <div style="font-size: 9px; color: var(--success); margin-top: 10px; font-weight: 800; letter-spacing: 1px;">
+            <i class="fas fa-check-circle"></i> SYSTEM ONLINE • AD-FUNDED LIQUIDITY
         </div>
     </div>
 
-    <div id="page-mine" class="page active">
-        <div class="tap-zone">
-            <div class="orb" id="orb"><i class="fas fa-fingerprint"></i></div>
-            <div style="width:100%; margin-top:30px;">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:#666;">
-                    <span>ENERGY CAPACITY</span><span id="ui-energy">1000/1000</span>
+    <div id="p-mine" class="page active">
+        <div class="engine-zone">
+            <div class="tap-orb" id="orb-main"><i class="fas fa-fingerprint"></i></div>
+            <div style="width:100%; margin-top:35px;">
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800; color:#666; margin-bottom:8px;">
+                    <span>POWER SUPPLY</span><span id="ui-energy" style="color:var(--gold)">1000/1000</span>
                 </div>
-                <div style="height:6px; background:#111; border-radius:10px; margin-top:8px; overflow:hidden;">
+                <div style="height:8px; background:#111; border-radius:10px; overflow:hidden; border:1px solid #222;">
                     <div id="energy-bar" style="height:100%; width:100%; background:var(--gold); transition:0.3s;"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="page-earn" class="page">
-        <h3 style="color:var(--gold); margin-bottom:20px; font-size:12px; font-weight:900;">REVENUE TERMINAL</h3>
-        
-        <div class="unit">
-            <div class="unit-info">
-                <b>Cash-Flow Video</b>
-                <small>+2,500 O$ • Funds Withdrawals</small>
-                <p style="font-size:8px; color:#555; margin-top:4px;">*Watching ads provides real money to the payout pool.</p>
-            </div>
-            <button class="btn-earn" onclick="app.watchAd()">WATCH</button>
+    <div id="p-earn" class="page">
+        <h3 style="color:var(--gold); margin-bottom:20px; font-size:12px; font-weight:900; letter-spacing:2px;">REVENUE TERMINAL</h3>
+        <div class="rev-unit">
+            <div><b style="display:block">Cash-Stream Video</b><small style="color:var(--success)">+2,500 O$ • Verify Reward</small></div>
+            <button class="btn-premium" onclick="app.watchAd()">WATCH</button>
         </div>
-
-        <div class="unit" style="border-left: 4px solid var(--success);">
-            <div class="unit-info">
-                <b>Monlix Offerwall</b>
-                <small>+500,000 O$ • High Reward</small>
-            </div>
-            <button class="btn-earn" onclick="app.runMonlix()">OPEN</button>
+        <div class="rev-unit" style="border-left: 3px solid var(--success);">
+            <div><b style="display:block">Monlix Offerwall</b><small style="color:var(--success)">+500,000 O$ • Global Missions</small></div>
+            <button class="btn-premium" onclick="app.runMonlix()">OPEN</button>
         </div>
     </div>
 
-    <div id="page-wallet" class="page">
-        <h3 style="color:var(--gold); margin-bottom:20px; font-size:12px;">ASSET WITHDRAWAL</h3>
-        <div style="background:var(--surface); padding:25px; border-radius:30px; border: 1px dashed #333;">
+    <div id="p-wallet" class="page">
+        <h3 style="color:var(--gold); margin-bottom:20px; font-size:12px;">ASSET LIQUIDATION</h3>
+        <div style="background:var(--surface); padding:25px; border-radius:30px; border: 1px dashed #333; text-align:center;">
             <p style="font-size:11px; color:#666; margin-bottom:15px;">Target: Solana (SPL) or PayPal</p>
-            <input type="text" id="w-addr" placeholder="Wallet Address or Email">
-            <input type="number" id="w-amt" placeholder="Amount (Min 500k)">
-            <button class="btn-earn" style="width:100%; padding:18px;" onclick="app.withdraw()">INITIALIZE PAYOUT</button>
-            <p style="font-size:9px; color:#444; margin-top:15px; text-align:center;">Verified ads watched: <span id="ui-ads">0</span></p>
+            <input type="text" id="w-address" placeholder="Enter Wallet Address / Email">
+            <button class="btn-premium" style="width:100%; padding:18px;" onclick="app.withdraw()">INITIALIZE TRANSFER</button>
+            <p style="font-size:9px; color:#444; margin-top:15px;">*Minimum threshold: 500,000 O$</p>
         </div>
     </div>
 
-    <nav class="nav">
-        <div class="nav-item active" onclick="app.nav('mine', this)"><i class="fas fa-hammer"></i>MINE</div>
-        <div class="nav-item" onclick="app.nav('earn', this)"><i class="fas fa-play-circle"></i>EARN</div>
-        <div class="nav-item" onclick="app.nav('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
+    <nav class="navbar">
+        <div class="nav-link active" onclick="app.nav('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
+        <div class="nav-link" onclick="app.nav('earn', this)"><i class="fas fa-play-circle"></i>EARN</div>
+        <div class="nav-link" onclick="app.nav('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
     </nav>
 </div>
 
@@ -126,75 +110,53 @@
     const app = {
         config: {
             fire: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/",
-            ad: "https://www.profitablecpmgate.com/a84a02d210d9a87f7e5dfcb4807e8ddc", // رابطك من Adsterra
+            ad: "https://www.profitablecpmgate.com/a84a02d210d9a87f7e5dfcb4807e8ddc",
             mon: "ضع_رابط_مونليكس_هنا"
         },
-
-        state: { points: 0, energy: 1000, ads: 0 },
-
+        state: { points: 0, energy: 1000 },
         init() {
             this.tg = window.Telegram.WebApp;
             this.tg.expand();
             firebase.initializeApp({ databaseURL: this.config.fire });
             this.db = firebase.database();
-            this.uid = (this.tg.initDataUnsafe?.user?.id || "TEST_USER").toString();
+            this.uid = (this.tg.initDataUnsafe?.user?.id || "CLIENT_" + Math.floor(Math.random()*999)).toString();
             this.ref = this.db.ref('players/' + this.uid);
             this.sync();
         },
-
         sync() {
             this.ref.on('value', snap => {
                 const data = snap.val();
                 if (data) {
                     this.state = {...this.state, ...data};
-                    this.render();
-                } else { this.ref.set({ points: 100, energy: 1000, ads: 0 }); }
+                    document.getElementById('ui-points').innerText = Math.floor(this.state.points).toLocaleString();
+                    document.getElementById('ui-energy').innerText = this.state.energy + "/1000";
+                    document.getElementById('energy-bar').style.width = (this.state.energy/10) + '%';
+                } else { this.ref.set({ points: 100, energy: 1000 }); }
             });
         },
-
-        render() {
-            document.getElementById('ui-points').innerText = Math.floor(this.state.points).toLocaleString();
-            document.getElementById('ui-energy').innerText = `${this.state.energy}/1000`;
-            document.getElementById('energy-bar').style.width = (this.state.energy/10) + '%';
-            document.getElementById('ui-ads').innerText = this.state.ads || 0;
-        },
-
-        nav(page, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + page).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        nav(p, el) {
+            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+            document.getElementById('p-' + p).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
             el.classList.add('active');
             this.tg.HapticFeedback.impactOccurred('light');
         },
-
         watchAd() {
-            this.tg.showConfirm("This video funds the Cash Pool. Ready to watch and earn 2,500 O$?", (ok) => {
-                if(ok) {
-                    this.tg.openLink(this.config.ad);
-                    setTimeout(() => {
-                        this.ref.child('points').transaction(p => (p || 0) + 2500);
-                        this.ref.child('ads').transaction(a => (a || 0) + 1);
-                        this.tg.showAlert("✅ Contribution Received! +2,500 O$ added to your portfolio.");
-                    }, 5000);
-                }
+            this.tg.openLink(this.config.ad);
+            this.tg.showConfirm("Did you complete the session to earn 2,500 O$?", (ok) => {
+                if(ok) this.ref.child('points').transaction(p => (p||0)+2500);
             });
         },
-
         runMonlix() { this.tg.openLink(this.config.mon + "?userId=" + this.uid); },
-
         withdraw() {
-            const amt = document.getElementById('w-amt').value;
-            if (this.state.points < 500000) {
-                this.tg.showAlert("Balance below 500,000 O$. Payout pool requires more ad-contributions.");
-            } else {
-                this.tg.showAlert("Request Logged. Our audit team is verifying your ad-revenue contributions.");
-            }
+            if(this.state.points < 500000) this.tg.showAlert("Asset threshold not met (500k O$). Connect more revenue units!");
+            else this.tg.showAlert("Liquidity check initiated. Your request is in the audit queue.");
         }
     };
 
     app.init();
 
-    document.getElementById('orb').onclick = () => {
+    document.getElementById('orb-main').onclick = () => {
         if (app.state.energy > 0) {
             app.state.points += 2; app.state.energy--;
             app.ref.update({ points: app.state.points, energy: app.state.energy });
@@ -203,7 +165,10 @@
     };
 
     setInterval(() => {
-        if (app.state.energy < 1000) { app.state.energy++; app.ref.child('energy').set(app.state.energy); }
+        if (app.state.energy < 1000) {
+            app.state.energy++;
+            app.ref.child('energy').set(app.state.energy);
+        }
     }, 4000);
 </script>
 </body>
