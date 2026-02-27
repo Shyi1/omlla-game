@@ -3,126 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA | The Royal Digital Currency</title>
+    <title>OMLLA | Royal Digital Currency & Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%); color: #e5e7eb; font-family: 'Georgia', serif; touch-action: manipulation; }
+        body { 
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%); 
+            color: #e5e7eb; 
+            font-family: 'Georgia', serif; 
+            touch-action: manipulation; 
+            overflow: hidden;
+        }
         .gold-coin { 
             background: linear-gradient(145deg, #1a1a1a, #000);
-            border: 12px solid #b8860b; /* Gold Metallic Border */
-            box-shadow: 0 0 40px rgba(184, 134, 11, 0.3), inset 0 0 20px rgba(184, 134, 11, 0.2);
+            border: 10px solid #b8860b; 
+            box-shadow: 0 0 50px rgba(184, 134, 11, 0.4), inset 0 0 30px rgba(184, 134, 11, 0.2);
             position: relative;
+            cursor: pointer;
+            transition: transform 0.05s;
         }
-        .gold-coin::before {
-            content: ''; position: absolute; inset: -5px; border: 2px solid #ffd700; border-radius: 50%; opacity: 0.5;
-        }
-        .royal-text { font-family: 'Times New Roman', serif; letter-spacing: 0.2em; text-transform: uppercase; color: #ffd700; }
-        .balance-glow { text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); font-variant-numeric: tabular-nums; }
-        .vip-active { border-color: #ffd700 !important; box-shadow: 0 0 60px rgba(255, 215, 0, 0.5) !important; animation: gold-pulse 2s infinite; }
-        @keyframes gold-pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+        .gold-coin:active { transform: scale(0.96); }
+        .royal-text { font-family: 'Times New Roman', serif; letter-spacing: 0.25em; text-transform: uppercase; color: #ffd700; }
+        .balance-glow { text-shadow: 0 0 20px rgba(255, 255, 255, 0.4); font-variant-numeric: tabular-nums; }
+        .vip-active { border-color: #ffd700 !important; box-shadow: 0 0 70px rgba(255, 215, 0, 0.6) !important; animation: royal-pulse 2s infinite; }
+        @keyframes royal-pulse { 0% { opacity: 0.9; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
+        .energy-bar-fill { transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
-<body class="flex flex-col items-center justify-between min-h-screen p-8 select-none overflow-hidden">
+<body class="flex flex-col items-center justify-between min-h-screen p-8 select-none">
 
     <div class="w-full flex justify-between items-center px-4">
         <div class="flex items-center gap-2">
-            <span class="text-[10px] royal-text opacity-70">Omlla Network v2.0</span>
+            <span class="text-[10px] royal-text opacity-80">Omlla Network v3.0</span>
         </div>
-        <div id="tier" class="border border-yellow-900/50 px-4 py-1 rounded text-[9px] font-bold text-yellow-600 tracking-widest">
-            STANDARD_LEDGER
+        <div id="tierBadge" class="border border-yellow-900/40 px-5 py-1.5 rounded-sm text-[9px] font-bold text-yellow-700 tracking-[0.2em]">
+            STANDARD_PROTOCOL
         </div>
     </div>
 
     <div class="text-center">
-        <p class="text-[11px] royal-text mb-2">Total Accumulated Omlla</p>
+        <p class="text-[11px] royal-text mb-3 opacity-60">Total Minted Omlla Assets</p>
         <div class="flex flex-col items-center">
-            <h1 id="balance" class="text-7xl font-light balance-glow italic text-white">0.00000000</h1>
-            <div id="agentStatus" class="mt-4 text-[9px] font-mono text-yellow-700 uppercase tracking-[0.3em]">
-                Agent_Omlla: Monitoring_Markets
+            <h1 id="mainBalance" class="text-7xl font-light balance-glow italic text-white tracking-tighter">0.00000000</h1>
+            <div id="agentDisplay" class="mt-6 py-2 px-8 bg-yellow-950/20 rounded-full border border-yellow-900/30">
+                <span id="agentStatus" class="text-[9px] font-mono text-yellow-600 uppercase tracking-[0.4em]">Agent_Omlla: Standby</span>
             </div>
         </div>
     </div>
 
     <div class="relative group">
-        <div id="aura" class="absolute inset-0 bg-yellow-900/10 blur-[100px] rounded-full"></div>
-        <button onclick="triggerCoinAction()" class="gold-coin relative z-10 w-72 h-72 rounded-full flex flex-col items-center justify-center active:scale-95 transition-transform duration-75">
-            <svg viewBox="0 0 24 24" class="w-32 h-32 text-yellow-600 opacity-80" fill="none" stroke="currentColor" stroke-width="1">
+        <div id="coinAura" class="absolute inset-0 bg-yellow-700/5 blur-[120px] rounded-full"></div>
+        <button onclick="executeOmllaTap()" class="gold-coin relative z-10 w-80 h-80 rounded-full flex flex-col items-center justify-center">
+            <svg viewBox="0 0 24 24" class="w-36 h-36 text-yellow-600 opacity-90" fill="none" stroke="currentColor" stroke-width="1.2">
                 <path d="M12 3a6 6 0 0 0-6 6c0 3.31 2.69 6 6 6s6-2.69 6-6a6 6 0 0 0-6-6Z"/><path d="M18 9h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/><path d="M6 9H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2"/><path d="M10 15v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/><path d="M14 15v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2"/><path d="M12 15v3a3 3 0 0 1-3 3H9"/>
             </svg>
-            <p class="royal-text text-xl font-bold mt-4">OMLLA</p>
+            <p class="royal-text text-2xl font-black mt-5">OMLLA</p>
         </button>
     </div>
 
-    <div class="w-full max-w-xs space-y-6 mb-4">
-        <div class="flex justify-between text-[10px] royal-text font-bold">
-            <span>Reserve: <span id="energy">100</span>%</span>
-            <span>Rate: <span id="rate">0.0001</span></span>
-        </div>
-        <div class="h-1 w-full bg-yellow-900/20 rounded-full overflow-hidden">
-            <div id="energyBar" class="h-full bg-yellow-600 transition-all duration-300" style="width: 100%"></div>
+    <div class="w-full max-w-sm space-y-8 mb-6">
+        <div class="space-y-3">
+            <div class="flex justify-between text-[11px] royal-text font-bold text-yellow-700">
+                <span>Reserve: <span id="energyText">100</span>%</span>
+                <span>Yield: <span id="yieldText">0.0001</span></span>
+            </div>
+            <div class="h-1.5 w-full bg-yellow-950/30 rounded-full overflow-hidden border border-yellow-900/20">
+                <div id="energyBar" class="h-full bg-yellow-600 energy-bar-fill" style="width: 100%"></div>
+            </div>
         </div>
         
-        <div class="grid grid-cols-2 gap-4 mt-6">
-            <button onclick="activateOmllaAgent()" class="bg-[#b8860b] text-black text-[10px] font-bold py-4 rounded shadow-lg uppercase tracking-widest hover:bg-[#ffd700] transition-all">Inject Agent</button>
-            <button class="bg-transparent border border-yellow-900/30 text-yellow-900 text-[10px] font-bold py-4 rounded uppercase tracking-widest">Withdraw</button>
+        <div class="grid grid-cols-2 gap-5 mt-8">
+            <button onclick="injectOmllaIntelligence()" class="bg-[#b8860b] text-black text-[11px] font-black py-5 rounded-sm uppercase tracking-[0.2em] shadow-xl hover:bg-[#ffd700] transition-all">
+                Inject Agent
+            </button>
+            <button class="bg-transparent border border-yellow-900/40 text-yellow-900 text-[11px] font-black py-5 rounded-sm uppercase tracking-[0.2em] cursor-not-allowed">
+                Ledger Market
+            </button>
         </div>
     </div>
 
     <script>
-        let state = {
-            omllaBalance: 0.00000000,
-            energyReserve: 100,
+        // System Initial State - Starts at 0 for Strategic Scarcity [cite: 2026-02-10]
+        let omllaSystem = {
+            balance: 0.00000000,
+            energy: 100,
             vipActive: false,
-            unitValue: 0.00015000
+            baseReward: 0.00015000
         };
 
-        // Omlla Intelligent Agent Injection [cite: 2026-02-10]
-        function activateOmllaAgent() {
-            if(state.vipActive) return;
-            state.vipActive = true;
-            state.unitValue = 0.00980000; // Fast profit boost [cite: 2026-02-10]
+        // Omlla Intelligence Agent Activation [cite: 2026-02-10]
+        function injectOmllaIntelligence() {
+            if(omllaSystem.vipActive) return;
+            omllaSystem.vipActive = true;
+            omllaSystem.baseReward = 0.00995000; // Accelerated profit logic [cite: 2026-02-10]
             
-            document.getElementById('tier').innerText = 'ROYAL_VIP_AGENT_ACTIVE';
-            document.getElementById('tier').classList.add('text-yellow-400');
+            // Visual System Upgrade [cite: 2026-02-04]
+            const badge = document.getElementById('tierBadge');
+            badge.innerText = 'ROYAL_INTELLIGENCE_INJECTED';
+            badge.style.color = '#ffd700';
+            badge.style.borderColor = '#ffd700';
             document.querySelector('.gold-coin').classList.add('vip-active');
-            document.getElementById('rate').innerText = '0.0098';
+            document.getElementById('yieldText').innerText = '0.0099';
             
-            startSmartCollection();
+            initiatePassiveCollection();
         }
 
-        function startSmartCollection() {
-            const logs = ["COLLECTING_TAX", "MARKET_ARBITRAGE", "YIELD_OPTIMIZATION"];
+        // Autonomous Yield Engine [cite: 2026-02-10]
+        function initiatePassiveCollection() {
+            const agentLogs = ["COLLECTING_TAX", "MARKET_ARBITRAGE", "LIQUIDITY_AUDIT"];
             setInterval(() => {
-                const log = logs[Math.floor(Math.random() * logs.length)];
+                const log = agentLogs[Math.floor(Math.random() * agentLogs.length)];
                 document.getElementById('agentStatus').innerText = `OMLLA_AGENT: ${log}`;
                 document.getElementById('agentStatus').style.color = "#ffd700";
                 
-                state.omllaBalance += 0.00008500; // Autonomous profit [cite: 2026-02-10]
-                updateOmllaUI();
+                // VIP Autonomous Accumulation [cite: 2026-02-10]
+                omllaSystem.balance += 0.00009500;
+                refreshOmllaDisplay();
             }, 2500);
         }
 
-        function triggerCoinAction() {
-            if (state.energyReserve > 0) {
-                state.omllaBalance += state.unitValue;
-                state.energyReserve -= 1;
-                updateOmllaUI();
+        function executeOmllaTap() {
+            if (omllaSystem.energy > 0) {
+                omllaSystem.balance += omllaSystem.baseReward;
+                omllaSystem.energy -= 1;
+                refreshOmllaDisplay();
             }
         }
 
-        function updateOmllaUI() {
-            document.getElementById('balance').innerText = state.omllaBalance.toFixed(8);
-            document.getElementById('energy').innerText = state.energyReserve;
-            document.getElementById('energyBar').style.width = state.energyReserve + '%';
+        function refreshOmllaDisplay() {
+            document.getElementById('mainBalance').innerText = omllaSystem.balance.toFixed(8);
+            document.getElementById('energyText').innerText = omllaSystem.energy;
+            document.getElementById('energyBar').style.width = omllaSystem.energy + '%';
         }
 
-        // Reserve recovery [cite: 2026-02-10]
+        // Fast Reserve Recovery Protocol [cite: 2026-02-10]
         setInterval(() => {
-            if (state.energyReserve < 100) {
-                state.energyReserve += 1;
-                updateOmllaUI();
+            if (omllaSystem.energy < 100) {
+                omllaSystem.energy += 1;
+                refreshOmllaDisplay();
             }
-        }, 4000);
+        }, 3500);
     </script>
 </body>
 </html>
