@@ -3,227 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA AI • AUTONOMOUS PROFITS</title>
-    
+    <title>OMLLA AI | SYSTEM SEVEREIGN</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        :root { 
-            --primary: #5d5fef; 
-            --accent: #a777e3;
-            --bg: #0f172a; 
-            --card: #1e293b; 
-            --green: #10b981; 
-            --red: #ef4444;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: #f8fafc; overflow-x: hidden; padding-bottom: 90px; }
-
-        /* Header AI Style */
-        .header { background: linear-gradient(135deg, var(--primary), var(--accent)); padding: 40px 20px 60px; border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; text-align: center; box-shadow: 0 10px 30px rgba(93, 95, 239, 0.3); }
-        .header h1 { font-size: 26px; font-weight: 900; letter-spacing: -1px; }
-
-        /* Main Balance Area */
-        .balance-container { background: var(--card); width: 90%; border-radius: 25px; margin: -40px auto 20px; padding: 30px 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative; }
-        .balance-label { font-size: 12px; text-transform: uppercase; color: #94a3b8; letter-spacing: 2px; margin-bottom: 5px; }
-        .points { font-size: 42px; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        .usd-val { color: var(--green); font-weight: 700; font-size: 18px; margin-top: 5px; }
-
-        /* Energy System */
-        .energy-box { padding: 0 20px; margin-bottom: 25px; }
-        .energy-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #94a3b8; }
-        .energy-bar-bg { background: #334155; height: 12px; border-radius: 10px; overflow: hidden; }
-        .energy-bar-fill { background: linear-gradient(90deg, #f59e0b, #fbbf24); width: 100%; height: 100%; border-radius: 10px; transition: width 0.5s ease; }
-
-        /* Agent Status Card */
-        .agent-card { background: rgba(93, 95, 239, 0.1); border: 1px dashed var(--primary); margin: 0 20px 25px; padding: 20px; border-radius: 20px; display: flex; align-items: center; }
-        .agent-icon { font-size: 30px; color: var(--primary); margin-right: 15px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        /* Navigation Pages */
-        .page { display: none; padding: 0 20px; }
-        .page.active { display: block; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* Action Buttons */
-        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .action-btn { background: var(--card); border: 1px solid #334155; padding: 20px; border-radius: 20px; text-align: center; color: white; cursor: pointer; transition: 0.2s; }
-        .action-btn:active { transform: scale(0.95); background: var(--primary); }
-        .action-btn i { font-size: 24px; margin-bottom: 10px; display: block; }
-
-        /* Withdrawal Section */
-        .input-group { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #334155; }
-        input, select { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 15px; border-radius: 12px; color: white; margin-bottom: 15px; outline: none; text-align: center; font-size: 16px; }
-        .confirm-btn { background: var(--primary); border: none; padding: 18px; border-radius: 15px; width: 100%; color: white; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 0 10px 20px rgba(93, 95, 239, 0.3); }
-
-        /* Bottom Nav */
-        .nav { position: fixed; bottom: 0; width: 100%; background: #1e293b; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #334155; }
-        .nav-item { color: #64748b; text-align: center; font-size: 10px; font-weight: 700; }
-        .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
+        :root { --p: #00f2ff; --s: #006aff; --bg: #030712; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        .dashboard { padding: 40px 20px; background: radial-gradient(circle at top, #111827 0%, var(--bg) 100%); border-bottom: 1px solid #1f2937; }
+        .balance-num { font-size: 56px; font-weight: 900; background: linear-gradient(to bottom, #fff, var(--p)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .energy-wrap { width: 85%; height: 6px; background: #1f2937; border-radius: 10px; margin: 25px auto; overflow: hidden; }
+        .energy-fill { background: var(--p); height: 100%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--p); }
+        .controls { flex: 1; padding: 30px 20px; display: flex; flex-direction: column; gap: 15px; }
+        .btn { background: #111827; border: 1px solid #374151; color: #fff; padding: 20px; border-radius: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
+        .btn:active { transform: scale(0.96); background: var(--s); border-color: var(--p); }
+        .ai-status { font-size: 11px; color: var(--p); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+        .withdraw-btn { background: var(--p); color: #000; border: none; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>OMLLA AI SYSTEM</h1>
-    <p style="font-size: 12px; opacity: 0.8; margin-top: 5px;">Powered by Gemini Autonomous Engine</p>
+<div class="dashboard">
+    <div class="ai-status"><i class="fas fa-microchip"></i> AI Engine: Hyper-Active</div>
+    <div class="balance-num" id="bal">0.00</div>
+    <div style="opacity: 0.5; font-size: 14px;">ESTIMATED REAL USD</div>
+    <div class="energy-wrap"><div class="energy-fill" id="eb"></div></div>
+    <div style="font-size: 12px;">SYSTEM ENERGY: <span id="ev">0</span>%</div>
 </div>
 
-<div class="balance-container">
-    <div class="balance-label">Total Real Profit</div>
-    <div class="points" id="balance">0.00</div>
-    <div class="usd-val">≈ $<span id="usd">0.00</span> USD</div>
+<div class="controls">
+    <button class="btn" onclick="buyEnergy()">Recharge Agent (TON/Stars)</button>
+    <button class="btn" onclick="upgrade()">Upgrade AI Intelligence</button>
+    <button class="btn withdraw-btn" onclick="cashout()">Execute Payout (Instant)</button>
 </div>
-
-<div class="energy-box">
-    <div class="energy-header">
-        <span><i class="fas fa-bolt"></i> Agent Energy</span>
-        <span id="energy-text">100/100</span>
-    </div>
-    <div class="energy-bar-bg">
-        <div class="energy-bar-fill" id="energy-bar"></div>
-    </div>
-</div>
-
-<div class="agent-card">
-    <div class="agent-icon"><i class="fas fa-robot"></i></div>
-    <div style="text-align: left;">
-        <b style="color: var(--primary);">AI AGENT Lvl.1</b><br>
-        <small id="status-text">Status: Autonomous Mining...</small>
-    </div>
-</div>
-
-<div id="mine" class="page active">
-    <div class="grid-buttons">
-        <div class="action-btn" onclick="boostMining()">
-            <i class="fas fa-rocket" style="color: #f59e0b;"></i>
-            <b>Boost Speed</b>
-        </div>
-        <div class="action-btn" onclick="refillEnergy()">
-            <i class="fas fa-plug" style="color: var(--green);"></i>
-            <b>Refill Energy</b>
-        </div>
-    </div>
-</div>
-
-<div id="wallet" class="page">
-    <div class="input-group">
-        <h3 style="margin-bottom: 15px; font-size: 16px;">Withdraw Profits</h3>
-        <select id="method">
-            <option value="PayPal">PayPal Balance</option>
-            <option value="Solana">Solana (SOL)</option>
-            <option value="USDT">USDT (TRC20)</option>
-        </select>
-        <input type="text" id="address" placeholder="Enter PayPal Email or Wallet Address">
-        <button class="confirm-btn" onclick="requestWithdraw()">Confirm Cashout</button>
-        <p style="font-size: 10px; color: #64748b; text-align: center; margin-top: 15px;">
-            AI Audit: Requests processed within 24 hours. Min: $10.00
-        </p>
-    </div>
-</div>
-
-<nav class="nav">
-    <div class="nav-item active" onclick="show('mine', this)"><i class="fas fa-microchip"></i><br>ENGINE</div>
-    <div class="nav-item" onclick="show('wallet', this)"><i class="fas fa-wallet"></i><br>WALLET</div>
-</nav>
 
 <script>
-    // Configuration
-    const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
-    const MINING_RATE = 0.005; // Base profit per second
-    const ENERGY_DRAIN = 0.1; // Energy lost per second
-
     const tg = window.Telegram.WebApp;
     tg.expand();
-    tg.backgroundColor = "#0f172a";
-
-    // Initialization
-    firebase.initializeApp({ databaseURL: FIREBASE_URL });
+    firebase.initializeApp({ databaseURL: "YOUR_FIREBASE_URL" });
     const db = firebase.database();
-    const userId = (tg.initDataUnsafe?.user?.id || "DEBUG_USER").toString();
-    const userRef = db.ref('players/' + userId);
+    const uid = (tg.initDataUnsafe?.user?.id || "DEV").toString();
 
-    let balance = 0;
-    let energy = 100;
-
-    // Sync Data
-    userRef.on('value', snap => {
-        const data = snap.val();
-        if (data) {
-            balance = data.balance || 0;
-            energy = data.energy || 0;
-            updateUI();
-        } else {
-            userRef.set({ balance: 0, energy: 100, agent_lvl: 1 });
-        }
+    db.ref('players/' + uid).on('value', (s) => {
+        const d = s.val() || { balance: 0, energy: 100, lvl: 1 };
+        document.getElementById('bal').innerText = (d.balance / 100).toFixed(2);
+        document.getElementById('ev').innerText = Math.floor(d.energy);
+        document.getElementById('eb').style.width = d.energy + "%";
     });
 
-    // Autonomous Engine (Runs 24/7 in User View)
-    setInterval(() => {
-        if (energy > 0) {
-            balance += MINING_RATE;
-            energy -= ENERGY_DRAIN;
-            updateUI();
-            
-            // Sync to Database every 5 seconds to prevent spam
-            if (Math.floor(Date.now() / 1000) % 5 === 0) {
-                userRef.update({ balance: balance, energy: energy });
-            }
-        } else {
-            document.getElementById('status-text').innerText = "Status: IDLE (No Energy)";
-            document.getElementById('status-text').style.color = "#ef4444";
-        }
-    }, 1000);
-
-    function updateUI() {
-        document.getElementById('balance').innerText = balance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('usd').innerText = (balance / 1000).toFixed(2); // Assuming 1000 points = $1
-        document.getElementById('energy-text').innerText = Math.floor(energy) + "/100";
-        document.getElementById('energy-bar').style.width = energy + "%";
-    }
-
-    function show(id, el) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-    }
-
-    function boostMining() {
-        tg.showConfirm("Would you like to boost AI Agent speed for 500 Stars?", (ok) => {
-            if(ok) tg.showAlert("Purchase system connecting to Telegram Stars...");
-        });
-    }
-
-    function refillEnergy() {
-        tg.showConfirm("Refill Energy to 100% using 100 Stars?", (ok) => {
-            if(ok) {
-                energy = 100;
-                userRef.update({ energy: 100 });
-                tg.showAlert("AI Agent Fully Charged!");
-            }
-        });
-    }
-
-    function requestWithdraw() {
-        const addr = document.getElementById('address').value;
-        const usd = (balance / 1000).toFixed(2);
-
-        if (balance < 10000) return tg.showAlert("Min withdrawal is $10.00 (10,000 Points)");
-        if (!addr) return tg.showAlert("Please enter a payment address!");
-
-        tg.showConfirm(`Withdraw $${usd} to ${document.getElementById('method').value}?`, (ok) => {
-            if(ok) {
-                tg.showPopup({ title: "Request Sent", message: "AI Agent is auditing your transaction. Payout in 24h.", buttons: [{type: "ok"}] });
-            }
-        });
-    }
+    function buyEnergy() { tg.showConfirm("Syncing with AI energy grid. Proceed?", (ok) => { if(ok) db.ref('players/'+uid).update({energy: 100}); }); }
+    function upgrade() { tg.showAlert("AI is analyzing your account for the next tier."); }
+    function cashout() { tg.showAlert("AI AUDIT: Minimum payout $10.00."); }
 </script>
 </body>
 </html>
