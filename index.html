@@ -3,231 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA | SUPREME EXECUTIVE • MISSIONS UPGRADE</title>
+    <title>OMLLA CAPITAL • EXECUTIVE GOLD</title>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;900&display=swap');
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; touch-action: manipulation; overflow: hidden; }
-        
-        /* 3D GOLD COIN DESIGN */
-        .gold-master-coin {
-            width: 260px; height: 260px; border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #fff9c4 0%, #ffeb3b 10%, #fbc02d 30%, #f9a825 60%, #e65100 100%);
-            box-shadow: 0 0 0 8px #1a1a1a, 0 25px 50px rgba(0,0,0,1), inset 0 8px 15px rgba(255,255,255,0.8);
-            display: flex; align-items: center; justify-content: center; position: relative;
-            cursor: pointer; transition: transform 0.05s ease; border: 2px solid #ff9100;
-        }
-        .gold-master-coin:active { transform: scale(0.94); }
-        .coin-emboss {
-            width: 85%; height: 85%; border-radius: 50%; border: 3px solid #f9a825;
-            background: radial-gradient(circle, #fbc02d 0%, #f57f17 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: inset 0 0 25px rgba(0,0,0,0.4);
-        }
-        .shine-layer {
-            position: absolute; width: 100%; height: 100%; border-radius: 50%;
-            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
-            animation: sweep 4s infinite linear; pointer-events: none;
-        }
-        @keyframes sweep { 0% { transform: translateX(-100%) translateY(-100%); } 100% { transform: translateX(100%) translateY(100%); } }
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        .nav-tab-active { color: #fbc02d; filter: drop-shadow(0 0 8px rgba(251,192,45,0.4)); border-top: 2px solid #fbc02d; }
-        .mission-card { background: linear-gradient(145deg, #111, #050505); border: 1px solid rgba(251,192,45,0.15); border-radius: 1.25rem; padding: 1.25rem; }
-        .tap-number { position: absolute; color: #fbc02d; font-weight: 900; font-size: 1.5rem; animation: floatUp 0.7s forwards; pointer-events: none; text-shadow: 0 0 10px #000; }
-        @keyframes floatUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100px); } }
-        .hidden { display: none; }
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --gold: #FFD700; --gold-dark: #b8860b; --emerald: #14F195;
+            --bg: #000000; --card: #0a0a0a; --border: rgba(255, 215, 0, 0.15);
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 30%, #1a1a1a, #000 100%);
+            color: white; font-family: 'Inter', sans-serif; height: 100vh;
+            display: flex; justify-content: center; overflow: hidden;
+        }
+
+        .app-shell {
+            width: 100%; max-width: 420px; background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(25px); border: 1px solid var(--border);
+            padding: 20px 16px 100px; position: relative; display: flex; flex-direction: column;
+        }
+
+        /* Executive Header */
+        .header-engine { text-align: center; margin-bottom: 20px; }
+        .balance-master { background: rgba(255,215,0,0.03); border: 1px solid var(--border); border-radius: 30px; padding: 25px; position: relative; overflow: hidden; }
+        .val-display { font-size: 52px; font-weight: 900; color: white; line-height: 1; font-style: italic; letter-spacing: -2px; }
+        .listing-tag { position: absolute; top: 10px; right: 15px; font-size: 8px; color: var(--gold); font-weight: 900; letter-spacing: 1px; }
+
+        /* Level Badge */
+        .level-badge {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: black; font-weight: 900; padding: 4px 12px;
+            border-radius: 10px; font-size: 10px; margin-bottom: 10px; display: inline-block;
+        }
+
+        .page { display: none; height: 100%; overflow-y: auto; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 3D Gold Coin */
+        .coin-portal { display: flex; justify-content: center; margin: 20px 0; }
+        .gold-coin {
+            width: 240px; height: 240px; border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fff9c4 0%, #ffeb3b 10%, #fbc02d 30%, #854d0e 100%);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 5px 15px rgba(255,255,255,0.8);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.05s; position: relative; border: 4px solid #3d2b07;
+        }
+        .gold-coin:active { transform: scale(0.92); }
+        .coin-inner {
+            width: 85%; height: 85%; border-radius: 50%; border: 2px solid #854d0e;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: radial-gradient(circle, #fbc02d 0%, #f57f17 100%);
+        }
+        .coin-text { font-family: 'Cinzel', serif; font-size: 32px; font-weight: 900; color: #3d2b07; }
+
+        /* Progress Bars */
+        .stat-bar { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 12px; border: 1px solid var(--border); margin-bottom: 10px; }
+        .bar-track { height: 6px; background: #111; border-radius: 10px; overflow: hidden; margin-top: 8px; }
+        .bar-fill { height: 100%; transition: width 0.3s; }
+        .fill-xp { background: linear-gradient(90deg, var(--gold), #fff); }
+        .fill-energy { background: linear-gradient(90deg, var(--emerald), var(--gold)); }
+
+        /* Grid Cards */
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 15px; }
+
+        /* Nav */
+        .tab-bar {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 32px); max-width: 380px; background: rgba(5,5,5,0.95);
+            border: 1px solid var(--border); border-radius: 25px; padding: 8px; display: flex;
+        }
+        .tab-link { flex: 1; text-align: center; color: #555; font-size: 9px; font-weight: 800; cursor: pointer; padding: 10px 0; border-radius: 15px; transition: 0.2s; }
+        .tab-link.active { color: var(--gold); background: rgba(255,215,0,0.05); }
+        .tab-link i { font-size: 18px; display: block; margin-bottom: 4px; }
+
+        .btn-prime { background: var(--gold); color: black; border: none; padding: 14px; border-radius: 15px; font-weight: 900; width: 100%; cursor: pointer; }
+        .btn-prime:active { transform: scale(0.98); }
+
+        .tap-pop { position: absolute; color: var(--gold); font-weight: 900; font-size: 28px; pointer-events: none; animation: pop 0.6s forwards; z-index: 100; }
+        @keyframes pop { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
+
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 10px 20px; border-radius: 20px; font-weight: 800; font-size: 12px; z-index: 5000; display: none; }
     </style>
 </head>
-<body class="flex flex-col h-screen select-none">
+<body>
+    <div id="toast" class="toast"></div>
 
-    <header class="p-4 flex justify-between items-center border-b border-yellow-600/20 bg-zinc-950/50 backdrop-blur">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-700 flex items-center justify-center shadow-lg shadow-yellow-600/20">
-                <span class="font-black text-black italic">O</span>
+    <div class="app-shell">
+        <header class="header-engine">
+            <div class="level-badge" id="lvl-badge">LVL 1 MANAGER</div>
+            <div class="balance-master">
+                <span class="listing-tag">LISTING DEC 2026</span>
+                <div class="val-display" id="main-balance">0</div>
+                <div style="font-size: 9px; color: var(--gold); font-weight: 800; letter-spacing: 3px; margin-top: 5px;">OMLLA CAPITAL ASSETS</div>
             </div>
-            <div>
-                <p class="text-[9px] font-black text-white uppercase italic tracking-tighter">Omlla Executive Agent</p>
-                <div class="flex items-center gap-1.5 text-[8px] text-yellow-500 font-bold uppercase">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_5px_#22c55e]"></span>
-                    <span id="agentStatus">MARKET_WATCH_ACTIVE</span>
-                </div>
-            </div>
-        </div>
-        <div class="text-right">
-            <p class="text-[7px] text-gray-500 font-bold">EST. VALUE</p>
-            <p id="equityDisplay" class="text-xs font-black text-green-400 tracking-widest">$0.00</p>
-        </div>
-    </header>
+        </header>
 
-    <main class="flex-1 overflow-y-auto p-5 pb-32">
-        
-        <section id="page-mine" class="space-y-8 flex flex-col items-center py-2">
-            <div class="text-center space-y-1">
-                <p class="text-[8px] font-black text-yellow-600 tracking-[0.5em] uppercase opacity-70">Secured Omlla Ledger</p>
-                <h1 id="balance" class="text-6xl font-black italic tracking-tighter text-white">0</h1>
-                <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Official Launch: DEC 2026</p>
-            </div>
-
-            <div class="relative py-4" id="coinContainer">
-                <div onclick="handleTap(event)" class="gold-master-coin">
-                    <div class="shine-layer"></div>
-                    <div class="coin-emboss">
-                        <svg viewBox="0 0 24 24" class="w-28 h-28 text-yellow-900/60" fill="none" stroke="currentColor" stroke-width="1.2">
-                            <path d="M12 3a6 6 0 0 0-6 6c0 3.31 2.69 6 6 6s6-2.69 6-6a6 6 0 0 0-6-6Z"/>
-                            <path d="M18 9h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/><path d="M6 9H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2"/>
-                            <path d="M10 15v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/><path d="M14 15v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2"/>
-                            <path d="M12 15v3a3 3 0 0 1-3 3H9"/>
-                        </svg>
-                        <span style="font-family:'Cinzel',serif" class="text-xl font-black tracking-widest text-yellow-900/70 mt-2">OMLLA</span>
+        <div id="mine-page" class="page active">
+            <div class="coin-portal">
+                <div class="gold-coin" id="coin-btn">
+                    <div class="coin-inner">
+                        <i class="fas fa-turtle" style="font-size: 60px; color: #3d2b07; opacity: 0.8;"></i>
+                        <div class="coin-text">OMLLA</div>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full max-w-xs space-y-3 bg-zinc-900/30 p-4 rounded-2xl border border-white/5">
-                <div class="flex justify-between text-[10px] font-black text-yellow-600 uppercase">
-                    <span>⚡ Energy Core: <span id="energy">1000</span></span>
-                    <span id="solPrice">SOL: $158.20</span>
+            <div class="stat-bar">
+                <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800;">
+                    <span>EXPERIENCE POINTS</span><span id="xp-text">0/1000</span>
                 </div>
-                <div class="w-full bg-black h-1.5 rounded-full overflow-hidden border border-yellow-600/20">
-                    <div id="energyBar" class="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 w-full transition-all"></div>
+                <div class="bar-track"><div class="bar-fill fill-xp" id="xp-fill" style="width:0%"></div></div>
+            </div>
+
+            <div class="stat-bar">
+                <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800;">
+                    <span>RESERVE POWER</span><span id="energy-text">1000/1000</span>
+                </div>
+                <div class="bar-track"><div class="bar-fill fill-energy" id="energy-fill" style="width:100%"></div></div>
+            </div>
+
+            <div class="grid-stats">
+                <div class="card text-center">
+                    <div style="color:var(--gold); font-size:18px; font-weight:900;" id="stat-taps">0</div>
+                    <div style="color:#555; font-size:8px; font-weight:800; margin-top:4px;">SESSION TAPS</div>
+                </div>
+                <div class="card text-center">
+                    <div style="color:var(--emerald); font-size:18px; font-weight:900;" id="stat-mult">1.0x</div>
+                    <div style="color:#555; font-size:8px; font-weight:800; margin-top:4px;">YIELD MULTIPLIER</div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <section id="page-missions" class="hidden space-y-6">
-            <h2 class="text-2xl font-black italic text-yellow-600 uppercase italic">Executive Missions</h2>
-            <div class="space-y-4">
-                <div class="mission-card flex justify-between items-center" onclick="claimMission('daily', 1000)">
-                    <div><p class="font-black text-sm uppercase">Daily Check-in</p><p class="text-[9px] text-green-500 font-bold">+1,000 OMLLA</p></div>
-                    <button class="bg-yellow-600 text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase">Claim</button>
-                </div>
-                <div class="mission-card flex justify-between items-center" onclick="tg.openLink('https://t.me/omlla_news'); claimMission('tg', 5000)">
-                    <div><p class="font-black text-sm uppercase">Join News Channel</p><p class="text-[9px] text-green-500 font-bold">+5,000 OMLLA</p></div>
-                    <button class="bg-yellow-600 text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase">Verify</button>
-                </div>
-                <div class="mission-card flex justify-between items-center" onclick="shareRef()">
-                    <div><p class="font-black text-sm uppercase">Invite Network</p><p class="text-[9px] text-green-500 font-bold">+10,000 OMLLA / REF</p></div>
-                    <button class="bg-yellow-600 text-black px-5 py-2 rounded-lg font-black text-[10px] uppercase">Invite</button>
-                </div>
+        <div id="tasks-page" class="page">
+            <h2 style="font-size:14px; letter-spacing:2px; margin-bottom:15px; color:var(--gold);">EXECUTIVE MISSIONS</h2>
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div><div style="font-weight:900; font-size:13px;">Daily Protocol</div><div style="color:var(--emerald); font-size:10px;">+500 O$</div></div>
+                <button class="btn-prime" style="width:auto; padding:8px 20px;" onclick="claimDaily()">CLAIM</button>
             </div>
-        </section>
-
-        <section id="page-wallet" class="hidden flex flex-col items-center justify-center h-full text-center space-y-8">
-            <div class="w-28 h-28 rounded-full mission-card flex items-center justify-center border-yellow-500/20 shadow-2xl">
-                <svg width="48" height="48" fill="none" stroke="#fbc02d" viewBox="0 0 24 24"><path stroke-width="1.5" d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2h11M21 12v4a2 2 0 01-2 2h-5M21 12H9"/></svg>
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+                <div><div style="font-weight:900; font-size:13px;">Official Network</div><div style="color:var(--gold); font-size:10px;">+2,000 O$</div></div>
+                <button class="btn-prime" style="width:auto; padding:8px 20px;" onclick="tg.openLink('https://t.me/OmllaChannel')">JOIN</button>
             </div>
-            <div class="px-6">
-                <h3 class="text-2xl font-black uppercase text-white italic">Asset Gateway</h3>
-                <p class="text-[9px] text-gray-500 uppercase tracking-widest mt-2 leading-relaxed">Connect your Ledger to authorize Omlla minting for the Dec 2026 distribution.</p>
+        </div>
+
+        <div id="wallet-page" class="page">
+            <h2 style="font-size:14px; letter-spacing:2px; margin-bottom:15px; color:var(--gold);">ASSET GATEWAY</h2>
+            <div class="card" style="text-align:center; padding:40px 20px;">
+                <i class="fas fa-wallet" style="font-size:50px; color:var(--gold); margin-bottom:20px;"></i>
+                <h3 style="font-size:20px; font-weight:900;">Link Solana Wallet</h3>
+                <p style="font-size:10px; color:#555; margin:10px 0 20px;">Withdrawals and Airdrop claims will be processed through this address in Q4 2026.</p>
+                <input type="text" id="wallet-input" placeholder="Enter Solana Address" style="width:100%; background:black; border:1px solid var(--border); padding:15px; border-radius:15px; color:white; font-size:11px; margin-bottom:15px; outline:none;">
+                <button class="btn-prime" onclick="saveWallet()">AUTHORIZE CONNECTION</button>
             </div>
-            <button onclick="connectWallet()" id="wBtn" class="bg-yellow-600 text-black w-full max-w-xs py-5 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-yellow-600/10">Authorize Ledger</button>
-        </section>
+        </div>
 
-    </main>
-
-    <nav class="fixed bottom-0 w-full bg-black/90 border-t border-yellow-600/10 p-5 flex justify-around items-center backdrop-blur-md">
-        <button onclick="nav('mine')" id="nav-mine" class="flex flex-col items-center gap-1 nav-tab-active">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            <span class="text-[8px] font-black uppercase tracking-widest">Mine</span>
-        </button>
-        <button onclick="nav('missions')" id="nav-missions" class="flex flex-col items-center gap-1 text-zinc-600">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l-5.5 9h11L12 2zM12 22l5.5-9h-11L12 22z"/></svg>
-            <span class="text-[8px] font-black uppercase tracking-widest">Missions</span>
-        </button>
-        <button onclick="nav('wallet')" id="nav-wallet" class="flex flex-col items-center gap-1 text-zinc-600">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2h11M21 12v4a2 2 0 01-2 2h-5M21 12H9"/></svg>
-            <span class="text-[8px] font-black uppercase tracking-widest">Wallet</span>
-        </button>
-    </nav>
+        <nav class="tab-bar">
+            <div class="tab-link active" onclick="nav('mine', this)"><i class="fas fa-gem"></i>MINE</div>
+            <div class="tab-link" onclick="nav('tasks', this)"><i class="fas fa-list-check"></i>TASKS</div>
+            <div class="tab-link" onclick="nav('wallet', this)"><i class="fas fa-vault"></i>WALLET</div>
+        </nav>
+    </div>
 
     <script>
-        // 1. Executive Logic & Firebase
-        const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
-        firebase.initializeApp(firebaseConfig);
+        const tg = window.Telegram.WebApp;
+        const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
+        
+        firebase.initializeApp({ databaseURL: FIREBASE_URL });
         const db = firebase.database();
-        const tg = window.Telegram?.WebApp;
-        if (tg) { tg.expand(); tg.ready(); }
-
-        let user = {
-            id: tg?.initDataUnsafe?.user?.id?.toString() || "guest_admin",
-            balance: 0,
-            energy: 1000,
-            lastMission: 0
-        };
-
+        const user = tg.initDataUnsafe?.user || { id: "tester_88", first_name: "Admin" };
         const userRef = db.ref('players/' + user.id);
-        userRef.on('value', (snap) => {
-            if (snap.val()) { user = { ...user, ...snap.val() }; updateUI(); }
-            else { userRef.set(user); }
+
+        let state = { points: 0, energy: 1000, xp: 0, level: 1, taps: 0, multiplier: 1.0 };
+        const xpLevels = [0, 1000, 3000, 7000, 15000, 31000, 63000];
+
+        // Core Functions
+        function updateUI() {
+            document.getElementById('main-balance').innerText = Math.floor(state.points).toLocaleString();
+            document.getElementById('energy-text').innerText = `${state.energy}/1000`;
+            document.getElementById('energy-fill').style.width = (state.energy / 10) + '%';
+            document.getElementById('stat-taps').innerText = state.taps.toLocaleString();
+            
+            // Level Logic
+            let currentLvl = 1;
+            for(let i=0; i<xpLevels.length; i++) { if(state.xp >= xpLevels[i]) currentLvl = i+1; }
+            const nextXp = xpLevels[currentLvl] || xpLevels[xpLevels.length-1] * 2;
+            
+            document.getElementById('lvl-badge').innerText = `LVL ${currentLvl} MANAGER`;
+            document.getElementById('xp-text').innerText = `${state.xp}/${nextXp}`;
+            document.getElementById('xp-fill').style.width = (state.xp / nextXp * 100) + '%';
+        }
+
+        // Tap Engine
+        document.getElementById('coin-btn').addEventListener('touchstart', (e) => {
+            if(state.energy < 1) { showToast("POWER DEPLETED"); return; }
+            
+            state.points += state.multiplier;
+            state.energy -= 1;
+            state.xp += 1;
+            state.taps += 1;
+            
+            const x = e.touches[0].clientX;
+            const y = e.touches[0].clientY;
+            createPop(x, y);
+            
+            updateUI();
+            tg.HapticFeedback.impactOccurred('medium');
+            
+            // Save every 10 taps to optimize
+            if(state.taps % 10 === 0) save();
         });
 
-        // 2. Core Actions
-        function handleTap(e) {
-            if (user.energy <= 0) return;
-            user.balance += 1;
-            user.energy -= 1;
-            
-            const num = document.createElement('div');
-            num.innerText = "+1";
-            num.className = 'tap-number';
-            num.style.left = `${e.clientX}px`;
-            num.style.top = `${e.clientY}px`;
-            document.body.appendChild(num);
-            setTimeout(() => num.remove(), 700);
-
-            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            updateUI();
-            if (user.balance % 10 === 0) save();
+        function createPop(x, y) {
+            const p = document.createElement('div');
+            p.className = 'tap-pop';
+            p.innerText = `+${state.multiplier}`;
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 600);
         }
 
-        function claimMission(type, amt) {
-            const now = Date.now();
-            if (type === 'daily' && now - user.lastMission < 86400000) return alert("Come back tomorrow!");
-            user.balance += amt;
-            if (type === 'daily') user.lastMission = now;
-            save();
-            alert(`Strategic bonus confirmed: +${amt.toLocaleString()} OMLLA`);
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2000);
         }
 
-        function connectWallet() {
-            const b = document.getElementById('wBtn');
-            b.innerText = "AUTHENTICATING...";
-            setTimeout(() => {
-                b.innerText = "0x77...E9F2 (LINKED)";
-                b.style.color = "#fbc02d"; b.style.background = "#000"; b.style.border = "1px solid #fbc02d";
-            }, 1500);
+        function nav(page, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page + '-page').classList.add('active');
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+            el.classList.add('active');
         }
 
-        // 3. System Utilities
-        function nav(p) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`page-${p}`).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-tab-active'));
-            document.getElementById(`nav-${p}`).classList.add('nav-tab-active');
-        }
+        function save() { userRef.update(state); }
 
-        function updateUI() {
-            document.getElementById('balance').innerText = Math.floor(user.balance).toLocaleString();
-            document.getElementById('equityDisplay').innerText = "$" + (user.balance * 0.0035).toFixed(2);
-            document.getElementById('energy').innerText = user.energy;
-            document.getElementById('energyBar').style.width = (user.energy / 10) + '%';
-        }
+        // Sync with Firebase
+        userRef.on('value', (snap) => {
+            const data = snap.val();
+            if(data) { state = {...state, ...data}; updateUI(); }
+            else { save(); }
+        });
 
-        function save() { userRef.update(user); }
-        function shareRef() {
-            const link = `https://t.me/OMLLA_Coin_bot?start=ref${user.id}`;
-            tg ? tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Join Omlla!`) : alert(link);
-        }
-
-        // 4. Background Protocols
+        // Energy Regen & Auto Save
         setInterval(() => {
-            if (user.energy < 1000) { user.energy += 3; updateUI(); }
-            const s = ["YIELD_SCAN", "LEDGER_LOCKED", "NODE_ACTIVE", "SYNC_COMPLETED"];
-            document.getElementById('agentStatus').innerText = s[Math.floor(Math.random()*s.length)];
-        }, 3000);
+            if(state.energy < 1000) { state.energy += 1; updateUI(); }
+        }, 2000);
+
+        setInterval(save, 15000);
+
+        function claimDaily() {
+            state.points += 500;
+            save();
+            showToast("+500 O$ CREDITED");
+        }
+
+        function saveWallet() {
+            const addr = document.getElementById('wallet-input').value;
+            if(addr.length < 20) return showToast("INVALID ADDRESS");
+            userRef.child('wallet').set(addr);
+            showToast("LEDGER AUTHORIZED");
+        }
+
+        tg.expand();
     </script>
 </body>
 </html>
