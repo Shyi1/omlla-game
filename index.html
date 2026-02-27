@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>OMLLA | SOVEREIGN CLOUD INTERFACE</title>
+    <title>OMLLA | SOVEREIGN WEALTH & RANKINGS</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -14,137 +14,187 @@
     <style>
         :root {
             --gold: #E5C100; --accent: #00F0FF; --bg-deep: #020202;
-            --surface: rgba(15, 15, 15, 0.95); --safe-top: env(safe-area-inset-top);
+            --surface: rgba(15, 15, 15, 0.95);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; }
         body { background: var(--bg-deep); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* Institutional Header */
-        .executive-header { padding: calc(var(--safe-top) + 15px) 20px 10px; background: linear-gradient(to bottom, rgba(229,193,0,0.05), transparent); border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .network-bar { display: flex; justify-content: space-between; font-size: 8px; font-weight: 800; letter-spacing: 2px; color: var(--gold); opacity: 0.7; margin-bottom: 15px; }
+        .executive-header { padding: 20px 20px 10px; background: linear-gradient(to bottom, rgba(229,193,0,0.05), transparent); border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .network-bar { display: flex; justify-content: space-between; font-size: 8px; font-weight: 800; letter-spacing: 2px; color: var(--gold); opacity: 0.7; }
 
-        /* Ledger Card */
-        .ledger-card { background: var(--surface); border: 1px solid rgba(229,193,0,0.2); border-radius: 28px; padding: 25px 20px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.8); position: relative; }
-        .balance-main { font-size: 52px; font-weight: 800; letter-spacing: -2px; font-style: italic; }
-        .valuation-sub { font-size: 10px; font-weight: 600; color: var(--accent); margin-top: 4px; letter-spacing: 1px; }
+        .ledger-card { background: var(--surface); border: 1px solid rgba(229,193,0,0.2); border-radius: 28px; padding: 25px 20px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.8); margin-top: 10px; }
+        .balance-main { font-size: 42px; font-weight: 800; letter-spacing: -1px; font-style: italic; }
 
-        /* Real-Time News Ticker (Feb 2026 Data) */
-        .news-ticker { margin-top: 15px; background: rgba(0,240,255,0.03); border: 1px solid rgba(0,240,255,0.1); border-radius: 12px; padding: 8px 15px; overflow: hidden; white-space: nowrap; position: relative; }
-        .news-content { display: inline-block; animation: ticker 25s linear infinite; font-size: 9px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .page { display: none; height: 100%; overflow-y: auto; padding: 20px 20px 150px; }
+        .page.active { display: block; }
 
-        /* 3D Sovereign Coin */
-        .vault-core { flex: 1; display: flex; align-items: center; justify-content: center; }
-        .omlla-sovereign { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FFEC8B 0%, #E5C100 45%, #856404 100%); box-shadow: 0 40px 80px rgba(0,0,0,0.9), inset 0 10px 20px rgba(255,255,255,0.5); border: 5px solid #1a1503; position: relative; cursor: pointer; transition: transform 0.08s cubic-bezier(0.2,0,0.2,1); display: flex; align-items: center; justify-content: center; }
-        .omlla-sovereign:active { transform: scale(0.94) translateY(4px); }
-        .omlla-sovereign::before { content: "O"; font-family: 'Cinzel'; font-size: 85px; color: rgba(61,43,7,0.85); text-shadow: 0 2px 2px rgba(255,255,255,0.2); }
+        /* أسلوب القوائم */
+        .executive-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 12px; }
+        .btn-gold { background: var(--gold); color: #000; border: none; padding: 14px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; }
 
-        /* AI Manager & Cloud Status */
-        .ai-console { padding: 15px 20px 30px; background: rgba(255,255,255,0.02); border-radius: 30px 30px 0 0; border-top: 1px solid rgba(255,255,255,0.05); }
-        .console-meta { display: flex; justify-content: space-between; font-size: 9px; font-weight: 800; color: #555; margin-bottom: 10px; }
-        .cloud-active { color: #00F0FF; font-style: italic; font-weight: 900; }
-        .status-active { color: var(--gold); display: flex; align-items: center; gap: 5px; }
-        .pulse-dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-        
-        .liquidity-track { height: 5px; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-        .liquidity-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--accent)); transition: width 0.3s; }
+        /* التصميم الخاص بـ Leaderboard */
+        .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 15px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.03); }
+        .rank-number { width: 25px; font-weight: 900; color: var(--gold); font-size: 12px; }
+        .rank-name { flex: 1; margin-left: 10px; font-weight: 600; font-size: 13px; }
+        .rank-val { font-weight: 800; color: #fff; font-size: 12px; }
+        .my-rank { border: 1px solid var(--gold); background: rgba(229,193,0,0.05); }
+
+        /* التعدين */
+        .vault-core { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 250px; }
+        .omlla-sovereign { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FFEC8B 0%, #E5C100 45%, #856404 100%); box-shadow: 0 30px 60px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; cursor: pointer; border: 5px solid #1a1503; }
+        .omlla-sovereign:active { transform: scale(0.95); }
+
+        /* التنقل السفلي */
+        .nav-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; background: rgba(10,10,10,0.98); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; display: flex; padding: 8px; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .nav-item { flex: 1; text-align: center; color: #444; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; border-radius: 20px; transition: 0.3s; }
+        .nav-item.active { color: var(--gold); background: rgba(255,215,0,0.05); }
+        .nav-item i { font-size: 18px; }
+
+        .liquidity-track { height: 4px; background: #000; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .liquidity-fill { height: 100%; background: var(--gold); transition: width 0.3s; }
     </style>
 </head>
 <body>
 
 <header class="executive-header">
     <div class="network-bar">
-        <span>OMLLA_NETWORK • CLOUD_MINTING_ACTIVE</span>
+        <span>OMLLA_NETWORK • RANKING_NODE</span>
         <span id="sol-price">SOL: $81.54</span>
     </div>
-    
     <div class="ledger-card">
-        <div style="position:absolute; top:12px; right:20px; font-size:7px; font-weight:900; color:var(--gold); letter-spacing:1px;">Q4 2026 LISTING</div>
         <div class="balance-main" id="bal">0.00</div>
-        <div class="valuation-sub">TOTAL ASSET POSITION: $<span id="usd">0.00</span></div>
-    </div>
-
-    <div class="news-ticker">
-        <div class="news-content" id="ticker-text">
-            SOLANA PRICE STABLE AT $81.54... U.S. GENIUS ACT IMPLEMENTATION UNDERWAY... NASDAQ FILES FOR NEW SOLANA ETFS... 
-        </div>
+        <div style="font-size: 9px; font-weight: 600; color: var(--accent); letter-spacing: 1px;">GLOBAL EQUITY POSITION</div>
     </div>
 </header>
 
-<div class="vault-core">
-    <div class="omlla-sovereign" id="action"></div>
-</div>
+<main style="flex: 1; position: relative;">
+    
+    <section id="page-mine" class="page active">
+        <div class="vault-core">
+            <div class="omlla-sovereign" id="action-btn"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:800; color:#555;">
+            <span>RESERVE LIQUIDITY</span>
+            <span id="energy-txt">1000/1000</span>
+        </div>
+        <div class="liquidity-track"><div class="liquidity-fill" id="energy-fill" style="width: 100%;"></div></div>
+    </section>
 
-<footer class="ai-console">
-    <div class="console-meta">
-        <div class="status-active"><span class="pulse-dot"></span> <span id="ai-log">CLOUD_MINING_ENABLED</span></div>
-        <div class="cloud-active" id="cloud-rate">YIELD: +0.25/SEC</div>
-    </div>
-    <div class="console-meta">
-        <span>RESERVE LIQUIDITY</span>
-        <span id="energy-txt">1000/1000</span>
-    </div>
-    <div class="liquidity-track"><div class="liquidity-fill" id="energy-fill" style="width: 100%;"></div></div>
-</footer>
+    <section id="page-rank" class="page">
+        <h2 style="color:var(--gold); margin-bottom:20px; font-style:italic;">GLOBAL_LEADERBOARD</h2>
+        <div id="leaderboard-list">
+            <p style="text-align:center; color:#444; font-size:12px;">Syncing Global Ranks...</p>
+        </div>
+    </section>
+
+    <section id="page-boost" class="page">
+        <h2 style="color:var(--gold); margin-bottom:20px;">UPGRADES</h2>
+        <div class="executive-card">
+            <p style="font-weight:800;">Multi-Tap Engine</p>
+            <p style="font-size:10px; color:#888; margin-bottom:10px;">+1.0 Per Tap</p>
+            <button class="btn-gold" onclick="buyUpgrade('tap')">Cost: 5,000 Omlla</button>
+        </div>
+    </section>
+
+    <section id="page-friends" class="page">
+        <h2 style="color:var(--gold); margin-bottom:20px;">NETWORK</h2>
+        <div class="executive-card" style="text-align:center;">
+            <p style="font-weight:800; margin-bottom:15px;">Your Referral Link</p>
+            <button class="btn-gold" onclick="shareRef()">INVITE PARTNERS</button>
+        </div>
+    </section>
+
+</main>
+
+<nav class="nav-bar">
+    <div class="nav-item active" onclick="showPage('mine', this)"><i class="fas fa-hammer"></i>MINE</div>
+    <div class="nav-item" onclick="showPage('rank', this); loadLeaderboard();"><i class="fas fa-trophy"></i>RANKS</div>
+    <div class="nav-item" onclick="showPage('boost', this)"><i class="fas fa-rocket"></i>BOOST</div>
+    <div class="nav-item" onclick="showPage('friends', this)"><i class="fas fa-users"></i>FRIENDS</div>
+</nav>
 
 <script>
     const tg = window.Telegram.WebApp;
-    // Current Parity: Feb 27, 2026
-    const state = { bal: 0, energy: 1000, mcap: 1420000, price: 0.0052, sol: 81.54, cloudRate: 0.25 };
+    // Firebase Config
+    const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    const user = tg.initDataUnsafe?.user || { id: "dev_user", first_name: "Executive_User" };
+    const userRef = db.ref('players/' + user.id);
 
-    const GlobalNews = [
-        "SOLANA $81.54 SUPPORT CONFIRMED... CLOUD YIELD STABILIZED",
-        "U.S. GENIUS ACT AMENDMENTS PROTECT PAYMENT STABLECOINS... BULLISH FOR OMLLA",
-        "WISDOMTREE TOKENIZED MONEY MARKET FUND GRANTED SEC EXEMPTION... LIQUIDITY RISING",
-        "SOLANA ALPENGLOW UPGRADE SLASHES FINALITY TO 150MS... NETWORK EFFICIENCY PEAKING",
-        "FEDERAL RESERVE ELIMINATES REPUTATION RISK IN BANK SUPERVISION... CRYPTO DEBANKING ENDS"
-    ];
+    let state = { bal: 0, energy: 1000, maxEnergy: 1000, tapValue: 1.5, cloudRate: 0.25, price: 0.0052, name: user.first_name };
 
-    const ExecutiveAgent = {
-        process: function() {
-            // Institutional Market Drift
-            const drift = (Math.random() - 0.48) * 0.00012; 
-            state.price += drift;
-            
-            // Cloud Mining Logic (Automatic Passive Accumulation)
-            state.bal += state.cloudRate; 
-            
-            // News Analysis
-            if(Math.random() > 0.8) {
-                const headline = GlobalNews[Math.floor(Math.random() * GlobalNews.length)];
-                document.getElementById('ticker-text').innerText = headline;
-                document.getElementById('ai-log').innerText = "MARKET_NEWS_ANALYZED";
-            }
-            this.update();
-        },
-        update: function() {
-            document.getElementById('bal').innerText = state.bal.toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('usd').innerText = (state.bal * state.price).toFixed(2);
-            document.getElementById('energy-txt').innerText = state.energy + "/1000";
-            document.getElementById('energy-fill').style.width = (state.energy / 10) + "%";
-            
-            // Parity: Feb 27, 2026 Real SOL price
-            const solVar = state.sol + (Math.random() * 0.4);
-            document.getElementById('sol-price').innerText = "SOL: $" + solVar.toFixed(2);
-        }
-    };
+    userRef.on('value', (snap) => {
+        if(snap.val()) { state = {...state, ...snap.val()}; updateUI(); }
+        else { userRef.set(state); }
+    });
 
-    document.getElementById('action').addEventListener('touchstart', (e) => {
+    function updateUI() {
+        document.getElementById('bal').innerText = state.bal.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('energy-txt').innerText = Math.floor(state.energy) + "/" + state.maxEnergy;
+        document.getElementById('energy-fill').style.width = (state.energy / state.maxEnergy * 100) + "%";
+    }
+
+    function showPage(id, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+        tg.HapticFeedback.impactOccurred('light');
+    }
+
+    // Leaderboard Logic
+    function loadLeaderboard() {
+        const listDiv = document.getElementById('leaderboard-list');
+        db.ref('players').orderByChild('bal').limitToLast(10).once('value', (snap) => {
+            let html = '';
+            let players = [];
+            snap.forEach(child => { players.push(child.val()); });
+            players.reverse().forEach((p, index) => {
+                const isMe = p.name === state.name ? 'my-rank' : '';
+                html += `
+                    <div class="rank-item ${isMe}">
+                        <span class="rank-number">#${index + 1}</span>
+                        <span class="rank-name">${p.name || 'Anonymous'}</span>
+                        <span class="rank-val">${Math.floor(p.bal).toLocaleString()} O$</span>
+                    </div>
+                `;
+            });
+            listDiv.innerHTML = html;
+        });
+    }
+
+    document.getElementById('action-btn').addEventListener('touchstart', (e) => {
         e.preventDefault();
-        if(state.energy < 1) { tg.HapticFeedback.notificationOccurred('error'); return; }
-        state.bal += 1.5; // Manager Boost: 1.5 per tap for quick profit
+        if(state.energy < 1) return;
+        state.bal += state.tapValue;
         state.energy -= 1;
-        ExecutiveAgent.update();
+        updateUI();
         tg.HapticFeedback.impactOccurred('heavy');
     });
 
-    // Cloud Mining & AI Loops
-    setInterval(() => ExecutiveAgent.process(), 1000); // 1-second cloud yield pulse
-    setInterval(() => { if(state.energy < 1000) state.energy += 5; ExecutiveAgent.update(); }, 2000);
+    function buyUpgrade(type) {
+        if(state.bal >= 5000) {
+            state.bal -= 5000; state.tapValue += 1;
+            userRef.update(state);
+            tg.showAlert("Upgrade Confirmed.");
+        }
+    }
+
+    function shareRef() {
+        const link = "https://t.me/YourBotName?start=ref" + user.id;
+        tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(link));
+    }
+
+    setInterval(() => {
+        state.bal += state.cloudRate;
+        if(state.energy < state.maxEnergy) state.energy += 3;
+        updateUI();
+        if(Math.floor(state.bal) % 20 === 0) userRef.update(state);
+    }, 1000);
 
     tg.expand();
-    tg.ready();
 </script>
 </body>
 </html>
