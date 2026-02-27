@@ -3,173 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA CAPITAL • PRESTIGE MAX</title>
+    <title>OMLLA • PLAY & EARN REAL CASH</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root { --gold: #FFD700; --success: #00FFA3; --bg: #050505; --surface: #111111; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Space Grotesk', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: white; min-height: 100vh; background-image: radial-gradient(circle at 50% 0%, #1a2a1a 0%, #050505 70%); overflow-x: hidden; }
-        .wrapper { width: 100%; max-width: 420px; margin: auto; padding: 20px 20px 100px; }
-        
-        /* Premium UI Components */
-        .logo-box { text-align: center; margin-bottom: 20px; }
-        .logo-orb { width: 75px; height: 75px; background: var(--gold); border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 35px; color: black; font-weight: 900; box-shadow: 0 0 25px rgba(255,215,0,0.3); border: 3px solid #332811; }
-        
-        .stat-card { background: var(--surface); border: 1px solid rgba(255,215,0,0.2); border-radius: 30px; padding: 25px; text-align: center; margin-bottom: 20px; backdrop-filter: blur(10px); }
-        .balance-val { font-family: 'Montserrat'; font-size: 42px; font-weight: 900; text-shadow: 0 0 15px rgba(255,215,0,0.3); }
-        
-        .page { display: none; animation: fadeIn 0.4s ease; }
+        :root {
+            --primary: #5d5fef; --secondary: #a5a6f6;
+            --bg: #f4f7ff; --text: #1a1a1a; --card: #ffffff;
+            --green: #14ca82; --gold: #ffd700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 100px; }
+
+        /* Top Banner Style JustPlay */
+        .top-banner {
+            background: var(--primary); color: white; padding: 40px 20px 80px;
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            text-align: center; position: relative;
+        }
+        .top-banner h1 { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
+
+        /* Wallet Card */
+        .wallet-card {
+            background: var(--card); width: 85%; border-radius: 25px;
+            margin: -50px auto 20px; padding: 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; z-index: 10;
+        }
+        .points-box { display: flex; justify-content: space-around; align-items: center; }
+        .stat-item b { display: block; font-size: 22px; color: var(--primary); }
+        .stat-item span { font-size: 11px; color: #888; font-weight: 700; }
+
+        .page { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Mining Engine */
-        .engine-zone { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
-        .tap-orb { width: 210px; height: 210px; border-radius: 50%; background: radial-gradient(circle, #222, #000); border: 8px solid #1a1a1a; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; box-shadow: 0 15px 45px rgba(0,0,0,0.8); position: relative; }
-        .tap-orb:active { transform: scale(0.92); border-color: var(--gold); }
-        .tap-orb i { font-size: 70px; color: var(--gold); text-shadow: 0 0 20px var(--gold); }
+        /* Tap Engine */
+        .tap-engine { text-align: center; margin-top: 20px; }
+        .main-coin {
+            width: 180px; height: 180px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            margin: 0 auto; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 60px; cursor: pointer;
+            box-shadow: 0 15px 35px rgba(93, 95, 239, 0.4); transition: 0.1s;
+        }
+        .main-coin:active { transform: scale(0.92); }
 
-        /* Revenue Units */
-        .rev-unit { background: var(--surface); border-radius: 20px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .btn-premium { background: var(--gold); color: black; border: none; padding: 12px 22px; border-radius: 12px; font-weight: 900; font-size: 11px; cursor: pointer; box-shadow: 0 4px 15px rgba(255,215,0,0.2); }
+        /* Reward Cards */
+        .offer-row {
+            background: var(--card); border-radius: 20px; padding: 15px;
+            margin-bottom: 15px; display: flex; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02); cursor: pointer;
+        }
+        .offer-icon { width: 50px; height: 50px; background: #f0f1ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 22px; margin-right: 15px; }
+        .offer-details { flex: 1; }
+        .offer-details b { font-size: 14px; display: block; }
+        .offer-details small { color: var(--green); font-weight: 700; }
 
-        /* Navigation */
-        .navbar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border-radius: 25px; padding: 12px; display: flex; justify-content: space-around; border: 1px solid rgba(255,215,0,0.1); z-index: 1000; }
-        .nav-link { color: #555; font-size: 11px; font-weight: 800; text-align: center; cursor: pointer; }
-        .nav-link.active { color: var(--gold); }
-        .nav-link i { font-size: 22px; display: block; margin-bottom: 4px; }
+        /* Input & Buttons */
+        input, select { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 12px; outline: none; background: #f9f9f9; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; }
 
-        input { width: 100%; padding: 16px; border-radius: 15px; background: #000; border: 1px solid #222; color: white; margin-bottom: 15px; outline: none; text-align: center; }
+        /* Nav Bar */
+        .navbar {
+            position: fixed; bottom: 0; width: 100%; background: white;
+            display: flex; justify-content: space-around; padding: 15px 0;
+            border-top: 1px solid #eee; z-index: 1000;
+        }
+        .nav-link { color: #ccc; text-align: center; font-size: 11px; cursor: pointer; transition: 0.3s; }
+        .nav-link.active { color: var(--primary); }
+        .nav-link i { font-size: 20px; display: block; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
-<script src="https://pl28803296.effectivegatecpm.com/2c/dd/09/2cdd09776aa553dca3c7d1f937532fa7.js"></script>
-
-<div class="wrapper">
-    <div class="logo-box"><div class="logo-orb">O</div></div>
-    
-    <div class="stat-card">
-        <p style="font-size:10px; color:#888; letter-spacing:2px; margin-bottom:8px;">OMLLA PORTFOLIO VALUATION</p>
-        <div class="balance-val" id="ui-points">0</div>
-        <div style="font-size: 9px; color: var(--success); margin-top: 10px; font-weight: 800; letter-spacing: 1px;">
-            <i class="fas fa-check-circle"></i> SYSTEM ONLINE • AD-FUNDED LIQUIDITY
-        </div>
+    <div class="top-banner">
+        <h1>OMLLA CAPITAL</h1>
+        <p>Turn your gaming time into real cash</p>
     </div>
 
-    <div id="p-mine" class="page active">
-        <div class="engine-zone">
-            <div class="tap-orb" id="orb-main"><i class="fas fa-fingerprint"></i></div>
-            <div style="width:100%; margin-top:35px;">
-                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800; color:#666; margin-bottom:8px;">
-                    <span>POWER SUPPLY</span><span id="ui-energy" style="color:var(--gold)">1000/1000</span>
-                </div>
-                <div style="height:8px; background:#111; border-radius:10px; overflow:hidden; border:1px solid #222;">
-                    <div id="energy-bar" style="height:100%; width:100%; background:var(--gold); transition:0.3s;"></div>
-                </div>
+    <div class="wallet-card">
+        <div class="points-box">
+            <div class="stat-item">
+                <b id="points-val">0</b>
+                <span>O$ COINS</span>
+            </div>
+            <div style="width: 1px; height: 40px; background: #eee;"></div>
+            <div class="stat-item">
+                <b id="usd-val">$0.00</b>
+                <span>USD VALUE</span>
             </div>
         </div>
     </div>
 
-    <div id="p-earn" class="page">
-        <h3 style="color:var(--gold); margin-bottom:20px; font-size:12px; font-weight:900; letter-spacing:2px;">REVENUE TERMINAL</h3>
-        <div class="rev-unit">
-            <div><b style="display:block">Cash-Stream Video</b><small style="color:var(--success)">+2,500 O$ • Verify Reward</small></div>
-            <button class="btn-premium" onclick="app.watchAd()">WATCH</button>
-        </div>
-        <div class="rev-unit" style="border-left: 3px solid var(--success);">
-            <div><b style="display:block">Monlix Offerwall</b><small style="color:var(--success)">+500,000 O$ • Global Missions</small></div>
-            <button class="btn-premium" onclick="app.runMonlix()">OPEN</button>
+    <div id="home" class="page active">
+        <div class="tap-engine">
+            <div class="main-coin" id="coin-trigger"><i class="fas fa-hand-holding-usd"></i></div>
+            <p style="margin-top:20px; font-weight:700; color:#888;">Daily Progress: <span id="energy-num">1000</span>/1000</p>
+            <div style="width: 200px; height: 8px; background: #e0e0e0; margin: 15px auto; border-radius: 10px; overflow: hidden;">
+                <div id="energy-bar" style="width: 100%; height: 100%; background: var(--primary); transition: 0.3s;"></div>
+            </div>
         </div>
     </div>
 
-    <div id="p-wallet" class="page">
-        <h3 style="color:var(--gold); margin-bottom:20px; font-size:12px;">ASSET LIQUIDATION</h3>
-        <div style="background:var(--surface); padding:25px; border-radius:30px; border: 1px dashed #333; text-align:center;">
-            <p style="font-size:11px; color:#666; margin-bottom:15px;">Target: Solana (SPL) or PayPal</p>
-            <input type="text" id="w-address" placeholder="Enter Wallet Address / Email">
-            <button class="btn-premium" style="width:100%; padding:18px;" onclick="app.withdraw()">INITIALIZE TRANSFER</button>
-            <p style="font-size:9px; color:#444; margin-top:15px;">*Minimum threshold: 500,000 O$</p>
+    <div id="earn" class="page">
+        <h2 style="margin-bottom:15px; font-size:18px; color: #333;">Available Offers</h2>
+        
+        <div class="offer-row" onclick="watchAd()">
+            <div class="offer-icon"><i class="fas fa-video"></i></div>
+            <div class="offer-details"><b>Adsterra Video</b><small>+1,000 O$ Coins</small></div>
+            <button class="btn-main" style="width:auto;">Watch</button>
+        </div>
+
+        <div class="offer-row" onclick="openOfferwall()">
+            <div class="offer-icon"><i class="fas fa-tasks"></i></div>
+            <div class="offer-details"><b>Monlix Offerwall</b><small>Up to $20.00 Per App</small></div>
+            <button class="btn-main" style="width:auto;">Open</button>
+        </div>
+    </div>
+
+    <div id="cashout" class="page">
+        <h2 style="margin-bottom:15px; font-size:18px; color: #333;">Request Payout</h2>
+        <div style="background: white; padding: 25px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+            <select id="method">
+                <option value="paypal">PayPal (USD)</option>
+                <option value="solana">Solana (SOL)</option>
+            </select>
+            <input type="text" id="address" placeholder="Enter Email or Wallet Address">
+            <button class="btn-main" onclick="requestWithdraw()">Confirm Cashout</button>
+            <p style="font-size:10px; color:#999; margin-top:15px; text-align:center;">Minimum cashout: $10.00 • Processing: 24h</p>
         </div>
     </div>
 
     <nav class="navbar">
-        <div class="nav-link active" onclick="app.nav('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
-        <div class="nav-link" onclick="app.nav('earn', this)"><i class="fas fa-play-circle"></i>EARN</div>
-        <div class="nav-link" onclick="app.nav('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
+        <div class="nav-link active" onclick="show('home', this)"><i class="fas fa-home"></i>Home</div>
+        <div class="nav-link" onclick="show('earn', this)"><i class="fas fa-rocket"></i>Offers</div>
+        <div class="nav-link" onclick="show('cashout', this)"><i class="fas fa-money-check-alt"></i>Cashout</div>
     </nav>
-</div>
 
-<script>
-    const app = {
-        config: {
-            fire: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/",
-            ad: "https://www.profitablecpmgate.com/a84a02d210d9a87f7e5dfcb4807e8ddc",
-            mon: "ضع_رابط_مونليكس_هنا"
-        },
-        state: { points: 0, energy: 1000 },
-        init() {
-            this.tg = window.Telegram.WebApp;
-            this.tg.expand();
-            firebase.initializeApp({ databaseURL: this.config.fire });
-            this.db = firebase.database();
-            this.uid = (this.tg.initDataUnsafe?.user?.id || "CLIENT_" + Math.floor(Math.random()*999)).toString();
-            this.ref = this.db.ref('players/' + this.uid);
-            this.sync();
-        },
-        sync() {
-            this.ref.on('value', snap => {
-                const data = snap.val();
-                if (data) {
-                    this.state = {...this.state, ...data};
-                    document.getElementById('ui-points').innerText = Math.floor(this.state.points).toLocaleString();
-                    document.getElementById('ui-energy').innerText = this.state.energy + "/1000";
-                    document.getElementById('energy-bar').style.width = (this.state.energy/10) + '%';
-                } else { this.ref.set({ points: 100, energy: 1000 }); }
-            });
-        },
-        nav(p, el) {
+    <script>
+        const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
+        
+        // --- ضع روابطك الحقيقية هنا ---
+        const ADSTERRA_LINK = "https://your-adsterra-direct-link.com"; // رابط الـ Direct Link
+        const MONLIX_LINK = "https://publisher.monlix.com/apps/20163"; // رابط العروض الخاص بك من الصورة
+
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        firebase.initializeApp({ databaseURL: FIREBASE_URL });
+        const db = firebase.database();
+        const user = tg.initDataUnsafe?.user || { id: "PLAYER_" + Math.floor(Math.random()*9999) };
+        const userRef = db.ref('players/' + user.id);
+
+        let state = { points: 0, energy: 1000 };
+
+        userRef.on('value', snap => {
+            const data = snap.val();
+            if (data) {
+                state.points = data.points || 0;
+                state.energy = data.energy !== undefined ? data.energy : 1000;
+                updateUI();
+            } else { userRef.set({ points: 0, energy: 1000 }); }
+        });
+
+        function updateUI() {
+            document.getElementById('points-val').innerText = Math.floor(state.points).toLocaleString();
+            // معدل التحويل: كل 10,000 نقطة = 1 دولار
+            document.getElementById('usd-val').innerText = "$" + (state.points / 10000).toFixed(2);
+            document.getElementById('energy-num').innerText = state.energy;
+            document.getElementById('energy-bar').style.width = (state.energy / 10) + "%";
+        }
+
+        document.getElementById('coin-trigger').onclick = () => {
+            if (state.energy > 0) {
+                state.points += 2; state.energy--;
+                userRef.update({ points: state.points, energy: state.energy });
+                tg.HapticFeedback.impactOccurred('medium');
+            } else {
+                tg.showAlert("Daily limit reached! Use 'Offers' to get more.");
+            }
+        };
+
+        function show(p, el) {
             document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-            document.getElementById('p-' + p).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            document.getElementById(p).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
             el.classList.add('active');
-            this.tg.HapticFeedback.impactOccurred('light');
-        },
-        watchAd() {
-            this.tg.openLink(this.config.ad);
-            this.tg.showConfirm("Did you complete the session to earn 2,500 O$?", (ok) => {
-                if(ok) this.ref.child('points').transaction(p => (p||0)+2500);
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function watchAd() {
+            tg.openLink(ADSTERRA_LINK);
+            tg.showConfirm("Did you finish watching the video to claim 1,000 O$?", (ok) => {
+                if(ok) userRef.child('points').transaction(p => (p || 0) + 1000);
             });
-        },
-        runMonlix() { this.tg.openLink(this.config.mon + "?userId=" + this.uid); },
-        withdraw() {
-            if(this.state.points < 500000) this.tg.showAlert("Asset threshold not met (500k O$). Connect more revenue units!");
-            else this.tg.showAlert("Liquidity check initiated. Your request is in the audit queue.");
         }
-    };
 
-    app.init();
+        function openOfferwall() { tg.openLink(MONLIX_LINK); }
 
-    document.getElementById('orb-main').onclick = () => {
-        if (app.state.energy > 0) {
-            app.state.points += 2; app.state.energy--;
-            app.ref.update({ points: app.state.points, energy: app.state.energy });
-            app.tg.HapticFeedback.impactOccurred('medium');
+        function requestWithdraw() {
+            const addr = document.getElementById('address').value;
+            const usd = (state.points / 10000);
+            if(usd < 10) tg.showAlert("Minimum cashout is $10.00 (100,000 Coins)");
+            else if(!addr) tg.showAlert("Please enter your payment address.");
+            else tg.showAlert("Request for $" + usd.toFixed(2) + " submitted successfully!");
         }
-    };
 
-    setInterval(() => {
-        if (app.state.energy < 1000) {
-            app.state.energy++;
-            app.ref.child('energy').set(app.state.energy);
-        }
-    }, 4000);
-</script>
+        // Energy Refill every 5 seconds
+        setInterval(() => {
+            if(state.energy < 1000) { state.energy++; userRef.child('energy').set(state.energy); }
+        }, 5000);
+    </script>
 </body>
 </html>
