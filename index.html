@@ -2,203 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>OMLLA CAPITAL • EXECUTIVE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OMLLA | CAPITAL ASSET MANAGEMENT</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        :root { 
-            --gold: #FFD700; --gold-dark: #B8860B; --emerald: #14F195; 
-            --bg: #000; --card: #0D0D0D; --border: rgba(255, 215, 0, 0.15);
-            --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        :root { --gold: #D4AF37; --deep-bg: #050505; --card-bg: rgba(15, 15, 15, 0.95); --glow: rgba(212, 175, 55, 0.2); }
 
-        body { 
-            background: radial-gradient(circle at 50% 20%, #1a1a1a 0%, #000 100%); 
-            color: #fff; font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden;
-        }
+        body { background: var(--deep-bg); color: #fff; height: 100vh; overflow: hidden; }
 
-        /* Ergonomic App Shell */
-        .app-shell { 
-            height: 100vh; width: 100%; max-width: 450px; margin: 0 auto;
-            display: flex; flex-direction: column; position: relative;
-            padding-top: var(--safe-top); padding-bottom: calc(90px + var(--safe-bottom));
-        }
+        .app-container { max-width: 450px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; padding: 20px; }
 
-        /* Luxury Header */
-        .header { padding: 15px 20px; text-align: center; }
-        .balance-box { 
-            background: linear-gradient(180deg, rgba(255,215,0,0.05) 0%, rgba(0,0,0,0) 100%);
-            border: 1px solid var(--border); border-radius: 28px; padding: 22px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4); position: relative;
-        }
-        .listing-pill {
-            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-            background: var(--gold); color: #000; font-size: 8px; font-weight: 900;
-            padding: 4px 12px; border-radius: 10px; letter-spacing: 1.5px; white-space: nowrap;
-        }
-        .val-display { font-size: 54px; font-weight: 900; font-style: italic; letter-spacing: -2px; }
-
-        /* The 3D Master Coin */
-        .coin-section { flex: 1; display: flex; align-items: center; justify-content: center; }
-        .gold-coin {
-            width: 250px; height: 250px; border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #fff9c4 0%, #ffeb3b 15%, #fbc02d 35%, #854d0e 100%);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 8px 20px rgba(255,255,255,0.7), inset 0 -8px 20px rgba(0,0,0,0.5);
-            display: flex; align-items: center; justify-content: center;
-            border: 5px solid #3d2b07; position: relative;
-        }
-        .coin-inner { 
-            width: 86%; height: 86%; border-radius: 50%; border: 3px solid #854d0e;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: radial-gradient(circle, #fbc02d 0%, #f57f17 100%); 
-        }
-        .coin-logo { font-family: 'Cinzel', serif; font-size: 34px; font-weight: 900; color: #3d2b07; }
-
-        /* Progress & Mobile Controls */
-        .controls { padding: 0 20px; }
-        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 14px; margin-bottom: 10px; }
-        .bar-bg { height: 10px; background: #111; border-radius: 10px; overflow: hidden; margin-top: 8px; border: 1px solid #222; }
-        .bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--emerald), var(--gold)); transition: width 0.3s; }
-
-        /* Modern Navigation */
-        .nav-bar { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: calc(100% - 40px); max-width: 400px;
-            background: rgba(10,10,10,0.95); backdrop-filter: blur(10px);
-            border: 1px solid var(--border); border-radius: 35px;
-            padding: 10px; display: flex; box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-        }
-        .nav-btn { flex: 1; text-align: center; color: #555; font-size: 10px; font-weight: 800; cursor: pointer; padding: 12px 0; border-radius: 25px; transition: 0.3s; }
-        .nav-btn.active { color: var(--gold); background: rgba(255,215,0,0.08); }
-        .nav-btn i { font-size: 20px; display: block; margin-bottom: 4px; }
-
-        .tap-pop { position: absolute; color: #fff; font-weight: 900; font-size: 32px; pointer-events: none; animation: popUp 0.8s forwards; z-index: 2000; text-shadow: 0 0 15px var(--gold); }
-        @keyframes popUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-140px); } }
+        /* Real Financial Header */
+        .market-ticker { font-size: 9px; color: var(--gold); letter-spacing: 2px; text-align: center; margin-bottom: 20px; opacity: 0.8; font-weight: 900; }
         
-        .page { display: none; height: 100%; overflow-y: auto; padding-bottom: 20px; }
-        .page.active { display: block; }
-        .btn-gold { background: var(--gold); color: #000; border: none; padding: 18px; border-radius: 20px; font-weight: 900; width: 100%; }
+        .equity-card { 
+            background: var(--card-bg); border: 1px solid rgba(255,215,0,0.15); border-radius: 24px; padding: 25px; 
+            text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative;
+        }
+
+        .omlla-balance { font-size: 50px; font-weight: 900; letter-spacing: -2px; font-style: italic; color: #fff; }
+        .valuation { color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: 1px; margin-top: 5px; }
+
+        /* The Realistic 3D Coin (Pure CSS) */
+        .coin-vault { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .omlla-coin {
+            width: 240px; height: 240px; border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fff9c4 0%, #D4AF37 40%, #854d0e 100%);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 8px 20px rgba(255,255,255,0.4);
+            display: flex; align-items: center; justify-content: center; border: 6px solid #2a2008;
+            cursor: pointer; transition: transform 0.05s; position: relative;
+        }
+        .omlla-coin:active { transform: scale(0.96); }
+        .omlla-coin::after { content: "OMLLA"; font-family: 'Cinzel'; font-size: 32px; font-weight: 900; color: #3d2b07; opacity: 0.8; letter-spacing: 4px; }
+
+        /* AI Agent Status Panel */
+        .ai-panel { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-top: 20px; }
+        .status-row { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: #666; margin-bottom: 10px; }
+        .ai-active-text { color: var(--gold); font-style: italic; }
+        
+        .progress-bar { height: 4px; background: #111; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .progress-fill { height: 100%; background: var(--gold); width: 100%; transition: width 0.3s linear; }
+
+        /* Navigation thumb-friendly */
+        .nav-ledger { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; 
+            background: rgba(10,10,10,0.98); border: 1px solid rgba(212,175,55,0.1); border-radius: 30px; 
+            display: flex; padding: 10px; 
+        }
+        .nav-item { flex: 1; text-align: center; color: #444; font-size: 9px; font-weight: 900; cursor: pointer; padding: 12px 0; }
+        .nav-item.active { color: var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="app-shell">
-        <header class="header">
-            <div class="balance-box">
-                <span class="listing-pill">OFFICIAL LISTING DEC 2026</span>
-                <div class="val-display" id="balance">0</div>
-                <div style="font-size: 9px; color: var(--gold); font-weight: 800; letter-spacing: 4px; margin-top: 6px; opacity: 0.8;">OMLLA CAPITAL LEDGER</div>
-            </div>
-        </header>
-
-        <div id="page-mine" class="page active">
-            <div class="coin-section">
-                <div class="gold-coin" id="coin">
-                    <div class="coin-inner">
-                        <i class="fas fa-turtle" style="font-size: 60px; color: #3d2b07; opacity: 0.7;"></i>
-                        <div class="coin-logo">OMLLA</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="controls">
-                <div class="stat-card">
-                    <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:900;">
-                        <span>RESERVE ENERGY</span><span id="energy-text">1000/1000</span>
-                    </div>
-                    <div class="bar-bg"><div class="bar-fill" id="energy-fill"></div></div>
-                </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <div class="stat-card" style="text-align:center;">
-                        <div id="lvl" style="color:var(--gold); font-weight:900; font-size:16px;">LVL 1</div>
-                        <div style="font-size:7px; color:#555; font-weight:900;">EXECUTIVE RANK</div>
-                    </div>
-                    <div class="stat-card" style="text-align:center;">
-                        <div id="agent" style="color:var(--emerald); font-weight:900; font-size:16px;">SYNC</div>
-                        <div style="font-size:7px; color:#555; font-weight:900;">AGENT STATUS</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-wallet" class="page">
-            <div style="padding: 20px;">
-                <div class="stat-card" style="text-align:center; padding: 40px 20px;">
-                    <i class="fas fa-vault" style="font-size: 50px; color: var(--gold); margin-bottom: 20px;"></i>
-                    <h2 style="font-weight:900; margin-bottom: 10px;">Solana Gateway</h2>
-                    <p style="font-size: 11px; color:#666; margin-bottom: 30px;">Authorized ledger for December 2026 Asset Distribution.</p>
-                    <input type="text" id="wallet-input" placeholder="Solana Address" style="width:100%; background:#000; border:1px solid var(--border); padding:20px; border-radius:18px; color:#fff; text-align:center; font-size:12px; margin-bottom:20px; outline:none;">
-                    <button class="btn-gold" onclick="saveWallet()">LINK LEDGER</button>
-                </div>
-            </div>
-        </div>
-
-        <nav class="nav-bar">
-            <div class="nav-btn active" onclick="nav('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
-            <div class="nav-btn" onclick="nav('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
-        </nav>
+<div class="app-container">
+    <div class="market-ticker">REAL-TIME LIQUIDITY PROVISIONING • PHASE 1</div>
+    
+    <div class="equity-card">
+        <div id="listing-status" style="position: absolute; top: 10px; right: 15px; font-size: 7px; color: var(--gold); font-weight: 900;">DEC 2026 LISTING</div>
+        <div class="omlla-balance" id="balance">0.00</div>
+        <div class="valuation">PORTFOLIO VALUATION: $<span id="usd">0.00</span></div>
     </div>
 
-    <script>
-        // Production Firebase Config
-        const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+    <div class="coin-vault">
+        <div class="omlla-coin" id="coin-action"></div>
+    </div>
 
-        let state = { points: 0, energy: 1000, taps: 0 };
-        const userRef = db.ref('players/' + (tg.initDataUnsafe?.user?.id || 'dev_777'));
+    <div class="ai-panel">
+        <div class="status-row">
+            <span>AI AGENT STATUS: <span class="ai-active-text" id="ai-mode">BALANCING_LEDGER</span></span>
+            <span id="market-cap">MCAP: $1.2M</span>
+        </div>
+        <div class="status-row">
+            <span>RESERVE LIQUIDITY</span>
+            <span id="energy-txt">1000/1000</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="energy-bar"></div></div>
+    </div>
+</div>
 
-        userRef.on('value', (s) => { 
-            if(s.val()) { state = {...state, ...s.val()}; updateUI(); } 
-            else { userRef.update(state); }
-        });
+<script>
+    // System Config
+    const tg = window.Telegram.WebApp;
+    const state = { balance: 0, energy: 1000, mcap: 1200000, price: 0.0045 };
 
-        function updateUI() {
-            document.getElementById('balance').innerText = Math.floor(state.points).toLocaleString();
-            document.getElementById('energy-text').innerText = `${state.energy}/1000`;
-            document.getElementById('energy-fill').style.width = (state.energy/10) + '%';
+    // AI AGENT LOGIC (Internal Controller)
+    const OmllaAgent = {
+        rebalance: function() {
+            // Simulate realistic market volatility to make numbers look "real"
+            const shift = (Math.random() - 0.5) * 0.0001;
+            state.price += shift;
+            state.mcap += shift * 1000000;
+            
+            // AI Action: Stabilize price if it drops too low
+            if(state.price < 0.0040) {
+                state.price += 0.0005;
+                document.getElementById('ai-mode').innerText = "INJECTING_LIQUIDITY";
+            } else {
+                document.getElementById('ai-mode').innerText = "STABLE_MARKET";
+            }
+            this.refreshUI();
+        },
+        refreshUI: function() {
+            document.getElementById('balance').innerText = state.balance.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('usd').innerText = (state.balance * state.price).toFixed(2);
+            document.getElementById('market-cap').innerText = "MCAP: $" + (state.mcap / 1000000).toFixed(1) + "M";
+            document.getElementById('energy-txt').innerText = state.energy + "/1000";
+            document.getElementById('energy-bar').style.width = (state.energy / 10) + "%";
         }
+    };
 
-        document.getElementById('coin').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if(state.energy < 1) return;
-            state.points += 1; state.energy -= 1; state.taps += 1;
-            const t = e.touches[0]; createPop(t.clientX, t.clientY);
-            updateUI();
-            if(state.taps % 10 === 0) userRef.update(state);
-            tg.HapticFeedback.impactOccurred('medium');
-        });
+    // Interaction
+    document.getElementById('coin-action').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if(state.energy < 1) return;
+        
+        state.balance += 1;
+        state.energy -= 1;
+        OmllaAgent.refreshUI();
+        tg.HapticFeedback.impactOccurred('medium');
+    });
 
-        function createPop(x,y) {
-            const d = document.createElement('div'); d.className='tap-pop'; d.innerText='+1';
-            d.style.left=x+'px'; d.style.top=y+'px'; document.body.appendChild(d);
-            setTimeout(()=>d.remove(), 700);
-        }
+    // Run AI Agent background thread
+    setInterval(() => OmllaAgent.rebalance(), 3000);
+    setInterval(() => { if(state.energy < 1000) state.energy += 2; OmllaAgent.refreshUI(); }, 2000);
 
-        function nav(p, el) {
-            document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-            document.getElementById('page-'+p).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        function saveWallet() {
-            const a = document.getElementById('wallet-input').value;
-            if(a.length<32) return tg.showAlert("Invalid Ledger Address");
-            userRef.child('wallet').set(a);
-            tg.showAlert("Solana Ledger Authorized Successfully.");
-        }
-
-        setInterval(() => { if(state.energy < 1000) { state.energy += 2; updateUI(); } }, 2000);
-    </script>
+    tg.expand();
+</script>
 </body>
 </html>
