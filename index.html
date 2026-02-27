@@ -41,7 +41,7 @@
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
-    firebase.initializeApp({ databaseURL: "YOUR_FIREBASE_URL" });
+    firebase.initializeApp({ databaseURLconst FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
     const db = firebase.database();
     const uid = (tg.initDataUnsafe?.user?.id || "DEV").toString();
 
@@ -58,3 +58,4 @@
 </script>
 </body>
 </html>
+
