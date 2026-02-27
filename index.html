@@ -3,107 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA CAPITAL • EXECUTIVE GOLD</title>
-    
+    <title>OMLLA CAPITAL • ELITE • GOLD</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        :root {
-            --gold: #FFD700; --gold-dark: #b8860b; --emerald: #14F195;
-            --bg: #000000; --card: #0a0a0a; --border: rgba(255, 215, 0, 0.15);
-        }
-
-        body {
-            background: radial-gradient(circle at 50% 30%, #1a1a1a, #000 100%);
-            color: white; font-family: 'Inter', sans-serif; height: 100vh;
-            display: flex; justify-content: center; overflow: hidden;
-        }
-
-        .app-shell {
-            width: 100%; max-width: 420px; background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(25px); border: 1px solid var(--border);
-            padding: 20px 16px 100px; position: relative; display: flex; flex-direction: column;
-        }
-
-        /* Executive Header */
-        .header-engine { text-align: center; margin-bottom: 20px; }
-        .balance-master { background: rgba(255,215,0,0.03); border: 1px solid var(--border); border-radius: 30px; padding: 25px; position: relative; overflow: hidden; }
-        .val-display { font-size: 52px; font-weight: 900; color: white; line-height: 1; font-style: italic; letter-spacing: -2px; }
+        :root { --gold: #FFD700; --gold-dark: #b8860b; --emerald: #14F195; --border: rgba(255, 215, 0, 0.2); }
+        body { background: radial-gradient(circle at 50% 30%, #1a1a1a, #000 100%); color: white; font-family: 'Inter', sans-serif; height: 100vh; display: flex; justify-content: center; overflow: hidden; }
+        .app-shell { width: 100%; max-width: 420px; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(25px); border: 1px solid var(--border); padding: 20px 16px 100px; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .header-engine { text-align: center; margin-bottom: 15px; }
+        .balance-master { background: rgba(255,215,0,0.02); border: 1px solid var(--border); border-radius: 25px; padding: 20px; position: relative; }
+        .val-display { font-size: 48px; font-weight: 900; color: white; font-style: italic; letter-spacing: -1px; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
         .listing-tag { position: absolute; top: 10px; right: 15px; font-size: 8px; color: var(--gold); font-weight: 900; letter-spacing: 1px; }
-
-        /* Level Badge */
-        .level-badge {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: black; font-weight: 900; padding: 4px 12px;
-            border-radius: 10px; font-size: 10px; margin-bottom: 10px; display: inline-block;
-        }
-
+        .level-badge { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: black; font-weight: 900; padding: 4px 12px; border-radius: 8px; font-size: 10px; margin-bottom: 8px; display: inline-block; }
         .page { display: none; height: 100%; overflow-y: auto; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* 3D Gold Coin */
         .coin-portal { display: flex; justify-content: center; margin: 20px 0; }
-        .gold-coin {
-            width: 240px; height: 240px; border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #fff9c4 0%, #ffeb3b 10%, #fbc02d 30%, #854d0e 100%);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 5px 15px rgba(255,255,255,0.8);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.05s; position: relative; border: 4px solid #3d2b07;
-        }
+        .gold-coin { width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff9c4 0%, #ffeb3b 10%, #fbc02d 30%, #854d0e 100%); box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 5px 15px rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s; position: relative; border: 4px solid #3d2b07; }
         .gold-coin:active { transform: scale(0.92); }
-        .coin-inner {
-            width: 85%; height: 85%; border-radius: 50%; border: 2px solid #854d0e;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: radial-gradient(circle, #fbc02d 0%, #f57f17 100%);
-        }
+        .coin-inner { width: 85%; height: 85%; border-radius: 50%; border: 2px solid #854d0e; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle, #fbc02d 0%, #f57f17 100%); }
         .coin-text { font-family: 'Cinzel', serif; font-size: 32px; font-weight: 900; color: #3d2b07; }
-
-        /* Progress Bars */
-        .stat-bar { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 12px; border: 1px solid var(--border); margin-bottom: 10px; }
+        .stat-bar { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 12px; border: 1px solid var(--border); margin-bottom: 8px; }
         .bar-track { height: 6px; background: #111; border-radius: 10px; overflow: hidden; margin-top: 8px; }
-        .bar-fill { height: 100%; transition: width 0.3s; }
+        .bar-fill { height: 100%; transition: width 0.3s linear; }
         .fill-xp { background: linear-gradient(90deg, var(--gold), #fff); }
         .fill-energy { background: linear-gradient(90deg, var(--emerald), var(--gold)); }
-
-        /* Grid Cards */
-        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 15px; }
-
-        /* Nav */
-        .tab-bar {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            width: calc(100% - 32px); max-width: 380px; background: rgba(5,5,5,0.95);
-            border: 1px solid var(--border); border-radius: 25px; padding: 8px; display: flex;
-        }
-        .tab-link { flex: 1; text-align: center; color: #555; font-size: 9px; font-weight: 800; cursor: pointer; padding: 10px 0; border-radius: 15px; transition: 0.2s; }
+        .tab-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 380px; background: rgba(10,10,10,0.95); border: 1px solid var(--border); border-radius: 20px; padding: 8px; display: flex; z-index: 1000; }
+        .tab-link { flex: 1; text-align: center; color: #555; font-size: 9px; font-weight: 800; cursor: pointer; padding: 10px 0; border-radius: 12px; }
         .tab-link.active { color: var(--gold); background: rgba(255,215,0,0.05); }
         .tab-link i { font-size: 18px; display: block; margin-bottom: 4px; }
-
-        .btn-prime { background: var(--gold); color: black; border: none; padding: 14px; border-radius: 15px; font-weight: 900; width: 100%; cursor: pointer; }
-        .btn-prime:active { transform: scale(0.98); }
-
-        .tap-pop { position: absolute; color: var(--gold); font-weight: 900; font-size: 28px; pointer-events: none; animation: pop 0.6s forwards; z-index: 100; }
+        .tap-pop { position: absolute; color: var(--gold); font-weight: 900; font-size: 28px; pointer-events: none; animation: pop 0.6s forwards; z-index: 2000; }
         @keyframes pop { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
-
-        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: white; color: black; padding: 10px 20px; border-radius: 20px; font-weight: 800; font-size: 12px; z-index: 5000; display: none; }
+        .btn-prime { background: var(--gold); color: black; border: none; padding: 14px; border-radius: 12px; font-weight: 900; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div id="toast" class="toast"></div>
-
     <div class="app-shell">
         <header class="header-engine">
             <div class="level-badge" id="lvl-badge">LVL 1 MANAGER</div>
             <div class="balance-master">
-                <span class="listing-tag">LISTING DEC 2026</span>
+                <span class="listing-tag">EST. DEC 2026</span>
                 <div class="val-display" id="main-balance">0</div>
-                <div style="font-size: 9px; color: var(--gold); font-weight: 800; letter-spacing: 3px; margin-top: 5px;">OMLLA CAPITAL ASSETS</div>
+                <p style="font-size: 9px; color: var(--gold); font-weight: 800; letter-spacing: 2px;">OMLLA CAPITAL LEDGER</p>
             </div>
         </header>
 
@@ -111,170 +56,101 @@
             <div class="coin-portal">
                 <div class="gold-coin" id="coin-btn">
                     <div class="coin-inner">
-                        <i class="fas fa-turtle" style="font-size: 60px; color: #3d2b07; opacity: 0.8;"></i>
+                        <i class="fas fa-turtle" style="font-size: 50px; color: #3d2b07; opacity: 0.8;"></i>
                         <div class="coin-text">OMLLA</div>
                     </div>
                 </div>
             </div>
-
             <div class="stat-bar">
-                <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800;">
-                    <span>EXPERIENCE POINTS</span><span id="xp-text">0/1000</span>
-                </div>
+                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:800;"><span>XP PROGRESS</span><span id="xp-text">0/1000</span></div>
                 <div class="bar-track"><div class="bar-fill fill-xp" id="xp-fill" style="width:0%"></div></div>
             </div>
-
             <div class="stat-bar">
-                <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800;">
-                    <span>RESERVE POWER</span><span id="energy-text">1000/1000</span>
-                </div>
+                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:800;"><span>ENERGY RESERVE</span><span id="energy-text">1000/1000</span></div>
                 <div class="bar-track"><div class="bar-fill fill-energy" id="energy-fill" style="width:100%"></div></div>
             </div>
-
-            <div class="grid-stats">
-                <div class="card text-center">
-                    <div style="color:var(--gold); font-size:18px; font-weight:900;" id="stat-taps">0</div>
-                    <div style="color:#555; font-size:8px; font-weight:800; margin-top:4px;">SESSION TAPS</div>
-                </div>
-                <div class="card text-center">
-                    <div style="color:var(--emerald); font-size:18px; font-weight:900;" id="stat-mult">1.0x</div>
-                    <div style="color:#555; font-size:8px; font-weight:800; margin-top:4px;">YIELD MULTIPLIER</div>
-                </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="stat-bar text-center"><div id="stat-taps" style="color:var(--gold); font-weight:900;">0</div><div style="font-size:7px; color:#666;">TOTAL MINTED</div></div>
+                <div class="stat-bar text-center"><div id="agent-msg" style="color:var(--emerald); font-weight:900; font-size:9px;">SYNCED</div><div style="font-size:7px; color:#666;">AGENT STATUS</div></div>
             </div>
         </div>
 
         <div id="tasks-page" class="page">
-            <h2 style="font-size:14px; letter-spacing:2px; margin-bottom:15px; color:var(--gold);">EXECUTIVE MISSIONS</h2>
-            <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <div><div style="font-weight:900; font-size:13px;">Daily Protocol</div><div style="color:var(--emerald); font-size:10px;">+500 O$</div></div>
-                <button class="btn-prime" style="width:auto; padding:8px 20px;" onclick="claimDaily()">CLAIM</button>
-            </div>
-            <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                <div><div style="font-weight:900; font-size:13px;">Official Network</div><div style="color:var(--gold); font-size:10px;">+2,000 O$</div></div>
-                <button class="btn-prime" style="width:auto; padding:8px 20px;" onclick="tg.openLink('https://t.me/OmllaChannel')">JOIN</button>
+            <h2 style="font-size:14px; color:var(--gold); margin-bottom:15px;">STRATEGIC MISSIONS</h2>
+            <div class="stat-bar" style="display:flex; justify-content:space-between; align-items:center;">
+                <div><p style="font-weight:900;">Daily Protocol</p><p style="color:var(--emerald); font-size:10px;">+500 O$</p></div>
+                <button class="btn-prime" style="width:auto; padding:8px 15px;" onclick="claimDaily()">CLAIM</button>
             </div>
         </div>
 
         <div id="wallet-page" class="page">
-            <h2 style="font-size:14px; letter-spacing:2px; margin-bottom:15px; color:var(--gold);">ASSET GATEWAY</h2>
-            <div class="card" style="text-align:center; padding:40px 20px;">
-                <i class="fas fa-wallet" style="font-size:50px; color:var(--gold); margin-bottom:20px;"></i>
-                <h3 style="font-size:20px; font-weight:900;">Link Solana Wallet</h3>
-                <p style="font-size:10px; color:#555; margin:10px 0 20px;">Withdrawals and Airdrop claims will be processed through this address in Q4 2026.</p>
-                <input type="text" id="wallet-input" placeholder="Enter Solana Address" style="width:100%; background:black; border:1px solid var(--border); padding:15px; border-radius:15px; color:white; font-size:11px; margin-bottom:15px; outline:none;">
-                <button class="btn-prime" onclick="saveWallet()">AUTHORIZE CONNECTION</button>
+            <h2 style="font-size:14px; color:var(--gold); margin-bottom:15px;">ASSET GATEWAY</h2>
+            <div class="stat-bar" style="text-align:center; padding:30px 10px;">
+                <i class="fas fa-vault" style="font-size:40px; color:var(--gold); margin-bottom:15px;"></i>
+                <h3 style="font-size:18px; font-weight:900;">Ledger Authentication</h3>
+                <input type="text" id="wallet-input" placeholder="Enter Solana Address" style="width:100%; background:black; border:1px solid var(--border); padding:12px; border-radius:10px; color:white; font-size:10px; margin:15px 0;">
+                <button class="btn-prime" onclick="saveWallet()">LINK WALLET</button>
             </div>
         </div>
 
         <nav class="tab-bar">
-            <div class="tab-link active" onclick="nav('mine', this)"><i class="fas fa-gem"></i>MINE</div>
-            <div class="tab-link" onclick="nav('tasks', this)"><i class="fas fa-list-check"></i>TASKS</div>
-            <div class="tab-link" onclick="nav('wallet', this)"><i class="fas fa-vault"></i>WALLET</div>
+            <div class="tab-link active" onclick="nav('mine', this)"><i class="fas fa-bolt"></i>MINE</div>
+            <div class="tab-link" onclick="nav('tasks', this)"><i class="fas fa-tasks"></i>TASKS</div>
+            <div class="tab-link" onclick="nav('wallet', this)"><i class="fas fa-wallet"></i>WALLET</div>
         </nav>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         const FIREBASE_URL = "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/";
-        
         firebase.initializeApp({ databaseURL: FIREBASE_URL });
         const db = firebase.database();
-        const user = tg.initDataUnsafe?.user || { id: "tester_88", first_name: "Admin" };
+        const user = tg.initDataUnsafe?.user || { id: "dev_77", first_name: "Admin" };
         const userRef = db.ref('players/' + user.id);
 
-        let state = { points: 0, energy: 1000, xp: 0, level: 1, taps: 0, multiplier: 1.0 };
-        const xpLevels = [0, 1000, 3000, 7000, 15000, 31000, 63000];
+        let state = { points: 0, energy: 1000, xp: 0, level: 1, taps: 0, multiplier: 1 };
+        const xpLevels = [0, 1000, 3000, 7000, 15000, 31000, 63000, 127000];
 
-        // Core Functions
         function updateUI() {
             document.getElementById('main-balance').innerText = Math.floor(state.points).toLocaleString();
             document.getElementById('energy-text').innerText = `${state.energy}/1000`;
             document.getElementById('energy-fill').style.width = (state.energy / 10) + '%';
             document.getElementById('stat-taps').innerText = state.taps.toLocaleString();
-            
-            // Level Logic
-            let currentLvl = 1;
-            for(let i=0; i<xpLevels.length; i++) { if(state.xp >= xpLevels[i]) currentLvl = i+1; }
-            const nextXp = xpLevels[currentLvl] || xpLevels[xpLevels.length-1] * 2;
-            
-            document.getElementById('lvl-badge').innerText = `LVL ${currentLvl} MANAGER`;
+            let currentLvl = 1; for(let i=0; i<xpLevels.length; i++) { if(state.xp >= xpLevels[i]) currentLvl = i+1; }
+            const nextXp = xpLevels[currentLvl] || xpLevels[xpLevels.length-1]*2;
+            document.getElementById('lvl-badge').innerText = `LVL ${currentLvl} EXECUTIVE`;
             document.getElementById('xp-text').innerText = `${state.xp}/${nextXp}`;
             document.getElementById('xp-fill').style.width = (state.xp / nextXp * 100) + '%';
         }
 
-        // Tap Engine
         document.getElementById('coin-btn').addEventListener('touchstart', (e) => {
-            if(state.energy < 1) { showToast("POWER DEPLETED"); return; }
-            
-            state.points += state.multiplier;
-            state.energy -= 1;
-            state.xp += 1;
-            state.taps += 1;
-            
-            const x = e.touches[0].clientX;
-            const y = e.touches[0].clientY;
-            createPop(x, y);
-            
-            updateUI();
-            tg.HapticFeedback.impactOccurred('medium');
-            
-            // Save every 10 taps to optimize
+            if(state.energy < 1) return tg.HapticFeedback.notificationOccurred('error');
+            state.points += state.multiplier; state.energy -= 1; state.xp += 1; state.taps += 1;
+            const x = e.touches[0].clientX, y = e.touches[0].clientY;
+            const p = document.createElement('div'); p.className = 'tap-pop'; p.innerText = `+${state.multiplier}`;
+            p.style.left = x + 'px'; p.style.top = y + 'px'; document.body.appendChild(p);
+            setTimeout(() => p.remove(), 600); updateUI(); tg.HapticFeedback.impactOccurred('medium');
             if(state.taps % 10 === 0) save();
         });
-
-        function createPop(x, y) {
-            const p = document.createElement('div');
-            p.className = 'tap-pop';
-            p.innerText = `+${state.multiplier}`;
-            p.style.left = x + 'px';
-            p.style.top = y + 'px';
-            document.body.appendChild(p);
-            setTimeout(() => p.remove(), 600);
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 2000);
-        }
 
         function nav(page, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(page + '-page').classList.add('active');
             document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
-            el.classList.add('active');
+            el.classList.add('active'); tg.HapticFeedback.impactOccurred('light');
         }
 
         function save() { userRef.update(state); }
-
-        // Sync with Firebase
-        userRef.on('value', (snap) => {
-            const data = snap.val();
-            if(data) { state = {...state, ...data}; updateUI(); }
-            else { save(); }
-        });
-
-        // Energy Regen & Auto Save
-        setInterval(() => {
-            if(state.energy < 1000) { state.energy += 1; updateUI(); }
-        }, 2000);
-
-        setInterval(save, 15000);
-
-        function claimDaily() {
-            state.points += 500;
-            save();
-            showToast("+500 O$ CREDITED");
-        }
-
-        function saveWallet() {
-            const addr = document.getElementById('wallet-input').value;
-            if(addr.length < 20) return showToast("INVALID ADDRESS");
-            userRef.child('wallet').set(addr);
-            showToast("LEDGER AUTHORIZED");
-        }
-
-        tg.expand();
+        userRef.on('value', (snap) => { if(snap.val()) { state = {...state, ...snap.val()}; updateUI(); } else { save(); } });
+        
+        // Final Fix for Energy Regen
+        setInterval(() => { if(state.energy < 1000) { state.energy += 2; updateUI(); } }, 3000);
+        setInterval(() => { const s = ["YIELD_SCAN", "NODE_LOCKED", "MINT_SYNC"]; document.getElementById('agent-msg').innerText = s[Math.floor(Math.random()*s.length)]; }, 4000);
+        
+        function claimDaily() { state.points += 500; save(); tg.showAlert("Daily Minting Reward: +500 O$ Successfully Added."); }
+        function saveWallet() { const addr = document.getElementById('wallet-input').value; if(addr.length < 32) return tg.showAlert("Invalid Wallet Signature."); userRef.child('wallet').set(addr); tg.showAlert("Solana Ledger Linked."); }
+        
+        tg.expand(); tg.ready();
     </script>
 </body>
 </html>
