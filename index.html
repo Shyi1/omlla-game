@@ -3,266 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA | EXECUTIVE GOLD • ULTIMATE</title>
+    <title>OMLLA | SUPREME EXECUTIVE GOLD</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;900&display=swap');
+        
         body { background: #000; color: #fff; font-family: 'Inter', sans-serif; touch-action: manipulation; overflow: hidden; }
-        .nav-active { color: #ffd700; border-top: 2px solid #ffd700; }
-        .executive-card { background: linear-gradient(145deg, #0f172a, #000); border: 1px solid rgba(255,215,0,0.1); }
-        .real-gold-coin {
+        
+        /* تصميم العملة الذهبية الواقعية المطورة */
+        .gold-master-coin {
             width: 280px; height: 280px; border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffdf00 0%, #d4af37 40%, #8b6508 80%, #5c4306 100%);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 -8px 15px rgba(0,0,0,0.4), inset 0 8px 15px rgba(255,255,255,0.4), 0 0 30px rgba(212, 175, 55, 0.2);
+            background: radial-gradient(circle at 35% 35%, #fff9c4 0%, #ffeb3b 10%, #fbc02d 30%, #f9a825 60%, #e65100 100%);
+            box-shadow: 
+                0 0 0 10px #1a1a1a,
+                0 30px 60px rgba(0,0,0,1),
+                inset 0 10px 20px rgba(255,255,255,0.8),
+                inset 0 -10px 20px rgba(0,0,0,0.6);
             display: flex; align-items: center; justify-content: center; position: relative;
-            border: 4px solid #aa8a2e; transition: transform 0.05s; cursor: pointer;
+            cursor: pointer; transition: transform 0.05s ease; border: 2px solid #ff9100;
         }
-        .real-gold-coin:active { transform: scale(0.92); }
-        .coin-inner-circle {
-            width: 82%; height: 82%; border-radius: 50%;
-            background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
-            border: 3px solid #8b6508; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        .gold-master-coin:active { transform: scale(0.94); }
+        
+        .coin-emboss {
+            width: 85%; height: 85%; border-radius: 50%;
+            border: 4px solid #f9a825;
+            background: radial-gradient(circle, #fbc02d 0%, #f57f17 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
         }
-        .gold-shine {
-            position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
-            transform: skewX(-25deg); animation: shine 5s infinite;
+
+        .turtle-logo-3d {
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.6));
+            color: #4e342e; /* لون النقش العميق */
         }
-        @keyframes shine { 0% { left: -100%; } 20% { left: 150%; } 100% { left: 150%; } }
-        .float-anim { animation: float 4s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        .tap-effect { position: absolute; color: #ffd700; font-weight: 900; animation: fadeUp 0.6s forwards; pointer-events: none; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,1); }
-        @keyframes fadeUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100px); } }
+
+        .omlla-text-3d {
+            font-family: 'Cinzel', serif;
+            font-weight: 900; color: #4e342e;
+            letter-spacing: 0.3em; margin-top: 10px;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+        }
+
+        /* تأثير اللمعان المتحرك */
+        .shine-layer {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%);
+            border-radius: 50%; animation: sweep 4s infinite linear;
+        }
+        @keyframes sweep { 0% { transform: translateX(-100%) translateY(-100%); } 100% { transform: translateX(100%) translateY(100%); } }
+
+        .nav-tab-active { color: #fbc02d; filter: drop-shadow(0 0 10px rgba(251,192,45,0.5)); border-top: 2px solid #fbc02d; }
+        .executive-gradient { background: linear-gradient(145deg, #1a1a1a, #000); border: 1px solid rgba(251,192,45,0.1); }
+        .tap-number { position: absolute; color: #fff; font-weight: 900; font-size: 2rem; animation: floatUp 0.8s forwards; pointer-events: none; text-shadow: 0 0 10px #fbc02d; }
+        @keyframes floatUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-120px); } }
         .hidden { display: none; }
-        .toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #b8860b; border-radius: 2rem; padding: 0.75rem 1.5rem; color: #000; font-weight: 800; z-index: 1000; }
-        .game-card { background: linear-gradient(145deg, #0f172a, #000); border: 1px solid rgba(255,215,0,0.1); border-radius: 1rem; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .game-card:hover { border-color: #ffd700; transform: translateY(-2px); }
-        .game-icon { font-size: 2rem; color: #ffd700; margin-bottom: 0.5rem; }
-        .game-container { background: linear-gradient(145deg, #0f172a, #000); border: 2px solid #ffd700; border-radius: 2rem; padding: 1.5rem; margin-top: 1rem; }
-        .bet-input { background: #000; border: 1px solid rgba(255,215,0,0.2); border-radius: 1rem; padding: 0.75rem; color: white; width: 100%; margin-bottom: 0.5rem; }
-        .preset { background: #0f172a; border: 1px solid rgba(255,215,0,0.1); border-radius: 0.75rem; padding: 0.5rem; text-align: center; cursor: pointer; }
-        .preset:hover { border-color: #ffd700; }
-        .withdraw-option { background: linear-gradient(145deg, #0f172a, #000); border: 1px solid rgba(255,215,0,0.1); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.2s; }
-        .withdraw-option:hover { border-color: #ffd700; }
     </style>
 </head>
 <body class="flex flex-col h-screen select-none">
 
-    <header class="p-4 flex justify-between items-center bg-zinc-950 border-b border-yellow-900/30">
+    <header class="p-4 flex justify-between items-center bg-black border-b border-yellow-600/20">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-yellow-600 flex items-center justify-center font-black text-black shadow-lg shadow-yellow-600/20">O</div>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-700 flex items-center justify-center shadow-lg">
+                <span class="font-black text-black text-xl italic">O</span>
+            </div>
             <div>
-                <p class="text-[10px] font-black text-white uppercase tracking-tighter">OMLLA EXECUTIVE GOLD</p>
-                <div class="flex items-center gap-1.5 text-[8px] text-yellow-600 font-mono">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                    <span id="agentStatus">STRATEGIC_IDLE</span>
+                <p class="text-[10px] font-black text-white uppercase tracking-tighter italic">Omlla Supreme Network</p>
+                <div class="flex items-center gap-1.5 text-[8px] text-yellow-500 font-bold uppercase">
+                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_5px_#22c55e]"></span>
+                    <span id="agentStatus">AGENT_SYNCING</span>
                 </div>
             </div>
         </div>
         <div class="text-right">
-            <p class="text-[7px] text-gray-500 font-bold uppercase">Estimated Value</p>
-            <p id="equityDisplay" class="text-xs font-black text-green-500">$0.00</p>
+            <p class="text-[7px] text-gray-500 font-bold">PORTFOLIO EQUITY</p>
+            <p id="equityDisplay" class="text-xs font-black text-green-400 tracking-widest">$0.00</p>
         </div>
     </header>
 
-    <main id="content" class="flex-1 overflow-y-auto p-5 pb-32">
+    <main class="flex-1 overflow-y-auto p-5 pb-32">
         
         <section id="page-mine" class="space-y-10 flex flex-col items-center py-4">
             <div class="text-center">
-                <p class="text-[9px] font-black text-yellow-700 tracking-[0.5em] mb-2 uppercase">OMLLA BALANCE</p>
-                <h1 id="balance" class="text-6xl font-black italic tracking-tighter text-white">0</h1>
-                <p class="text-xs text-gray-500 mt-2 font-bold tracking-widest uppercase" id="solPrice">SOL: $150</p>
+                <p class="text-[9px] font-black text-yellow-600 tracking-[0.5em] mb-2 uppercase">Current Ledger</p>
+                <h1 id="balance" class="text-6xl font-black italic tracking-tighter text-white drop-shadow-lg">0</h1>
+                <p class="text-xs text-gray-500 mt-2 font-bold tracking-widest uppercase">Listing Date: DEC 2026</p>
             </div>
 
-            <div class="relative float-anim" id="coinContainer">
-                <div onclick="handleTap(event)" class="real-gold-coin">
-                    <div class="gold-shine"></div>
-                    <div class="coin-inner-circle">
-                        <svg viewBox="0 0 24 24" class="w-32 h-32 text-yellow-900/60" fill="none" stroke="currentColor" stroke-width="1.5">
+            <div class="relative" id="coinContainer">
+                <div onclick="handleTap(event)" class="gold-master-coin">
+                    <div class="shine-layer"></div>
+                    <div class="coin-emboss">
+                        <svg viewBox="0 0 24 24" class="w-32 h-32 turtle-logo-3d" fill="none" stroke="currentColor" stroke-width="1.2">
                             <path d="M12 3a6 6 0 0 0-6 6c0 3.31 2.69 6 6 6s6-2.69 6-6a6 6 0 0 0-6-6Z"/>
                             <path d="M18 9h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/><path d="M6 9H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2"/>
                             <path d="M10 15v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/><path d="M14 15v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2"/>
                             <path d="M12 15v3a3 3 0 0 1-3 3H9"/>
                         </svg>
-                        <span class="font-serif font-black text-2xl tracking-widest text-yellow-900/70 mt-1">OMLLA</span>
+                        <span class="omlla-text-3d text-2xl">OMLLA</span>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full max-w-xs space-y-3">
+            <div class="w-full max-w-xs space-y-3 bg-zinc-900/40 p-4 rounded-2xl border border-white/5">
                 <div class="flex justify-between text-[10px] font-black text-yellow-600 uppercase">
-                    <span>⚡ Energy: <span id="energy">1000</span>/1000</span>
-                    <span id="priceDisplay">Rate: 0.0035</span>
+                    <span>⚡ Reserve: <span id="energy">1000</span></span>
+                    <span id="solPrice">SOL: $155.40</span>
                 </div>
-                <div class="w-full bg-yellow-900/20 h-2 rounded-full overflow-hidden border border-yellow-600/20">
-                    <div id="energyBar" class="h-full bg-yellow-600 w-full transition-all"></div>
-                </div>
-            </div>
-
-            <div class="w-full grid grid-cols-3 gap-3 mt-4">
-                <div class="game-card" onclick="openGame('coinflip')">
-                    <div class="game-icon">🪙</div><p class="text-xs font-black">FLIP</p>
-                </div>
-                <div class="game-card" onclick="openGame('dice')">
-                    <div class="game-icon">🎲</div><p class="text-xs font-black">DICE</p>
-                </div>
-                <div class="game-card" onclick="openGame('crash')">
-                    <div class="game-icon">📈</div><p class="text-xs font-black">CRASH</p>
-                </div>
-            </div>
-
-            <div id="game-container" class="game-container hidden w-full">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="game-title" class="text-xl font-black text-yellow-600 uppercase">GAME</h3>
-                    <button onclick="closeGame()" class="text-gray-500 hover:text-white text-xl">✕</button>
-                </div>
-                <div id="game-stage" class="text-center text-4xl my-4 min-h-[100px] flex items-center justify-center"></div>
-                <div class="space-y-3">
-                    <input type="number" id="bet-amount" class="bet-input" value="100">
-                    <div id="game-controls" class="space-y-2"></div>
+                <div class="w-full bg-black h-2 rounded-full overflow-hidden border border-yellow-600/20">
+                    <div id="energyBar" class="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 w-full transition-all"></div>
                 </div>
             </div>
         </section>
 
-        <section id="page-earn" class="hidden space-y-6">
-            <h2 class="text-2xl font-black italic text-yellow-600 uppercase">💰 EARN</h2>
-            <div class="executive-card p-5 rounded-2xl flex justify-between items-center cursor-pointer" onclick="watchAd('premium')">
-                <div><p class="font-black">Premium Ad</p><p class="text-[10px] text-green-500">+5,000 O$</p></div>
-                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs">WATCH</button>
+        <section id="page-earn" class="hidden space-y-4">
+            <h2 class="text-2xl font-black italic text-yellow-600 uppercase mb-6">Strategic Earnings</h2>
+            <div class="executive-gradient p-5 rounded-2xl flex justify-between items-center" onclick="claimDaily()">
+                <div><p class="font-black">Daily Executive Bonus</p><p class="text-[10px] text-green-500">+1,000 OMLLA</p></div>
+                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs uppercase">Claim</button>
             </div>
-            <div class="executive-card p-5 rounded-2xl flex justify-between items-center cursor-pointer" onclick="claimDaily()">
-                <div><p class="font-black">Daily Reward</p><p class="text-[10px] text-green-500">+500 O$</p></div>
-                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs">CLAIM</button>
-            </div>
-        </section>
-
-        <section id="page-store" class="hidden space-y-6">
-            <h2 class="text-2xl font-black italic text-yellow-600 uppercase">🛒 STORE</h2>
-            <div class="executive-card p-5 rounded-2xl flex justify-between items-center cursor-pointer" onclick="buy(10000)">
-                <div><p class="font-black">10K OMLLA</p><p class="text-[10px] text-gray-500">Starter Pack</p></div>
-                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs">0.1 SOL</button>
+            <div class="executive-gradient p-5 rounded-2xl flex justify-between items-center" onclick="watchAd()">
+                <div><p class="font-black">Watch Market Brief</p><p class="text-[10px] text-green-500">+5,000 OMLLA</p></div>
+                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs uppercase">Watch</button>
             </div>
         </section>
 
-        <section id="page-withdraw" class="hidden space-y-6">
-            <h2 class="text-2xl font-black italic text-yellow-600 uppercase">💸 WITHDRAW</h2>
-            <div class="withdraw-option" onclick="showWithdrawModal('solana')">
-                <div class="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center text-black font-black">S</div>
-                <div class="flex-1"><p class="font-black">Solana</p></div>
-                <div class="text-yellow-600 font-black">0.5 SOL</div>
+        <section id="page-wallet" class="hidden flex flex-col items-center justify-center space-y-8 h-full">
+            <div class="w-32 h-32 rounded-full executive-gradient flex items-center justify-center shadow-2xl">
+                <svg width="60" height="60" fill="none" stroke="#fbc02d" viewBox="0 0 24 24"><path stroke-width="1.5" d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2h11M21 12v4a2 2 0 01-2 2h-5M21 12H9"/></svg>
             </div>
+            <div class="text-center px-6">
+                <h3 class="text-2xl font-black uppercase text-white mb-2 italic">Web3 Integration</h3>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest leading-relaxed">Connect your Solana Ledger to authorize Omlla transfers for Dec 2026 Listing.</p>
+            </div>
+            <button onclick="connect()" id="wBtn" class="bg-yellow-600 text-black w-full max-w-xs py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] shadow-xl">Link Ledger</button>
         </section>
+
     </main>
 
-    <nav class="fixed bottom-0 w-full bg-black/90 border-t border-yellow-900/30 p-5 flex justify-around items-center">
-        <button onclick="nav('mine')" id="nav-mine" class="flex flex-col items-center gap-1 nav-active">
+    <nav class="fixed bottom-0 w-full bg-black border-t border-yellow-600/20 p-5 flex justify-around items-center">
+        <button onclick="nav('mine')" id="nav-mine" class="flex flex-col items-center gap-1 nav-tab-active pt-1">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            <span class="text-[8px] font-black uppercase">MINE</span>
+            <span class="text-[8px] font-black uppercase">Mine</span>
         </button>
-        <button onclick="nav('earn')" id="nav-earn" class="flex flex-col items-center gap-1 text-zinc-600">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
-            <span class="text-[8px] font-black uppercase">EARN</span>
+        <button onclick="nav('earn')" id="nav-earn" class="flex flex-col items-center gap-1 text-zinc-600 pt-1">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l-5.5 9h11L12 2zM12 22l5.5-9h-11L12 22z"/></svg>
+            <span class="text-[8px] font-black uppercase">Earn</span>
         </button>
-        <button onclick="nav('store')" id="nav-store" class="flex flex-col items-center gap-1 text-zinc-600">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v2H4V6zm2-4h12v2H6V2zm16 7v12H2V9h20zm-6 3H6v6h10v-6z"/></svg>
-            <span class="text-[8px] font-black uppercase">STORE</span>
-        </button>
-        <button onclick="nav('withdraw')" id="nav-withdraw" class="flex flex-col items-center gap-1 text-zinc-600">
+        <button onclick="nav('wallet')" id="nav-wallet" class="flex flex-col items-center gap-1 text-zinc-600 pt-1">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2h11M21 12v4a2 2 0 01-2 2h-5M21 12H9"/></svg>
-            <span class="text-[8px] font-black uppercase">WALLET</span>
+            <span class="text-[8px] font-black uppercase">Wallet</span>
         </button>
     </nav>
 
-    <div id="withdraw-modal" class="fixed inset-0 bg-black/95 hidden items-center justify-center p-5 z-50">
-        <div class="bg-zinc-900 border-2 border-yellow-600 rounded-3xl p-6 w-full max-w-sm">
-            <h3 id="modal-title" class="text-xl font-black text-center text-yellow-600 mb-4 uppercase">Withdraw Assets</h3>
-            <input type="text" id="withdraw-address" class="w-full p-3 bg-black border border-yellow-600/30 rounded-xl mb-3" placeholder="Address">
-            <input type="number" id="withdraw-amount" class="w-full p-3 bg-black border border-yellow-600/30 rounded-xl mb-3" placeholder="Amount">
-            <button onclick="processWithdrawal()" class="w-full bg-yellow-600 text-black font-black py-3 rounded-xl mb-2">CONFIRM</button>
-            <button onclick="closeModal()" class="w-full bg-zinc-800 text-white font-black py-3 rounded-xl">CANCEL</button>
-        </div>
-    </div>
-
     <script>
+        // 1. Firebase System Fix
         const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const tg = window.Telegram?.WebApp;
         if (tg) { tg.expand(); tg.ready(); }
 
+        // 2. State & User Manager
         let user = {
-            id: tg?.initDataUnsafe?.user?.id?.toString() || "dev_user",
-            balance: 10000, energy: 1000, price: 0.0035
+            id: tg?.initDataUnsafe?.user?.id?.toString() || "web_tester",
+            balance: 0,
+            energy: 1000,
+            lastSave: Date.now()
         };
 
         const userRef = db.ref('players/' + user.id);
         userRef.on('value', (snap) => {
-            if (snap.val()) { user = { ...user, ...snap.val() }; updateUI(); }
-            else { userRef.set(user); }
+            if (snap.val()) { 
+                user = { ...user, ...snap.val() }; 
+                updateUI(); 
+            } else { 
+                userRef.set(user); 
+            }
         });
+
+        // 3. Game Logic
+        function handleTap(e) {
+            if (user.energy <= 0) return;
+            user.balance += 1;
+            user.energy -= 1;
+            
+            // Visual Tap Effect
+            const num = document.createElement('div');
+            num.innerText = "+1";
+            num.className = 'tap-number';
+            num.style.left = `${e.clientX}px`;
+            num.style.top = `${e.clientY}px`;
+            document.body.appendChild(num);
+            setTimeout(() => num.remove(), 800);
+
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            updateUI();
+            
+            // Auto-save every 5 taps to reduce database load
+            if (user.balance % 5 === 0) userRef.update({ balance: user.balance, energy: user.energy });
+        }
+
+        function nav(p) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`page-${p}`).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-tab-active'));
+            document.getElementById(`nav-${p}`).classList.add('nav-tab-active');
+        }
+
+        function connect() {
+            const btn = document.getElementById('wBtn');
+            btn.innerText = "AUTHENTICATING...";
+            setTimeout(() => {
+                btn.innerText = "LEDGER_LINKED (0x7...E9)";
+                btn.style.background = "#000";
+                btn.style.color = "#fbc02d";
+                btn.style.border = "1px solid #fbc02d";
+            }, 2000);
+        }
 
         function updateUI() {
             document.getElementById('balance').innerText = Math.floor(user.balance).toLocaleString();
-            document.getElementById('equityDisplay').innerText = "$" + (user.balance * user.price).toFixed(2);
+            document.getElementById('equityDisplay').innerText = "$" + (user.balance * 0.0035).toFixed(2);
             document.getElementById('energy').innerText = user.energy;
             document.getElementById('energyBar').style.width = (user.energy / 10) + '%';
-            document.getElementById('withdraw-balance').innerText = Math.floor(user.balance).toLocaleString();
         }
 
-        window.handleTap = (e) => {
-            if (user.energy <= 0) return;
-            user.balance += 1; user.energy -= 1;
-            userRef.update({ balance: user.balance, energy: user.energy });
-            const tap = document.createElement('div');
-            tap.innerText = "+1"; tap.className = 'tap-effect';
-            tap.style.left = `${e.clientX}px`; tap.style.top = `${e.clientY}px`;
-            document.body.appendChild(tap); setTimeout(() => tap.remove(), 600);
-            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-        };
-
-        window.nav = (p) => {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`page-${p}`).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
-            document.getElementById(`nav-${p}`).classList.add('nav-active');
-        };
-
-        window.openGame = (game) => {
-            document.getElementById('game-container').classList.remove('hidden');
-            document.getElementById('game-title').innerText = game;
-            const stage = document.getElementById('game-stage');
-            const ctrls = document.getElementById('game-controls');
-            if (game === 'coinflip') {
-                stage.innerHTML = "🪙";
-                ctrls.innerHTML = '<button onclick="playCoin(\'heads\')" class="w-full bg-yellow-600 py-3 rounded-xl text-black font-black">FLIP</button>';
-            }
-        };
-
-        window.playCoin = (c) => {
-            const bet = parseInt(document.getElementById('bet-amount').value);
-            if(bet > user.balance) return alert("Low balance");
-            user.balance -= bet;
-            const win = Math.random() > 0.5;
-            if(win) { user.balance += bet * 2; alert("WIN!"); } else { alert("LOST"); }
-            userRef.update({balance: user.balance});
-        };
-
-        window.showWithdrawModal = (t) => {
-            document.getElementById('withdraw-modal').classList.remove('hidden');
-            document.getElementById('withdraw-modal').classList.add('flex');
-        };
-
-        window.closeModal = () => document.getElementById('withdraw-modal').classList.add('hidden');
-        window.closeGame = () => document.getElementById('game-container').classList.add('hidden');
-
+        // 4. Background Agent Protocols
         setInterval(() => {
-            if (user.energy < 1000) { user.energy += 1; userRef.child('energy').set(user.energy); }
-            const s = ["MARKET_SCAN", "YIELD_MAX", "LEDGER_SYNC"];
-            document.getElementById('agentStatus').innerText = s[Math.floor(Math.random()*s.length)];
+            if (user.energy < 1000) {
+                user.energy += 2;
+                updateUI();
+            }
+            const logs = ["PROTOCOL_SCAN", "MARKET_SYNC", "YIELD_FOUND", "LEDGER_LOCKED"];
+            document.getElementById('agentStatus').innerText = logs[Math.floor(Math.random()*logs.length)];
         }, 3000);
+
     </script>
 </body>
 </html>
