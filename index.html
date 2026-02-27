@@ -3,200 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OMLLA | Executive Empire</title>
+    <title>OMLLA | EXECUTIVE GOLD • ULTIMATE</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #000; color: #fff; font-family: 'Inter', sans-serif; touch-action: manipulation; overflow: hidden; }
-        .nav-blur { background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05); }
-        .card-grad { background: linear-gradient(145deg, #111, #050505); border: 1px solid rgba(255,255,255,0.05); }
-        .coin-btn { transition: transform 0.05s ease; box-shadow: 0 0 50px rgba(161, 98, 7, 0.1); }
-        .coin-btn:active { transform: scale(0.92); }
-        .active-nav { color: #22d3ee !important; }
+        .nav-active { color: #ffd700; border-top: 2px solid #ffd700; }
+        .executive-card { background: linear-gradient(145deg, #0f172a, #000); border: 1px solid rgba(255,215,0,0.1); }
+        .real-gold-coin {
+            width: 280px; height: 280px; border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffdf00 0%, #d4af37 40%, #8b6508 80%, #5c4306 100%);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 -8px 15px rgba(0,0,0,0.4), inset 0 8px 15px rgba(255,255,255,0.4), 0 0 30px rgba(212, 175, 55, 0.2);
+            display: flex; align-items: center; justify-content: center; position: relative;
+            border: 4px solid #aa8a2e; transition: transform 0.05s; cursor: pointer;
+        }
+        .real-gold-coin:active { transform: scale(0.92); }
+        .coin-inner-circle {
+            width: 82%; height: 82%; border-radius: 50%;
+            background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
+            border: 3px solid #8b6508; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        }
+        .gold-shine {
+            position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            transform: skewX(-25deg); animation: shine 5s infinite;
+        }
+        @keyframes shine { 0% { left: -100%; } 20% { left: 150%; } 100% { left: 150%; } }
+        .float-anim { animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        .tap-effect { position: absolute; color: #ffd700; font-weight: 900; animation: fadeUp 0.6s forwards; pointer-events: none; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,1); }
+        @keyframes fadeUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100px); } }
         .hidden { display: none; }
-        @keyframes float-up { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100px); } }
-        .tap-number { position: absolute; pointer-events: none; color: #22d3ee; font-weight: 900; animation: float-up 0.8s forwards; }
+        .toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #b8860b; border-radius: 2rem; padding: 0.75rem 1.5rem; color: #000; font-weight: 800; z-index: 1000; }
+        .game-card { background: linear-gradient(145deg, #0f172a, #000); border: 1px solid rgba(255,215,0,0.1); border-radius: 1rem; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .game-card:hover { border-color: #ffd700; transform: translateY(-2px); }
+        .game-icon { font-size: 2rem; color: #ffd700; margin-bottom: 0.5rem; }
+        .game-container { background: linear-gradient(145deg, #0f172a, #000); border: 2px solid #ffd700; border-radius: 2rem; padding: 1.5rem; margin-top: 1rem; }
+        .bet-input { background: #000; border: 1px solid rgba(255,215,0,0.2); border-radius: 1rem; padding: 0.75rem; color: white; width: 100%; margin-bottom: 0.5rem; }
+        .preset { background: #0f172a; border: 1px solid rgba(255,215,0,0.1); border-radius: 0.75rem; padding: 0.5rem; text-align: center; cursor: pointer; }
+        .preset:hover { border-color: #ffd700; }
+        .withdraw-option { background: linear-gradient(145deg, #0f172a, #000); border: 1px solid rgba(255,215,0,0.1); border-radius: 1rem; padding: 1rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.2s; }
+        .withdraw-option:hover { border-color: #ffd700; }
     </style>
 </head>
 <body class="flex flex-col h-screen select-none">
 
-    <div class="p-4 flex justify-between items-center bg-zinc-950/80 border-b border-white/5">
+    <header class="p-4 flex justify-between items-center bg-zinc-950 border-b border-yellow-900/30">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-yellow-600 flex items-center justify-center font-black text-black">O</div>
+            <div class="w-10 h-10 rounded-full bg-yellow-600 flex items-center justify-center font-black text-black shadow-lg shadow-yellow-600/20">O</div>
             <div>
-                <p class="text-[10px] font-black text-white leading-none">CEO (Level 1)</p>
-                <p class="text-[8px] text-cyan-500 font-bold mt-1 uppercase tracking-widest">Master Manager</p>
+                <p class="text-[10px] font-black text-white uppercase tracking-tighter">OMLLA EXECUTIVE GOLD</p>
+                <div class="flex items-center gap-1.5 text-[8px] text-yellow-600 font-mono">
+                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                    <span id="agentStatus">STRATEGIC_IDLE</span>
+                </div>
             </div>
         </div>
         <div class="text-right">
-            <p class="text-[8px] text-gray-500 font-bold uppercase">Profit Per Hour</p>
-            <p class="text-[11px] text-green-400 font-black">+<span id="pph">0</span></p>
+            <p class="text-[7px] text-gray-500 font-bold uppercase">Estimated Value</p>
+            <p id="equityDisplay" class="text-xs font-black text-green-500">$0.00</p>
         </div>
-    </div>
+    </header>
 
-    <main class="flex-1 overflow-y-auto p-4 pb-28">
+    <main id="content" class="flex-1 overflow-y-auto p-5 pb-32">
         
-        <div id="page-exchange" class="space-y-6">
-            <div class="flex justify-center gap-4 py-4">
-                <div class="card-grad p-3 rounded-xl flex-1 text-center">
-                    <p class="text-[7px] text-gray-500 font-bold uppercase mb-1">Listing Date</p>
-                    <p class="text-xs font-black text-yellow-600">DEC 2026</p>
-                </div>
-                <div class="card-grad p-3 rounded-xl flex-1 text-center">
-                    <p class="text-[7px] text-gray-500 font-bold uppercase mb-1">Network Status</p>
-                    <p class="text-xs font-black text-green-500">SECURE</p>
+        <section id="page-mine" class="space-y-10 flex flex-col items-center py-4">
+            <div class="text-center">
+                <p class="text-[9px] font-black text-yellow-700 tracking-[0.5em] mb-2 uppercase">OMLLA BALANCE</p>
+                <h1 id="balance" class="text-6xl font-black italic tracking-tighter text-white">0</h1>
+                <p class="text-xs text-gray-500 mt-2 font-bold tracking-widest uppercase" id="solPrice">SOL: $150</p>
+            </div>
+
+            <div class="relative float-anim" id="coinContainer">
+                <div onclick="handleTap(event)" class="real-gold-coin">
+                    <div class="gold-shine"></div>
+                    <div class="coin-inner-circle">
+                        <svg viewBox="0 0 24 24" class="w-32 h-32 text-yellow-900/60" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 3a6 6 0 0 0-6 6c0 3.31 2.69 6 6 6s6-2.69 6-6a6 6 0 0 0-6-6Z"/>
+                            <path d="M18 9h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/><path d="M6 9H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2"/>
+                            <path d="M10 15v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/><path d="M14 15v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2"/>
+                            <path d="M12 15v3a3 3 0 0 1-3 3H9"/>
+                        </svg>
+                        <span class="font-serif font-black text-2xl tracking-widest text-yellow-900/70 mt-1">OMLLA</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="text-center space-y-2">
-                <div class="flex items-center justify-center gap-2">
-                    <img src="https://cdn-icons-png.flaticon.com/512/217/217853.png" class="w-8 h-8 filter brightness-150">
-                    <h1 id="balance" class="text-5xl font-black tracking-tighter">0</h1>
+            <div class="w-full max-w-xs space-y-3">
+                <div class="flex justify-between text-[10px] font-black text-yellow-600 uppercase">
+                    <span>⚡ Energy: <span id="energy">1000</span>/1000</span>
+                    <span id="priceDisplay">Rate: 0.0035</span>
                 </div>
-                <p class="text-xs text-gray-500 font-bold tracking-widest uppercase">Target: $1.00 / Omlla</p>
-            </div>
-
-            <div class="flex justify-center relative py-10" id="coin-container">
-                <button onclick="handleTap(event)" class="coin-btn w-72 h-72 rounded-full border-[12px] border-zinc-900 bg-gradient-to-b from-zinc-800 to-black flex flex-col items-center justify-center">
-                    <svg viewBox="0 0 24 24" class="w-36 h-36 text-yellow-700/80" fill="none" stroke="currentColor" stroke-width="1.2">
-                        <path d="M12 3a6 6 0 0 0-6 6c0 3.31 2.69 6 6 6s6-2.69 6-6a6 6 0 0 0-6-6Z"/><path d="M18 9h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/><path d="M6 9H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2"/><path d="M10 15v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/><path d="M14 15v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2"/><path d="M12 15v3a3 3 0 0 1-3 3H9"/>
-                    </svg>
-                    <span class="text-3xl font-black tracking-[0.4em] mt-4 ml-4">OMLLA</span>
-                </button>
-            </div>
-
-            <div class="max-w-xs mx-auto space-y-2">
-                <div class="flex justify-between text-[10px] font-black">
-                    <span>⚡ <span id="energy">1000</span> / 1000</span>
-                    <span class="text-cyan-400">OFFICIAL AGENT ACTIVE</span>
-                </div>
-                <div class="w-full bg-zinc-900 h-2 rounded-full overflow-hidden">
-                    <div id="energyBar" class="h-full bg-white transition-all w-full"></div>
+                <div class="w-full bg-yellow-900/20 h-2 rounded-full overflow-hidden border border-yellow-600/20">
+                    <div id="energyBar" class="h-full bg-yellow-600 w-full transition-all"></div>
                 </div>
             </div>
-        </div>
 
-        <div id="page-mine" class="hidden space-y-4">
-            <h2 class="text-xl font-black italic mb-4 uppercase">Upgrade Efficiency</h2>
-            <div class="grid grid-cols-2 gap-3">
-                <div onclick="buyUpgrade('Trading Bot', 500, 100)" class="card-grad p-4 rounded-2xl space-y-2 cursor-pointer">
-                    <p class="text-xs font-black">Trading Bot</p>
-                    <p class="text-[9px] text-green-400">+100 PPH</p>
-                    <p class="text-[10px] font-bold text-yellow-600">Cost: 500</p>
+            <div class="w-full grid grid-cols-3 gap-3 mt-4">
+                <div class="game-card" onclick="openGame('coinflip')">
+                    <div class="game-icon">🪙</div><p class="text-xs font-black">FLIP</p>
                 </div>
-                <div onclick="buyUpgrade('AI Manager', 2000, 500)" class="card-grad p-4 rounded-2xl space-y-2 cursor-pointer">
-                    <p class="text-xs font-black">AI Manager</p>
-                    <p class="text-[9px] text-green-400">+500 PPH</p>
-                    <p class="text-[10px] font-bold text-yellow-600">Cost: 2000</p>
+                <div class="game-card" onclick="openGame('dice')">
+                    <div class="game-icon">🎲</div><p class="text-xs font-black">DICE</p>
+                </div>
+                <div class="game-card" onclick="openGame('crash')">
+                    <div class="game-icon">📈</div><p class="text-xs font-black">CRASH</p>
                 </div>
             </div>
-        </div>
 
-        <div id="page-wallet" class="hidden flex flex-col items-center justify-center h-full text-center space-y-6">
-            <div class="w-24 h-24 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/30">
-                <svg width="48" height="48" fill="none" stroke="#22d3ee" viewBox="0 0 24 24"><path stroke-width="1.5" d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2h11M21 12v4a2 2 0 01-2 2h-5M21 12H9"/></svg>
+            <div id="game-container" class="game-container hidden w-full">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="game-title" class="text-xl font-black text-yellow-600 uppercase">GAME</h3>
+                    <button onclick="closeGame()" class="text-gray-500 hover:text-white text-xl">✕</button>
+                </div>
+                <div id="game-stage" class="text-center text-4xl my-4 min-h-[100px] flex items-center justify-center"></div>
+                <div class="space-y-3">
+                    <input type="number" id="bet-amount" class="bet-input" value="100">
+                    <div id="game-controls" class="space-y-2"></div>
+                </div>
             </div>
-            <div>
-                <h2 class="text-2xl font-black">Connect Wallet</h2>
-                <p class="text-xs text-gray-500 mt-2 px-10">Withdrawals will be enabled in Q4 2026. Link your wallet to qualify for the Airdrop.</p>
-            </div>
-            <button onclick="connectWallet()" id="walletBtn" class="bg-cyan-500 text-black w-full max-w-xs py-4 rounded-2xl font-black uppercase text-xs tracking-widest">Connect Wallet</button>
-        </div>
+        </section>
 
+        <section id="page-earn" class="hidden space-y-6">
+            <h2 class="text-2xl font-black italic text-yellow-600 uppercase">💰 EARN</h2>
+            <div class="executive-card p-5 rounded-2xl flex justify-between items-center cursor-pointer" onclick="watchAd('premium')">
+                <div><p class="font-black">Premium Ad</p><p class="text-[10px] text-green-500">+5,000 O$</p></div>
+                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs">WATCH</button>
+            </div>
+            <div class="executive-card p-5 rounded-2xl flex justify-between items-center cursor-pointer" onclick="claimDaily()">
+                <div><p class="font-black">Daily Reward</p><p class="text-[10px] text-green-500">+500 O$</p></div>
+                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs">CLAIM</button>
+            </div>
+        </section>
+
+        <section id="page-store" class="hidden space-y-6">
+            <h2 class="text-2xl font-black italic text-yellow-600 uppercase">🛒 STORE</h2>
+            <div class="executive-card p-5 rounded-2xl flex justify-between items-center cursor-pointer" onclick="buy(10000)">
+                <div><p class="font-black">10K OMLLA</p><p class="text-[10px] text-gray-500">Starter Pack</p></div>
+                <button class="bg-yellow-600 text-black px-4 py-2 rounded-lg font-black text-xs">0.1 SOL</button>
+            </div>
+        </section>
+
+        <section id="page-withdraw" class="hidden space-y-6">
+            <h2 class="text-2xl font-black italic text-yellow-600 uppercase">💸 WITHDRAW</h2>
+            <div class="withdraw-option" onclick="showWithdrawModal('solana')">
+                <div class="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center text-black font-black">S</div>
+                <div class="flex-1"><p class="font-black">Solana</p></div>
+                <div class="text-yellow-600 font-black">0.5 SOL</div>
+            </div>
+        </section>
     </main>
 
-    <nav class="fixed bottom-0 w-full nav-blur p-4 flex justify-around items-center">
-        <button onclick="showPage('exchange')" id="nav-exchange" class="flex flex-col items-center gap-1 active-nav">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 12l10 5 10-5M2 17l10 5 10-5"/></svg>
-            <span class="text-[8px] font-black uppercase">Exchange</span>
+    <nav class="fixed bottom-0 w-full bg-black/90 border-t border-yellow-900/30 p-5 flex justify-around items-center">
+        <button onclick="nav('mine')" id="nav-mine" class="flex flex-col items-center gap-1 nav-active">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span class="text-[8px] font-black uppercase">MINE</span>
         </button>
-        <button onclick="showPage('mine')" id="nav-mine" class="flex flex-col items-center gap-1 text-gray-500">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l-5.5 9h11L12 2zM12 22l5.5-9h-11L12 22z"/></svg>
-            <span class="text-[8px] font-black uppercase">Mine</span>
+        <button onclick="nav('earn')" id="nav-earn" class="flex flex-col items-center gap-1 text-zinc-600">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
+            <span class="text-[8px] font-black uppercase">EARN</span>
         </button>
-        <button onclick="showPage('wallet')" id="nav-wallet" class="flex flex-col items-center gap-1 text-gray-500">
+        <button onclick="nav('store')" id="nav-store" class="flex flex-col items-center gap-1 text-zinc-600">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v2H4V6zm2-4h12v2H6V2zm16 7v12H2V9h20zm-6 3H6v6h10v-6z"/></svg>
+            <span class="text-[8px] font-black uppercase">STORE</span>
+        </button>
+        <button onclick="nav('withdraw')" id="nav-withdraw" class="flex flex-col items-center gap-1 text-zinc-600">
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2h11M21 12v4a2 2 0 01-2 2h-5M21 12H9"/></svg>
-            <span class="text-[8px] font-black uppercase">Wallet</span>
+            <span class="text-[8px] font-black uppercase">WALLET</span>
         </button>
     </nav>
 
+    <div id="withdraw-modal" class="fixed inset-0 bg-black/95 hidden items-center justify-center p-5 z-50">
+        <div class="bg-zinc-900 border-2 border-yellow-600 rounded-3xl p-6 w-full max-w-sm">
+            <h3 id="modal-title" class="text-xl font-black text-center text-yellow-600 mb-4 uppercase">Withdraw Assets</h3>
+            <input type="text" id="withdraw-address" class="w-full p-3 bg-black border border-yellow-600/30 rounded-xl mb-3" placeholder="Address">
+            <input type="number" id="withdraw-amount" class="w-full p-3 bg-black border border-yellow-600/30 rounded-xl mb-3" placeholder="Amount">
+            <button onclick="processWithdrawal()" class="w-full bg-yellow-600 text-black font-black py-3 rounded-xl mb-2">CONFIRM</button>
+            <button onclick="closeModal()" class="w-full bg-zinc-800 text-white font-black py-3 rounded-xl">CANCEL</button>
+        </div>
+    </div>
+
     <script>
-        let state = {
-            balance: 0,
-            pph: 0,
-            energy: 1000,
-            tapValue: 1,
-            walletConnected: false
+        const firebaseConfig = { databaseURL: "https://omllagame-default-rtdb.europe-west1.firebasedatabase.app/" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const tg = window.Telegram?.WebApp;
+        if (tg) { tg.expand(); tg.ready(); }
+
+        let user = {
+            id: tg?.initDataUnsafe?.user?.id?.toString() || "dev_user",
+            balance: 10000, energy: 1000, price: 0.0035
         };
 
-        function handleTap(e) {
-            if (state.energy > 0) {
-                state.balance += state.tapValue;
-                state.energy -= 1;
-                
-                // Visual Tap Effect
-                const num = document.createElement('div');
-                num.innerText = `+${state.tapValue}`;
-                num.className = 'tap-number';
-                num.style.left = `${e.clientX}px`;
-                num.style.top = `${e.clientY}px`;
-                document.body.appendChild(num);
-                setTimeout(() => num.remove(), 800);
-                
-                updateUI();
-            }
-        }
-
-        function showPage(pageId) {
-            document.querySelectorAll('main > div').forEach(p => p.classList.add('hidden'));
-            document.getElementById(`page-${pageId}`).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav'));
-            document.getElementById(`nav-${pageId}`).classList.add('active-nav');
-        }
-
-        function buyUpgrade(name, cost, pphGain) {
-            if (state.balance >= cost) {
-                state.balance -= cost;
-                state.pph += pphGain;
-                alert(`${name} Purchased! Your Profit Per Hour increased by ${pphGain}.`);
-                updateUI();
-            } else {
-                alert("Insufficient Omlla balance!");
-            }
-        }
-
-        function connectWallet() {
-            const btn = document.getElementById('walletBtn');
-            btn.innerText = "CONNECTING...";
-            setTimeout(() => {
-                state.walletConnected = true;
-                btn.innerText = "0x...F2 (CONNECTED)";
-                btn.style.background = "transparent";
-                btn.style.border = "1px solid #22d3ee";
-                btn.style.color = "#22d3ee";
-                alert("Wallet Connected to Omlla Mainnet.");
-            }, 1500);
-        }
+        const userRef = db.ref('players/' + user.id);
+        userRef.on('value', (snap) => {
+            if (snap.val()) { user = { ...user, ...snap.val() }; updateUI(); }
+            else { userRef.set(user); }
+        });
 
         function updateUI() {
-            document.getElementById('balance').innerText = Math.floor(state.balance).toLocaleString();
-            document.getElementById('pph').innerText = state.pph.toLocaleString();
-            document.getElementById('energy').innerText = state.energy;
-            document.getElementById('energyBar').style.width = (state.energy / 10) + '%';
+            document.getElementById('balance').innerText = Math.floor(user.balance).toLocaleString();
+            document.getElementById('equityDisplay').innerText = "$" + (user.balance * user.price).toFixed(2);
+            document.getElementById('energy').innerText = user.energy;
+            document.getElementById('energyBar').style.width = (user.energy / 10) + '%';
+            document.getElementById('withdraw-balance').innerText = Math.floor(user.balance).toLocaleString();
         }
 
-        // Background Profit & Energy Recovery Logic [cite: 2026-02-10]
+        window.handleTap = (e) => {
+            if (user.energy <= 0) return;
+            user.balance += 1; user.energy -= 1;
+            userRef.update({ balance: user.balance, energy: user.energy });
+            const tap = document.createElement('div');
+            tap.innerText = "+1"; tap.className = 'tap-effect';
+            tap.style.left = `${e.clientX}px`; tap.style.top = `${e.clientY}px`;
+            document.body.appendChild(tap); setTimeout(() => tap.remove(), 600);
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        };
+
+        window.nav = (p) => {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`page-${p}`).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
+            document.getElementById(`nav-${p}`).classList.add('nav-active');
+        };
+
+        window.openGame = (game) => {
+            document.getElementById('game-container').classList.remove('hidden');
+            document.getElementById('game-title').innerText = game;
+            const stage = document.getElementById('game-stage');
+            const ctrls = document.getElementById('game-controls');
+            if (game === 'coinflip') {
+                stage.innerHTML = "🪙";
+                ctrls.innerHTML = '<button onclick="playCoin(\'heads\')" class="w-full bg-yellow-600 py-3 rounded-xl text-black font-black">FLIP</button>';
+            }
+        };
+
+        window.playCoin = (c) => {
+            const bet = parseInt(document.getElementById('bet-amount').value);
+            if(bet > user.balance) return alert("Low balance");
+            user.balance -= bet;
+            const win = Math.random() > 0.5;
+            if(win) { user.balance += bet * 2; alert("WIN!"); } else { alert("LOST"); }
+            userRef.update({balance: user.balance});
+        };
+
+        window.showWithdrawModal = (t) => {
+            document.getElementById('withdraw-modal').classList.remove('hidden');
+            document.getElementById('withdraw-modal').classList.add('flex');
+        };
+
+        window.closeModal = () => document.getElementById('withdraw-modal').classList.add('hidden');
+        window.closeGame = () => document.getElementById('game-container').classList.add('hidden');
+
         setInterval(() => {
-            // Passive Income per second
-            if (state.pph > 0) {
-                state.balance += (state.pph / 3600);
-                updateUI();
-            }
-            // Energy Recovery
-            if (state.energy < 1000) {
-                state.energy += 1;
-                updateUI();
-            }
-        }, 1000);
+            if (user.energy < 1000) { user.energy += 1; userRef.child('energy').set(user.energy); }
+            const s = ["MARKET_SCAN", "YIELD_MAX", "LEDGER_SYNC"];
+            document.getElementById('agentStatus').innerText = s[Math.floor(Math.random()*s.length)];
+        }, 3000);
     </script>
 </body>
 </html>
